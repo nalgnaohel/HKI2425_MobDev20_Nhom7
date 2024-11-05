@@ -17,6 +17,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -30,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
@@ -62,17 +66,16 @@ fun HomeScreen(
                 Row {
                     IconButton(onClick = { /* Notification */ }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.notification),
+                            imageVector = Icons.Default.Notifications,
                             contentDescription = "Notifications",
                             modifier = Modifier.size(24.dp)
                         )
                     }
                     IconButton(onClick = { /* Settings */ }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.settings),
+                            imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",
                             modifier = Modifier.size(24.dp)
-
                         )
                     }
                 }
@@ -118,7 +121,9 @@ fun HomeScreen(
                     listOf(
                         "Faded" to "Alan Walker",
                         "Shape of You" to "Ed Sheeran",
-                        "Perfect" to "Ed Sheeran"
+                        "Perfect" to "Ed Sheeran",
+                        "Blinding Lights" to "The Weeknd",
+                        "Thinking Out Loud" to "Ed Sheeran"
                     )
                 ) { (suggestion, artistName) ->
                     SuggestionCard(suggestion, artistName)
@@ -136,12 +141,13 @@ fun HomeScreen(
             ) {
                 items(
                     listOf(
-                        R.drawable.ic_launcher_background,
-                        R.drawable.ic_launcher_background,
-                        R.drawable.ic_launcher_background,
-                        R.drawable.ic_launcher_background,
-                        R.drawable.ic_launcher_background,
-                        R.drawable.ic_launcher_background
+                        R.drawable.top100,
+                        R.drawable.top100,
+                        R.drawable.top100,
+                        R.drawable.top100,
+                        R.drawable.top100,
+                        R.drawable.top100,
+
                     )
                 ) { chart ->
                     ChartsCard(chart)
@@ -155,7 +161,7 @@ fun HomeScreen(
 @Composable
 fun ProfileImage(modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.ic_launcher_background),
+        painter = painterResource(id = R.drawable.hip),
         contentDescription = "Profile",
         modifier = modifier
             .size(48.dp)
@@ -172,7 +178,7 @@ fun GenreCard(genre: String) {
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(text = genre, color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text(text = genre, color = Color.White, fontSize= 20.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -182,13 +188,12 @@ fun MixCard(mix: String) {
     Surface(
         modifier = Modifier
             .size(width = 150.dp, height = 150.dp),
-        color = Color.DarkGray,
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(contentAlignment = Alignment.BottomCenter) {
             // Placeholder for the image
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+                painter = painterResource(id = R.drawable.pop),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -197,14 +202,16 @@ fun MixCard(mix: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp),
-                color = Color(0xFFB22222), // Bottom strip color for mix type
+                color = Color.Black.copy(alpha = 0.4f),
                 shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
             ) {
                 Text(
                     text = mix,
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 8.dp),
                     color = Color.White,
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -224,12 +231,13 @@ fun SuggestionCard(suggestion: String, artistName: String) {
                 modifier = Modifier.size(width = 125.dp, height = 125.dp),
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
+                    painter = painterResource(id = R.drawable.v),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = suggestion,
                 fontSize = 16.sp,
@@ -252,11 +260,17 @@ fun ChartsCard(chartImg: Int) {
         Box(contentAlignment = Alignment.BottomCenter) {
             // Placeholder for the image
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+                painter = painterResource(id = chartImg),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun HomeScreenPreview() {
+    HomeScreen(onSearchButtonClicked = {})
 }

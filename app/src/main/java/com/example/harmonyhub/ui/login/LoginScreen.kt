@@ -39,11 +39,11 @@ fun LoginScreen() {
         Icon(
             painter = painterResource(id = com.example.harmonyhub.R.drawable.speaker),
             contentDescription = null,
-            modifier = Modifier.size(100.dp),
+            modifier = Modifier.size(200.dp),
             tint = Color.Unspecified
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Text(
             text = "Login",
@@ -118,7 +118,7 @@ fun LoginScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00D2F2))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5))
         ) {
             Icon(
                 imageVector = Icons.Filled.Lock,
@@ -144,7 +144,7 @@ fun LoginScreen() {
 
             val signUpText = buildAnnotatedString {
                 pushStringAnnotation(tag = "SIGN_UP", annotation = "SignUp")
-                withStyle(style = SpanStyle(color = Color(0xFF00D2F2), textDecoration = TextDecoration.Underline)) {
+                withStyle(style = SpanStyle(color = Color(0xFF03DAC5), textDecoration = TextDecoration.Underline)) {
                     append("Sign Up")
                 }
                 pop()
