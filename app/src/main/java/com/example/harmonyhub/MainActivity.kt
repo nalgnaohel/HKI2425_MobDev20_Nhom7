@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.harmonyhub.ui.home.HomeScreen
+import com.example.harmonyhub.ui.login.LoginScreen
 import com.example.harmonyhub.ui.theme.HarmonyHubTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HarmonyHubTheme {
-                HarmonyHubApp()
+                LoginScreen()
             }
         }
     }
