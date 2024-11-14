@@ -55,7 +55,6 @@ fun SearchScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
         // Thanh tìm kiếm
         TextField(
             value = query,
@@ -77,7 +76,7 @@ fun SearchScreen(
             item {
                 Text(
                     text = if (query.isEmpty()) "Tìm kiếm gần đây" else "Kết quả tìm kiếm",
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
