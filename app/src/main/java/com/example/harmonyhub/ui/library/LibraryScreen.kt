@@ -42,7 +42,6 @@ fun LibraryScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -58,7 +57,7 @@ fun LibraryScreen() {
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = "Thư viện",
-                fontSize = 20.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -75,7 +74,7 @@ fun LibraryScreen() {
         // Các playlist của tôi
         Text(
             text = "Các playlist của tôi",
-            fontSize = 24.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )

@@ -18,30 +18,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,7 +67,7 @@ fun HomeScreen(
                 onProfileButtonClicked = onProfileButtonClicked,
             )
         },
-        scrimColor = Color.Black.copy(alpha = 1f)
+        scrimColor = Color.Black.copy(alpha = 0.9f),
     ) {
         LazyColumn(
             modifier = Modifier
@@ -95,13 +88,13 @@ fun HomeScreen(
                         IconButton(onClick = {
                             coroutineScope.launch { drawerState.open() }
                         }) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.hip),
-                                    contentDescription = "Profile",
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .clip(CircleShape)
-                                )
+                            Image(
+                                painter = painterResource(id = R.drawable.hip),
+                                contentDescription = "Profile",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                            )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "Thomas", fontSize = 24.sp, fontWeight = FontWeight.Bold)
@@ -140,14 +133,22 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Top Mixes Section
-                Text(text = "Top Mixes", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                // Artists Section
+                Text(text = "Artists", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                 LazyRow(
                     modifier = Modifier.padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(listOf("Pop Mix", "Chill Mix", "Dance Mix", "Jazz Mix")) { mix ->
-                        MixCard(mix)
+                    items(
+                        listOf(
+                            "Alan Walker" to R.drawable.v,
+                            "Ed Sheeran" to R.drawable.v,
+                            "The Weeknd" to R.drawable.v,
+                            "Adele" to R.drawable.v,
+                            "Taylor Swift" to R.drawable.v
+                        )
+                    ) {
+                        ArtistsCard(it.first, it.second)
                     }
                 }
 
@@ -228,37 +229,36 @@ fun GenreCard(genre: String) {
 }
 
 @Composable
-fun MixCard(mix: String) {
+fun ArtistsCard(artistName: String, artistImg: Int) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 150.dp),
-        shape = RoundedCornerShape(8.dp)
+            .size(width = 150.dp, height = 175.dp)
     ) {
-        Box(contentAlignment = Alignment.BottomCenter) {
-            // Placeholder for the image
-            Image(
-                painter = painterResource(id = R.drawable.pop),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(20.dp),
-                color = Color.Black.copy(alpha = 0.4f),
-                shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
-            ) {
-                Text(
-                    text = mix,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier.size(width = 150.dp, height = 150.dp),
+                ) {
+                Image(
+                    painter = painterResource(id = artistImg),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 8.dp),
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
+                        .fillMaxSize()
+                        .clip(CircleShape),
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = artistName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = Ellipsis,
+            )
+
         }
     }
 }
@@ -353,17 +353,63 @@ fun ProfileDrawerContent(
                 )
             }
         }
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .padding(end = 32.dp)
+        )
 
         TextButton(onClick = onProfileButtonClicked) {
-            Text(text = "Hồ sơ", fontSize = 20.sp, color = Color.White)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Hồ sơ",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Hồ sơ", fontSize = 20.sp, color = Color.White)
+            }
         }
+
         TextButton(onClick = { /* Nâng cấp lên VIP */ }) {
-            Text(text = "Nâng cấp lên VIP", fontSize = 20.sp, color = Color.White)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Nâng cấp lên VIP",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Nâng cấp lên VIP", fontSize = 20.sp, color = Color.White)
+            }
+        }
+        TextButton(onClick = { /* Cài đặt */ }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Cài đặt",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Cài đặt", fontSize = 20.sp, color = Color.White)
+            }
         }
         TextButton(onClick = { /* Đăng xuất */ }) {
-            Text(text = "Đăng xuất", fontSize = 20.sp, color = Color.White)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Đăng xuất",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Đăng xuất", fontSize = 20.sp, color = Color.White)
+            }
         }
+
+
     }
 }
 
