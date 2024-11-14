@@ -35,7 +35,7 @@ fun LoginScreen() {
     ){
 
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         // Logo
         Image(
@@ -96,7 +96,7 @@ fun LoginScreen() {
             },
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.icons8_google_48), // Replace with your visibility icon
+                    painter = painterResource(id = R.drawable.icons8_eye_60),
                     contentDescription = "Toggle Password Visibility",
                     tint = Color.Gray
                 )

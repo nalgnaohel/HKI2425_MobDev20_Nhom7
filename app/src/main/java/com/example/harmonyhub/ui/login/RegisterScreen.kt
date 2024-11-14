@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -42,6 +43,15 @@ fun RegisterScreen() {
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.speaker), // Replace with your logo icon
+            contentDescription = "Logo",
+            modifier = Modifier.size(150.dp)
+        )
+
+        Spacer(modifier = Modifier.height(50.dp))
 
         // Title
         Text(
@@ -100,7 +110,7 @@ fun RegisterScreen() {
             visualTransformation = PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.notification), // Replace with your visibility icon
+                    painter = painterResource(id = R.drawable.icons8_hide_60), // Replace with your visibility icon
                     contentDescription = "Toggle Password Visibility",
                     tint = Color.Gray
                 )
@@ -126,7 +136,7 @@ fun RegisterScreen() {
             visualTransformation = PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.notification), // Replace with your visibility icon
+                    painter = painterResource(id = R.drawable.icons8_hide_60), // Replace with your visibility icon
                     contentDescription = "Toggle Password Visibility",
                     tint = Color.Gray
                 )

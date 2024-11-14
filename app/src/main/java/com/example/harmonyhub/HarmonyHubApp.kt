@@ -1,10 +1,16 @@
 package com.example.harmonyhub
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
@@ -16,14 +22,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -31,6 +44,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.harmonyhub.ui.home.HomeScreen
+import com.example.harmonyhub.ui.library.LibraryScreen
+import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.search.SearchScreen
 
 enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
@@ -39,6 +54,8 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     Play(title = R.string.play, icon = Icons.Filled.PlayArrow),
     Library(title = R.string.library, icon = Icons.Filled.AccountBox),
     Settings(title = R.string.settings, icon = Icons.Filled.Settings),
+    Profile(title = R.string.profile, icon = Icons.Filled.AccountBox),
+
 }
 
 @Composable
@@ -50,7 +67,8 @@ fun HarmonyHubApp() {
     )
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) },
+        bottomBar = {
+            BottomNavigationBar(navController = navController) },
     ) { innerPadding ->
 
         NavHost(
@@ -63,17 +81,17 @@ fun HarmonyHubApp() {
                     onSearchButtonClicked = {
                         navController.navigate(HarmonyHubScreen.Search.name)
                     },
-//                    onPlayButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Play.name)
-//                    },
-//                    onLibraryButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Library.name)
-//                    },
+                    onProfileButtonClicked = {
+                        navController.navigate(HarmonyHubScreen.Profile.name)
+                    },
+                    onPlayButtonClicked = {
+                        navController.navigate(HarmonyHubScreen.Play.name)
+                    },
+                    onLibraryButtonClicked = {
+                        navController.navigate(HarmonyHubScreen.Library.name)
+                    },
 //                    onSettingsButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.Settings.name)
-//                    },
-//                    onProfileButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Profile.name)
 //                    },
 //                    onAboutButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.About.name)
@@ -105,7 +123,6 @@ fun HarmonyHubApp() {
 //                    onResetPasswordButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.ResetPassword.name)
 //                    }
-
                 )
             }
             composable(route = HarmonyHubScreen.Search.name) {
@@ -113,6 +130,14 @@ fun HarmonyHubApp() {
                     onSearchQueryChanged = { /* Handle search query change */ },
                     onSearchButtonClicked = { /* Handle search button click */ }
                 )
+            }
+            composable(route = HarmonyHubScreen.Play.name) {
+                // Play screen content
+                PlayScreen()
+            }
+            composable(route = HarmonyHubScreen.Library.name) {
+                // Library screen content
+                LibraryScreen()
             }
         }
     }
@@ -138,7 +163,8 @@ fun HarmonyHubApp() {
 fun BottomNavigationBar(navController: NavHostController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
-    val screens = listOf(HarmonyHubScreen.Home, HarmonyHubScreen.Search, HarmonyHubScreen.Library)
+    val screens =
+        listOf(HarmonyHubScreen.Home, HarmonyHubScreen.Search, HarmonyHubScreen.Library)
 
     NavigationBar {
         screens.forEach { screen ->
@@ -159,3 +185,5 @@ fun BottomNavigationBar(navController: NavHostController) {
         }
     }
 }
+
+
