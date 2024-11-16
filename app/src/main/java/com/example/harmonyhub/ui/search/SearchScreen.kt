@@ -47,6 +47,21 @@ fun SearchScreen(
         "Blinding Lights - The Weeknd",
         "Levitating - Dua Lipa",
         "Stay - Justin Bieber",
+        "As It Was - Harry Styles",
+        "Shape of You - Ed Sheeran",
+        "Blinding Lights - The Weeknd",
+        "Levitating - Dua Lipa",
+        "Stay - Justin Bieber",
+        "As It Was - Harry Styles",
+        "Shape of You - Ed Sheeran",
+        "Blinding Lights - The Weeknd",
+        "Levitating - Dua Lipa",
+        "Stay - Justin Bieber",
+        "As It Was - Harry Styles",
+        "Shape of You - Ed Sheeran",
+        "Blinding Lights - The Weeknd",
+        "Levitating - Dua Lipa",
+        "Stay - Justin Bieber",
         "As It Was - Harry Styles"
     ).filter { it.contains(query, ignoreCase = true) }
 
@@ -69,18 +84,17 @@ fun SearchScreen(
             singleLine = true
         )
 
+        Text(
+            text = if (query.isEmpty()) "Tìm kiếm gần đây" else "Kết quả tìm kiếm",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
         // Hiển thị danh sách kết quả tìm kiếm
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Text(
-                    text = if (query.isEmpty()) "Tìm kiếm gần đây" else "Kết quả tìm kiếm",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
             items(searchResults) { result ->
                 SearchResultItem(result)
             }

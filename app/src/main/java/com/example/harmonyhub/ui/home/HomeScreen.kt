@@ -40,13 +40,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
+import com.example.harmonyhub.components.AppScaffoldWithDrawer
+import com.example.harmonyhub.ui.theme.NotoSans
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,18 +62,11 @@ fun HomeScreen(
     onProfileButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val coroutineScope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ProfileDrawerContent(
-                onProfileButtonClicked = onProfileButtonClicked,
-            )
-        },
-        scrimColor = Color.Black.copy(alpha = 0.9f),
-    ) {
+    AppScaffoldWithDrawer(
+        onProfileClicked = onProfileButtonClicked,
+        onSettingsClicked = {},
+        onLogoutClicked = {}
+    ) { onOpenDrawer ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,9 +83,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = {
-                            coroutineScope.launch { drawerState.open() }
-                        }) {
+                        IconButton(onClick = { onOpenDrawer() }) {
                             Image(
                                 painter = painterResource(id = R.drawable.hip),
                                 contentDescription = "Profile",
@@ -97,7 +93,14 @@ fun HomeScreen(
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Thomas", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "Thomas",
+                            style = TextStyle(
+                                fontFamily = NotoSans,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        )
                     }
                     Row {
                         IconButton(onClick = { /* Notification */ }) {
@@ -120,7 +123,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 //Top Genres Section
-                Text(text = "Genres", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "Thể loại",
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
+                )
                 LazyRow(
                     modifier = Modifier.padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -134,7 +144,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Artists Section
-                Text(text = "Artists", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "Nghệ sĩ",
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
+                )
                 LazyRow(
                     modifier = Modifier.padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,7 +172,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Suggestions Section
-                Text(text = "Suggestion", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "Đề xuất cho bạn",
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
+                )
 
                 LazyRow(
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -177,7 +201,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Charts Section
-                Text(text = "Charts", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "Bảng xếp hạng",
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
+                )
 
                 LazyRow(
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -199,7 +230,6 @@ fun HomeScreen(
                 }
             }
         }
-
     }
 }
 
@@ -218,12 +248,19 @@ fun ProfileImage(modifier: Modifier = Modifier) {
 fun GenreCard(genre: String) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 150.dp),
-        color = MaterialTheme.colorScheme.primary, // Replace with the actual color for genre background
-        shape = RoundedCornerShape(8.dp)
+            .size(width = 150.dp, height = 150.dp).padding(4.dp),
+        color = Color(0xFF1DB954),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(text = genre, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = genre,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
+            )
         }
     }
 }
@@ -232,15 +269,18 @@ fun GenreCard(genre: String) {
 fun ArtistsCard(artistName: String, artistImg: Int) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 175.dp)
+            .size(width = 130.dp, height = 170.dp),
+        color = Color.Transparent
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(4.dp)
+
         ) {
             Box(
-                modifier = Modifier.size(width = 150.dp, height = 150.dp),
-                ) {
+                modifier = Modifier.size(width = 130.dp, height = 130.dp),
+            ) {
                 Image(
                     painter = painterResource(id = artistImg),
                     contentDescription = null,
@@ -253,10 +293,14 @@ fun ArtistsCard(artistName: String, artistImg: Int) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = artistName,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                ),
                 maxLines = 1,
                 overflow = Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
         }
@@ -267,29 +311,41 @@ fun ArtistsCard(artistName: String, artistImg: Int) {
 fun SuggestionCard(suggestion: String, artistName: String) {
     Surface(
         modifier = Modifier
-            .size(width = 125.dp, height = 170.dp)
+            .size(width = 125.dp, height = 180.dp),
+        color = Color.Transparent
     ) {
-        Column()
+        Column(modifier = Modifier.padding(4.dp))
         {
             Box(
-                modifier = Modifier.size(width = 125.dp, height = 125.dp),
+                modifier = Modifier.size(width = 125.dp, height = 125.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.v),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = suggestion,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                ),
                 maxLines = 1,
                 overflow = Ellipsis
             )
-            Text(text = artistName, fontSize = 14.sp, maxLines = 1, overflow = Ellipsis)
+            Text(
+                text = artistName,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp
+                ),
+                color = Color.Gray,
+                maxLines = 1, overflow = Ellipsis
+            )
         }
     }
 }
@@ -299,117 +355,18 @@ fun ChartsCard(chartImg: Int) {
     Surface(
         modifier = Modifier
             .size(width = 150.dp, height = 150.dp),
-        color = Color.DarkGray
+        color = Color.Transparent
     ) {
-        Box(contentAlignment = Alignment.BottomCenter) {
+        Box(contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.padding(4.dp)) {
             // Placeholder for the image
             Image(
                 painter = painterResource(id = chartImg),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp))
             )
         }
-    }
-}
-
-@Composable
-fun ProfileDrawerContent(
-    onProfileButtonClicked: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.hip),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-            )
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Thomas",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = "Tài khoản miễn phí",
-                    fontSize = 16.sp,
-                    color = Color.LightGray
-                )
-            }
-        }
-        HorizontalDivider(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .padding(end = 32.dp)
-        )
-
-        TextButton(onClick = onProfileButtonClicked) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Hồ sơ",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Hồ sơ", fontSize = 20.sp, color = Color.White)
-            }
-        }
-
-        TextButton(onClick = { /* Nâng cấp lên VIP */ }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = "Nâng cấp lên VIP",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Nâng cấp lên VIP", fontSize = 20.sp, color = Color.White)
-            }
-        }
-        TextButton(onClick = { /* Cài đặt */ }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Cài đặt",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Cài đặt", fontSize = 20.sp, color = Color.White)
-            }
-        }
-        TextButton(onClick = { /* Đăng xuất */ }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Đăng xuất",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Đăng xuất", fontSize = 20.sp, color = Color.White)
-            }
-        }
-
-
     }
 }
 

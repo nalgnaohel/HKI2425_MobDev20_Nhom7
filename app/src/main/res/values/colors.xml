@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#ebfffa</color>
-    <color name="secondary">#ebfffa</color>
-    <color name="tertiary">#fdf9ff</color>
-    <color name="error">#fff9f9</color>
-    <color name="primary_container">#24e2cd</color>
-    <color name="secondary_container">#9dd6cb</color>
-    <color name="tertiary_container">#c8c5ff</color>
-    <color name="error_container">#ffbab1</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

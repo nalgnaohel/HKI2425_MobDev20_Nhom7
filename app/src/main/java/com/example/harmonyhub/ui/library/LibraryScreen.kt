@@ -3,6 +3,7 @@ package com.example.harmonyhub.ui.library
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,15 @@ fun LibraryScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            LibraryCard(title = "Liked Songs", count = 120)
+            LibraryCard(title = "Downloads", count = 210)
+            LibraryCard(title = "Playlists", count = 12)
+            LibraryCard(title = "Artists", count = 3)
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -97,7 +107,7 @@ fun LibraryScreen() {
                         modifier = Modifier
                             .size(50.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(Color(0xFF1DB954))
                             .clickable(onClick = { /* Xử lý thêm danh sách phát */ }),
                         contentAlignment = Alignment.Center
                     ) {
@@ -122,6 +132,16 @@ fun LibraryScreen() {
         }
 
     }
+}
+
+@Composable
+fun LibraryCard(title: String, count: Int) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(8.dp),
+    ) {
+
+    }
+
 }
 
 @Composable

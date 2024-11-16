@@ -25,24 +25,10 @@ fun RegisterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
-
-        // Back to Login Text
-        Text(
-            text = "Back to Login",
-            color = Color(0xFF1DB954),
-            modifier = Modifier
-                .align(Alignment.Start)
-                .clickable { /* TODO: Handle back navigation */ },
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         // Logo
         Image(
@@ -165,6 +151,19 @@ fun RegisterScreen() {
             shape = MaterialTheme.shapes.medium
         ) {
             Text(text = "Register", color = Color.White, fontSize = 18.sp)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row{
+            Text(
+                text = "Bạn đã có tài khoản? ",
+                color = Color.White
+            )
+            Text(
+                text = "Đăng nhập",
+                color = Color(0xFF1DB954),
+                modifier = Modifier.clickable { /* TODO: Handle login */ }
+            )
         }
     }
 }

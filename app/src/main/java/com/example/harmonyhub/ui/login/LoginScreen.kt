@@ -28,7 +28,6 @@ fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
             .padding(horizontal = 24.dp)
             .clickable { focusManager.clearFocus() }, // Clear focus when tapping outside
         horizontalAlignment = Alignment.CenterHorizontally
@@ -153,31 +152,31 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Forgot Password
-        ClickableText(
+        Text(
             text = AnnotatedString("Forgot the password?"),
-            onClick = { /* TODO: Handle forgot password */ },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
+            color = Color(0xFF1DB954),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .clickable { /* TODO: Handle forgot password */ },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        Spacer(modifier = Modifier.height(16.dp))
 
         // Or Continue With
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
-            Text(
-                text = " or continue with ",
-                color = Color.Gray,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
+//            Text(
+//                text = " or continue with ",
+//                color = Color.Gray,
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
+//        }
+//
+//        Spacer(modifier = Modifier.height(16.dp))
 
 //        // Social Media Icons
 //        Row(
@@ -203,20 +202,18 @@ fun LoginScreen() {
 //                tint = Color.Unspecified
 //            )
 //        }
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Sign Up
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Don’t have an account?", color = Color.Gray)
-            Spacer(modifier = Modifier.width(4.dp))
-            ClickableText(
+            Text(text = "Don’t have an account? ", color = Color.Gray)
+            Text(
                 text = AnnotatedString("Sign Up"),
-                onClick = { /* TODO: Handle sign up */ },
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF1DB954))
+                modifier = Modifier.clickable { /* TODO: Handle sign up */ },
+                color = Color(0xFF1DB954)
             )
         }
     }

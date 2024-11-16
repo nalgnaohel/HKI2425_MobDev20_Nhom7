@@ -1,9 +1,12 @@
 package com.example.harmonyhub
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.LibraryScreen
 import com.example.harmonyhub.ui.play.PlayScreen
+import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
 
 enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
@@ -59,6 +64,13 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
 
 }
 
+val gradientBackground = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFF1E1E1E),
+        Color.Black
+    )
+)
+
 @Composable
 fun HarmonyHubApp() {
     val navController = rememberNavController()
@@ -68,29 +80,33 @@ fun HarmonyHubApp() {
     )
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(navController = navController) },
     ) { innerPadding ->
-
-        NavHost(
-            navController = navController,
-            startDestination = HarmonyHubScreen.Home.name,
-            modifier = Modifier.padding(innerPadding)
+        Box(
+            modifier = Modifier.fillMaxSize().background(gradientBackground),
         ) {
-            composable(route = HarmonyHubScreen.Home.name) {
-                HomeScreen(
-                    onSearchButtonClicked = {
-                        navController.navigate(HarmonyHubScreen.Search.name)
-                    },
-                    onProfileButtonClicked = {
-                        navController.navigate(HarmonyHubScreen.Profile.name)
-                    },
-                    onPlayButtonClicked = {
-                        navController.navigate(HarmonyHubScreen.Play.name)
-                    },
-                    onLibraryButtonClicked = {
-                        navController.navigate(HarmonyHubScreen.Library.name)
-                    },
+            NavHost(
+                navController = navController,
+                startDestination = HarmonyHubScreen.Home.name,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(route = HarmonyHubScreen.Home.name) {
+                    HomeScreen(
+                        onSearchButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Search.name)
+                        },
+                        onProfileButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Profile.name)
+                        },
+                        onPlayButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Play.name)
+                        },
+                        onLibraryButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Library.name)
+                        },
 //                    onSettingsButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.Settings.name)
 //                    },
@@ -124,21 +140,30 @@ fun HarmonyHubApp() {
 //                    onResetPasswordButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.ResetPassword.name)
 //                    }
-                )
-            }
-            composable(route = HarmonyHubScreen.Search.name) {
-                SearchScreen(
-                    onSearchQueryChanged = { /* Handle search query change */ },
-                    onSearchButtonClicked = { /* Handle search button click */ }
-                )
-            }
-            composable(route = HarmonyHubScreen.Play.name) {
-                // Play screen content
-                PlayScreen()
-            }
-            composable(route = HarmonyHubScreen.Library.name) {
-                // Library screen content
-                LibraryScreen()
+                    )
+                }
+                composable(route = HarmonyHubScreen.Search.name) {
+                    SearchScreen(
+                        onSearchQueryChanged = { /* Handle search query change */ },
+                        onSearchButtonClicked = { /* Handle search button click */ }
+                    )
+                }
+                composable(route = HarmonyHubScreen.Play.name) {
+                    // Play screen content
+                    PlayScreen()
+                }
+                composable(route = HarmonyHubScreen.Library.name) {
+                    // Library screen content
+                    LibraryScreen()
+                }
+                composable(route = HarmonyHubScreen.Profile.name) {
+                    ProfileScreen(
+                        onHomeButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Home.name)
+                        }
+                    )
+                }
+
             }
         }
     }
@@ -161,13 +186,16 @@ fun HarmonyHubApp() {
 //}
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    navController: NavHostController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
     val screens =
         listOf(HarmonyHubScreen.Home, HarmonyHubScreen.Search, HarmonyHubScreen.Library)
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = Color.Transparent
+    ) {
         screens.forEach { screen ->
             NavigationBarItem(
                 icon = { Icon(screen.icon, contentDescription = null) },
