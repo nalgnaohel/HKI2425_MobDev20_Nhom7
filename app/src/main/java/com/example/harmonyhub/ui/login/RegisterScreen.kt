@@ -21,7 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.harmonyhub.R
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(
+    onRegisterButtonClicked: () -> Unit = {},
+    onLoginButtonClicked: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -162,7 +165,9 @@ fun RegisterScreen() {
             Text(
                 text = "Đăng nhập",
                 color = Color(0xFF1DB954),
-                modifier = Modifier.clickable { /* TODO: Handle login */ }
+                modifier = Modifier.clickable {
+                    onLoginButtonClicked()
+                }
             )
         }
     }

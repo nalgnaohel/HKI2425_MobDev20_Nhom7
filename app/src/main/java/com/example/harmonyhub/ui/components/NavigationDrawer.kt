@@ -1,4 +1,4 @@
-package com.example.harmonyhub.components
+package com.example.harmonyhub.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

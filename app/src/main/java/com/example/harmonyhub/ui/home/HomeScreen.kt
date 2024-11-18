@@ -1,6 +1,8 @@
 package com.example.harmonyhub.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,41 +20,36 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
-import com.example.harmonyhub.components.AppScaffoldWithDrawer
+import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
+import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.theme.NotoSans
-import kotlinx.coroutines.launch
+
+val gradientBackground = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFF00FAF2),
+        Color(0xFF1E3264)
+    )
+)
 
 @Composable
 fun HomeScreen(
@@ -60,172 +57,179 @@ fun HomeScreen(
     onPlayButtonClicked: () -> Unit,
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
+    onLogoutButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
         onSettingsClicked = {},
-        onLogoutClicked = {}
+        onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            item {
-                //Header with avatar, username, and profile button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { onOpenDrawer() }) {
-                            Image(
-                                painter = painterResource(id = R.drawable.hip),
-                                contentDescription = "Profile",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Thomas",
-                            style = TextStyle(
-                                fontFamily = NotoSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
-                            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { onOpenDrawer() }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.hip),
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
                         )
                     }
-                    Row {
-                        IconButton(onClick = { /* Notification */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        IconButton(onClick = { /* Settings */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings",
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                //Top Genres Section
-                Text(
-                    text = "Thể loại",
-                    style = TextStyle(
-                        fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    )
-                )
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
-                        GenreCard(genre)
-                    }
-                }
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Artists Section
-                Text(
-                    text = "Nghệ sĩ",
-                    style = TextStyle(
-                        fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    )
-                )
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        listOf(
-                            "Alan Walker" to R.drawable.v,
-                            "Ed Sheeran" to R.drawable.v,
-                            "The Weeknd" to R.drawable.v,
-                            "Adele" to R.drawable.v,
-                            "Taylor Swift" to R.drawable.v
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Thomas",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
                         )
+                    )
+                }
+                Row {
+                    IconButton(onClick = { /* Notification */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Notifications",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* Settings */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.Top
+            ) {
+                item {
+                    //Header with avatar, username, and profile button
+
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    //Top Genres Section
+                    Text(
+                        text = "Thể loại",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
+                    )
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        ArtistsCard(it.first, it.second)
+                        items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
+                            GenreCard(genre)
+                        }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(16.dp))
 
-                // Suggestions Section
-                Text(
-                    text = "Đề xuất cho bạn",
-                    style = TextStyle(
-                        fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    )
-                )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        listOf(
-                            "Faded" to "Alan Walker",
-                            "Shape of You" to "Ed Sheeran",
-                            "Perfect" to "Ed Sheeran",
-                            "Blinding Lights" to "The Weeknd",
-                            "Thinking Out Loud" to "Ed Sheeran"
+                    // Artists Section
+                    Text(
+                        text = "Nghệ sĩ",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
                         )
-                    ) { (suggestion, artistName) ->
-                        SuggestionCard(suggestion, artistName)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Charts Section
-                Text(
-                    text = "Bảng xếp hạng",
-                    style = TextStyle(
-                        fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
                     )
-                )
-
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        listOf(
-                            R.drawable.top100,
-                            R.drawable.top100,
-                            R.drawable.top100,
-                            R.drawable.top100,
-                            R.drawable.top100,
-                            R.drawable.top100,
-
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            listOf(
+                                "Alan Walker" to R.drawable.v,
+                                "Ed Sheeran" to R.drawable.v,
+                                "The Weeknd" to R.drawable.v,
+                                "Adele" to R.drawable.v,
+                                "Taylor Swift" to R.drawable.v
                             )
-                    ) { chart ->
-                        ChartsCard(chart)
+                        ) {
+                            ArtistsCard(it.first, it.second)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Suggestions Section
+                    Text(
+                        text = "Đề xuất cho bạn",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
+                    )
+
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            listOf(
+                                "Faded" to "Alan Walker",
+                                "Shape of You" to "Ed Sheeran",
+                                "Perfect" to "Ed Sheeran",
+                                "Blinding Lights" to "The Weeknd",
+                                "Thinking Out Loud" to "Ed Sheeran"
+                            )
+                        ) { (suggestion, artistName) ->
+                            SuggestionCard(suggestion, artistName)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Charts Section
+                    Text(
+                        text = "Bảng xếp hạng",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
+                    )
+
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            listOf(
+                                R.drawable.top100,
+                                R.drawable.top100,
+                                R.drawable.top100,
+                                R.drawable.top100,
+                                R.drawable.top100,
+                                R.drawable.top100,
+
+                                )
+                        ) { chart ->
+                            ChartsCard(chart)
+                        }
                     }
                 }
             }
@@ -234,25 +238,17 @@ fun HomeScreen(
 }
 
 @Composable
-fun ProfileImage(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.hip),
-        contentDescription = "Profile",
-        modifier = modifier
-            .size(48.dp)
-            .clip(CircleShape)
-    )
-}
-
-@Composable
 fun GenreCard(genre: String) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 150.dp).padding(4.dp),
-        color = Color(0xFF1DB954),
+            .size(width = 150.dp, height = 150.dp)
+            .padding(4.dp)
+            .clickable {  },
         shape = RoundedCornerShape(12.dp)
     ) {
-        Box(contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(gradientBackground),
+            contentAlignment = Alignment.Center) {
             Text(
                 text = genre,
                 style = TextStyle(
@@ -266,52 +262,11 @@ fun GenreCard(genre: String) {
 }
 
 @Composable
-fun ArtistsCard(artistName: String, artistImg: Int) {
+fun SuggestionCard(songName: String, artistName: String) {
     Surface(
         modifier = Modifier
-            .size(width = 130.dp, height = 170.dp),
-        color = Color.Transparent
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(4.dp)
-
-        ) {
-            Box(
-                modifier = Modifier.size(width = 130.dp, height = 130.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = artistImg),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape),
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = artistName,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp
-                ),
-                maxLines = 1,
-                overflow = Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-        }
-    }
-}
-
-@Composable
-fun SuggestionCard(suggestion: String, artistName: String) {
-    Surface(
-        modifier = Modifier
-            .size(width = 125.dp, height = 180.dp),
+            .size(width = 125.dp, height = 180.dp)
+            .clickable {  },
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))
@@ -328,11 +283,11 @@ fun SuggestionCard(suggestion: String, artistName: String) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = suggestion,
+                text = songName,
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp
+                    fontSize = 16.sp
                 ),
                 maxLines = 1,
                 overflow = Ellipsis
@@ -341,7 +296,7 @@ fun SuggestionCard(suggestion: String, artistName: String) {
                 text = artistName,
                 style = TextStyle(
                     fontFamily = NotoSans,
-                    fontSize = 16.sp
+                    fontSize = 14.sp
                 ),
                 color = Color.Gray,
                 maxLines = 1, overflow = Ellipsis
@@ -354,7 +309,8 @@ fun SuggestionCard(suggestion: String, artistName: String) {
 fun ChartsCard(chartImg: Int) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 150.dp),
+            .size(width = 150.dp, height = 150.dp)
+            .clickable {  },
         color = Color.Transparent
     ) {
         Box(contentAlignment = Alignment.BottomCenter,
@@ -368,15 +324,4 @@ fun ChartsCard(chartImg: Int) {
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun HomeScreenPreview() {
-    HomeScreen(
-        onSearchButtonClicked = {},
-        onPlayButtonClicked = {},
-        onLibraryButtonClicked = {},
-        onProfileButtonClicked = {},
-    )
 }

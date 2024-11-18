@@ -20,7 +20,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.harmonyhub.R
 import androidx.compose.ui.platform.LocalFocusManager
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onLoginButtonClicked: () -> Unit = {},
+    onRegisterButtonClicked: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
@@ -97,7 +100,8 @@ fun LoginScreen() {
                 Icon(
                     painter = painterResource(id = R.drawable.icons8_eye_60),
                     contentDescription = "Toggle Password Visibility",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable {  }
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
@@ -137,7 +141,9 @@ fun LoginScreen() {
 
         // Login Button
         Button(
-            onClick = { /* TODO: Handle login */ },
+            onClick = {
+                onLoginButtonClicked()
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF1DB954)
             ),
@@ -212,7 +218,9 @@ fun LoginScreen() {
             Text(text = "Don’t have an account? ", color = Color.Gray)
             Text(
                 text = AnnotatedString("Sign Up"),
-                modifier = Modifier.clickable { /* TODO: Handle sign up */ },
+                modifier = Modifier.clickable {
+                    onRegisterButtonClicked()
+                },
                 color = Color(0xFF1DB954)
             )
         }
