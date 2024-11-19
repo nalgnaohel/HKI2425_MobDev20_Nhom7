@@ -70,7 +70,6 @@ fun SongCard(name: String, artists: String, songImg: Int) {
             )
         }
 
-        // Menu hành động (tùy chọn)
         IconButton(onClick = { /* Handle menu action */ }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,

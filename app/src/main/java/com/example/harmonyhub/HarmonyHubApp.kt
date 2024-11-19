@@ -108,7 +108,7 @@ fun HarmonyHubApp() {
                 composable(route = HarmonyHubScreen.Register.name) {
                     RegisterScreen(
                         onRegisterButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Home.name)
+                            navController.navigate(HarmonyHubScreen.Login.name)
                         },
                         onLoginButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Login.name)
@@ -181,6 +181,9 @@ fun HarmonyHubApp() {
                         },
                         onArtistsFollowingButtonClicked = {
                             navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+                        },
+                        onLogoutButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Login.name)
                         }
                     )
                 }

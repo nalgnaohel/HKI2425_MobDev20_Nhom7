@@ -44,7 +44,7 @@ import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.theme.NotoSans
 
-val gradientBackground = Brush.verticalGradient(
+private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
         Color(0xFF00FAF2),
         Color(0xFF1E3264)
