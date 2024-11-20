@@ -1,26 +1,39 @@
 package com.example.harmonyhub.ui.login
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.harmonyhub.R
-import androidx.compose.ui.platform.LocalFocusManager
+
+
+private val gradientBackground = Brush.verticalGradient(
+    colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
+)
+
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onLoginButtonClicked: () -> Unit = {},
+    onRegisterButtonClicked: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
@@ -28,18 +41,17 @@ fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
             .padding(horizontal = 24.dp)
             .clickable { focusManager.clearFocus() }, // Clear focus when tapping outside
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
 
 
         Spacer(modifier = Modifier.height(80.dp))
 
         // Logo
         Image(
-            painter = painterResource(id = R.drawable.speaker), // Replace with your logo icon
+            painter = painterResource(id = R.drawable.music), // Replace with your logo icon
             contentDescription = "Logo",
             modifier = Modifier.size(150.dp)
         )
@@ -71,11 +83,15 @@ fun LoginScreen() {
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF1DB954),
+                focusedBorderColor = Color(0xFF00FAF2),
                 unfocusedBorderColor = Color.Gray,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 cursorColor = Color.White
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
             )
         )
 
@@ -96,18 +112,23 @@ fun LoginScreen() {
             },
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.icons8_eye_60),
+                    painter = painterResource(id = R.drawable.icons8_hide_60),
                     contentDescription = "Toggle Password Visibility",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable { }
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF1DB954),
+                focusedBorderColor = Color(0xFF00FAF2),
                 unfocusedBorderColor = Color.Gray,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 cursorColor = Color.White
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
             )
         )
 
@@ -124,7 +145,7 @@ fun LoginScreen() {
                 colors = CheckboxDefaults.colors(
                     checkmarkColor = Color.White,
                     uncheckedColor = Color.Gray,
-                    checkedColor = Color(0xFF1DB954)
+                    checkedColor = Color(0xFF0A91BD)
                 )
             )
             Text(
@@ -138,13 +159,17 @@ fun LoginScreen() {
 
         // Login Button
         Button(
-            onClick = { /* TODO: Handle login */ },
+            onClick = {
+                onLoginButtonClicked()
+            },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF1DB954)
+                containerColor = Color.Transparent
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(50.dp)
+                .background(gradientBackground, shape = MaterialTheme.shapes.medium),
+            contentPadding = PaddingValues(0.dp),
             shape = MaterialTheme.shapes.medium
         ) {
             Text(text = "Log in", color = Color.White, fontSize = 18.sp)
@@ -153,31 +178,32 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Forgot Password
-        ClickableText(
+        Text(
             text = AnnotatedString("Forgot the password?"),
-            onClick = { /* TODO: Handle forgot password */ },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
+            color = Color(0xFF00FAF2),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .clickable { /* TODO: Handle forgot password */ },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        Spacer(modifier = Modifier.height(16.dp))
 
         // Or Continue With
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
-            Text(
-                text = " or continue with ",
-                color = Color.Gray,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
+//            Text(
+//                text = " or continue with ",
+//                color = Color.Gray,
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
+//        }
+//
+//        Spacer(modifier = Modifier.height(16.dp))
 
 //        // Social Media Icons
 //        Row(
@@ -203,20 +229,20 @@ fun LoginScreen() {
 //                tint = Color.Unspecified
 //            )
 //        }
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Sign Up
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Don’t have an account?", color = Color.Gray)
-            Spacer(modifier = Modifier.width(4.dp))
-            ClickableText(
+            Text(text = "Don’t have an account? ", color = Color.Gray)
+            Text(
                 text = AnnotatedString("Sign Up"),
-                onClick = { /* TODO: Handle sign up */ },
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF1DB954))
+                modifier = Modifier.clickable {
+                    onRegisterButtonClicked()
+                },
+                color = Color(0xFF00FAF2)
             )
         }
     }
