@@ -1,7 +1,9 @@
-name: On Pull Request 
+name: Pull Request And Push
 
 on:
   pull_request:
+    branches: [ main,  frontend, backend, entry, minhnhat_branch]
+  push:
     branches: [ main,  frontend, backend, entry, minhnhat_branch]
 
 jobs:
