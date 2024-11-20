@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.AuthState
 import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
+import com.example.harmonyhub.ui.theme.NotoSans
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
@@ -94,6 +96,7 @@ fun RegisterScreen(
         // Title
         Text(
             text = "Registration",
+            fontFamily = NotoSans,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -107,7 +110,7 @@ fun RegisterScreen(
             value = email,
             onValueChange = {email = it},
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Email ID", color = Color.Gray) },
+            placeholder = { Text("Email ID", color = Color.Gray, fontFamily = NotoSans) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF00FAF2),
                 unfocusedBorderColor = Color.Gray,
@@ -151,7 +154,7 @@ fun RegisterScreen(
             value = password,
             onValueChange = {password = it},
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Password", color = Color.Gray) },
+            placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             visualTransformation = PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
@@ -180,7 +183,7 @@ fun RegisterScreen(
             value = confirmPassword,
             onValueChange = {confirmPassword = it},
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Confirm Password", color = Color.Gray) },
+            placeholder = { Text("Confirm Password", color = Color.Gray, fontFamily = NotoSans) },
             visualTransformation = PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
@@ -229,7 +232,13 @@ fun RegisterScreen(
                     .background(gradientBackground),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Register", color = Color.White, fontSize = 18.sp)
+                Text(
+                    text = "Register",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -237,11 +246,15 @@ fun RegisterScreen(
         Row {
             Text(
                 text = "Bạn đã có tài khoản? ",
-                color = Color.White
+                color = Color.Gray,
+                fontFamily = NotoSans,
+                fontSize = 14.sp
             )
             Text(
                 text = "Đăng nhập",
                 color = Color(0xFF00FAF2),
+                fontFamily = NotoSans,
+                fontSize = 14.sp,
                 modifier = Modifier.clickable {
                     onLoginButtonClicked()
                 }

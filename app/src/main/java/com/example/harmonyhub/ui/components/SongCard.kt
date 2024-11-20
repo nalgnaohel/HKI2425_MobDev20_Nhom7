@@ -26,24 +26,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class Song(val name: String, val artists: String, val songImg: Int)
+data class Song(val id: String,val name: String, val artist: String, val imageResId: Int)
 
 fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
-    return this.name.contains(query, ignoreCase) || this.artists.contains(query, ignoreCase)
+    return this.name.contains(query, ignoreCase) || this.artist.contains(query, ignoreCase)
 }
 
 @Composable
-fun SongCard(name: String, artists: String, songImg: Int) {
+fun SongCard(
+    song: Song,
+    onSongClick: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { },
+            .clickable{onSongClick(song.id)},
+
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Hình ảnh đại diện của bài hát
         Image(
-            painter = painterResource(id = songImg),
+            painter = painterResource(id = song.imageResId),  // song.image sẽ là id hình ảnh
             contentDescription = "Song Image",
             modifier = Modifier
                 .size(50.dp)
@@ -58,19 +61,22 @@ fun SongCard(name: String, artists: String, songImg: Int) {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = name,
+                text = song.name,  // song.title là tên bài hát
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = artists,
+                text = song.artist,  // song.artist là tên nghệ sĩ
                 fontSize = 14.sp,
                 color = Color.Gray
             )
         }
 
-        IconButton(onClick = { /* Handle menu action */ }) {
+        // Menu hành động (tùy chọn)
+        IconButton(onClick = {
+            // Xử lý menu hành động tại đây
+        }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More Options",

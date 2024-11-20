@@ -54,13 +54,6 @@ import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
 
-private val gradientBackground = Brush.verticalGradient(
-    colors = listOf(
-        Color(0xFF00FAF2),
-        Color(0xFF1E3264)
-    )
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistsFollowingScreen(
@@ -121,18 +114,6 @@ fun ArtistsFollowingScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Thông tin số bài hát
-        Text(
-            text = "${searchResults.size} nghệ sĩ",
-            style = TextStyle(
-                fontFamily = NotoSans,
-                fontSize = 20.sp,
-                color = Color.Gray
-            ),
-            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-        )
 
         // Ô tìm kiếm
         TextField(
@@ -149,7 +130,6 @@ fun ArtistsFollowingScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
                 .clip(RoundedCornerShape(16.dp)),
             singleLine = true,
             maxLines = 1,
@@ -169,10 +149,38 @@ fun ArtistsFollowingScreen(
             },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${searchResults.size} nghệ sĩ",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 20.sp,
+                    color = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "Xóa tất cả",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp,
+                    color = Color(0xFF00FAF2),
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable {
+
+                }
+            )
+        }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(top = 8.dp)
         ) {
             items(searchResults.chunked(2)) { artistPair ->
                 Row(

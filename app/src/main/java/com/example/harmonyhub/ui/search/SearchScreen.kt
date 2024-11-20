@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
+import com.example.harmonyhub.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -44,28 +45,9 @@ fun SearchScreen(
 ) {
     var query by remember { mutableStateOf("") }
 
-    //Bo sung: Khi slide thi cung can clearFocus
     val focusManager = LocalFocusManager.current
 
-    val allSongs = listOf(
-        Song("Inside Out", "The Chainsmokers, Charlee", R.drawable.v),
-        Song("Young", "The Chainsmokers", R.drawable.v),
-        Song("Beach House", "The Chainsmokers, Sick", R.drawable.v),
-        Song("Kills You Slowly", "The Chainsmokers", R.drawable.v),
-        Song("Setting Fires", "The Chainsmokers, XYLO", R.drawable.v),
-        Song("The Real Slim Shady", "Eminem", R.drawable.v),
-        Song("Lose Yourself", "Eminem", R.drawable.v),
-        Song("Bohemian Rhapsody", "Queen", R.drawable.v),
-        Song("Shape of You", "Ed Sheeran", R.drawable.v),
-        Song("Perfect", "Ed Sheeran", R.drawable.v),
-        Song("Thinking Out Loud", "Ed Sheeran", R.drawable.v),
-        Song("Photograph", "Ed Sheeran", R.drawable.v),
-        Song("Imagine Dragons", "Imagine Dragons", R.drawable.v),
-        Song("Believer", "Imagine Dragons", R.drawable.v),
-        Song("Radioactive", "Imagine Dragons", R.drawable.v),
-        Song("Thunder", "Imagine Dragons", R.drawable.v),
-        Song("Demons", "Imagine Dragons", R.drawable.v),
-    )
+    val allSongs: List<Song> = SongRepository.allSongs
 
     val searchResults = allSongs.filter { it.contains(query, ignoreCase = true) }
 
@@ -80,7 +62,6 @@ fun SearchScreen(
             }
 
     ) {
-        // Thanh tìm kiếm
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -124,15 +105,12 @@ fun SearchScreen(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Hiển thị danh sách kết quả tìm kiếm
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(name = song.name, artists = song.artists, songImg = song.songImg)
+                SongCard(song = song , onSongClick = {} )
             }
         }
     }
 }
-
-
