@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class Song(val id: String,val name: String, val artist: String, val imageResId: Int)
+data class Song(val id: String,val name: String, val artist: String, val imageResId: Int, val url: String)
 
 fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
     return this.name.contains(query, ignoreCase) || this.artist.contains(query, ignoreCase)

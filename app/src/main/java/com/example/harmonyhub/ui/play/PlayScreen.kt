@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
@@ -52,22 +53,15 @@ fun PlayScreen(
 ) {
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
-    val songId = "1"
-    val song = SongRepository.allSongs.find { it.id == songId }
-
-    var isPlaying by remember { mutableStateOf(false) }
+    var playlist by remember { mutableStateOf(SongRepository.allSongs) }
     var currentSongIndex by remember { mutableStateOf(0) }
+    //var currentSong by remember { mutableStateOf(playlist[currentSongIndex]) }
+    var isPlaying by remember { mutableStateOf(false) }
 
-    // Playlist
-    val playlist = listOf(
-        Pair("Song Title 1", "https://aac.saavncdn.com/948/d52ab14bf31ac4ed166bcd03dacee9e1_96.mp4"),
-        Pair("Song Title 2", "https://aac.saavncdn.com/651/b69440a1f0441e569bbf4782299852b2_96.mp4"),
-        Pair("Song Title 3", "https://aac.saavncdn.com/386/c69effef37d7f3d7b27ff2cef78c2598_96.mp4")
-    )
 
     // Load song
     fun loadSong(index: Int) {
-        exoPlayer.setMediaItem(MediaItem.fromUri(playlist[index].second))
+        exoPlayer.setMediaItem(MediaItem.fromUri(playlist[index].url))
         exoPlayer.prepare()
     }
 
@@ -103,7 +97,7 @@ fun PlayScreen(
         loadSong(currentSongIndex)
     }
 
-    if (song != null) {
+    if (playlist[currentSongIndex] != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -145,7 +139,7 @@ fun PlayScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             RoundedImageCard(
-                imageResId = song.imageResId,
+                imageResId = playlist[currentSongIndex].imageResId,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(350.dp)
@@ -162,7 +156,7 @@ fun PlayScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = song.name,
+                        text = playlist[currentSongIndex].name,
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
@@ -171,7 +165,7 @@ fun PlayScreen(
                         )
                     )
                     Text(
-                        text = song.artist,
+                        text = playlist[currentSongIndex].artist,
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontSize = 18.sp,
@@ -286,3 +280,5 @@ fun PlayScreen(
         }
     }
 }
+
+
