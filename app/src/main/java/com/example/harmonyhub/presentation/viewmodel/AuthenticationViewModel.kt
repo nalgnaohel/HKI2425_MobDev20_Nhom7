@@ -57,7 +57,7 @@ class AuthenticationViewModel @Inject constructor() : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.Authenticated
+                    _authState.value = AuthState.SuccessfullyRegistered
                 } else {
                     _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
                 }
@@ -74,5 +74,6 @@ sealed class AuthState {
     object Unauthenticated : AuthState()
     object Authenticated : AuthState()
     object Loading : AuthState()
+    object SuccessfullyRegistered : AuthState()
     data class Error(val message: String) : AuthState()
 }
