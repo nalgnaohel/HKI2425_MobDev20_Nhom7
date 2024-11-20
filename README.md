@@ -1,6 +1,6 @@
 # HarmonyHub
 
-Music Streaming app :v 
+Music Streaming app for Mobile Application Development Course :v 
 
 Team members:
 * 22028013: Lê Hoàng Lan
