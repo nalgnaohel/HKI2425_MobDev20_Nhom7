@@ -68,6 +68,24 @@ class AuthenticationViewModel @Inject constructor(
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
     }
+
+    fun resetPassword(email: String) {
+        if (email.isEmpty()) {
+            _authState.value = AuthState.Error("Email must not be empty")
+            return
+        }
+
+        _authState.value = AuthState.Loading
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _authState.value = AuthState.SuccessfullyRegistered
+                } else {
+                    _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
+                }
+            }
+    }
 }
 
 sealed class AuthState {
