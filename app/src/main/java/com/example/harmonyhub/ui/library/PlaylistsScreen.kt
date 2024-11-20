@@ -47,15 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.harmonyhub.HarmonyHubScreen
 import com.example.harmonyhub.R
-import com.example.harmonyhub.ui.components.Artist
-import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.components.Playlist
 import com.example.harmonyhub.ui.components.PlaylistCard
-import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.contains
-import com.example.harmonyhub.ui.home.SuggestionCard
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,17 +117,6 @@ fun PlaylistsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Thông tin số bài hát
-        Text(
-            text = "${searchResults.size} danh sách phát",
-            style = TextStyle(
-                fontFamily = NotoSans,
-                fontSize = 20.sp,
-                color = Color.Gray
-            ),
-            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-        )
-
         // Ô tìm kiếm
         TextField(
             value = query,
@@ -148,7 +132,7 @@ fun PlaylistsScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 8.dp)
                 .clip(RoundedCornerShape(16.dp)),
             singleLine = true,
             maxLines = 1,
@@ -168,7 +152,35 @@ fun PlaylistsScreen(
             },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${searchResults.size} danh sách phát",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 20.sp,
+                    color = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "Xóa tất cả",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp,
+                    color = Color(0xFF00FAF2),
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable {
+
+                }
+            )
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize()

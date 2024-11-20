@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -95,17 +96,6 @@ fun SongList(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Thông tin số bài hát
-        Text(
-            text = "${searchResults.size} bài hát",
-            style = TextStyle(
-                fontFamily = NotoSans,
-                fontSize = 20.sp,
-                color = Color.Gray
-            ),
-            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-        )
-
         // Ô tìm kiếm
         TextField(
             value = query,
@@ -121,7 +111,7 @@ fun SongList(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 8.dp)
                 .clip(RoundedCornerShape(16.dp)),
             singleLine = true,
             maxLines = 1,
@@ -141,7 +131,37 @@ fun SongList(
             },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Thông tin số bài hát
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${searchResults.size} bài hát",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 20.sp,
+                    color = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "Xóa tất cả",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp,
+                    color = Color(0xFF00FAF2),
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable {
+
+                }
+            )
+        }
+
 
         // Danh sách bài hát
         LazyColumn(
