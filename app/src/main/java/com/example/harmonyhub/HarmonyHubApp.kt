@@ -29,12 +29,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
 import com.example.harmonyhub.ui.library.DownloadScreen
@@ -83,7 +85,9 @@ private val gradientBackground = Brush.verticalGradient(
 )
 
 @Composable
-fun HarmonyHubApp() {
+fun HarmonyHubApp(
+    authenticationMainViewModel: AuthenticationViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentScreen = HarmonyHubScreen.valueOf(
@@ -163,6 +167,7 @@ fun HarmonyHubApp() {
 //                        navController.navigate(HarmonyHubScreen.Privacy.name)
 //                    },
                         onLogoutButtonClicked = {
+                            authenticationMainViewModel.signOut()
                             navController.navigate(HarmonyHubScreen.Login.name)
                         }
                     )

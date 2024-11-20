@@ -83,4 +83,10 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.5.1")
+
+    implementation ("com.google.code.gson:gson:2.8.9")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3") // OkHttp - thư viện HTTP Client
+    implementation ("org.json:json:20210307") // org.json để xử lý JSON
+    implementation ("androidx.media3:media3-exoplayer:1.1.0")
+    implementation ("androidx.media3:media3-ui:1.1.0")
 }
