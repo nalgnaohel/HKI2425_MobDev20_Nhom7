@@ -9,7 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -40,8 +42,11 @@ import com.example.harmonyhub.ui.library.FavoriteScreen
 import com.example.harmonyhub.ui.library.HistoryScreen
 import com.example.harmonyhub.ui.library.LibraryScreen
 import com.example.harmonyhub.ui.library.PlaylistsScreen
+import com.example.harmonyhub.ui.login.ForgotPasswordScreen
 import com.example.harmonyhub.ui.login.LoginScreen
+import com.example.harmonyhub.ui.login.NewPasswordScreen
 import com.example.harmonyhub.ui.login.RegisterScreen
+import com.example.harmonyhub.ui.login.VerificationScreen
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -55,10 +60,18 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     Library(title = R.string.library, icon = Icons.Filled.AccountBox),
     Settings(title = R.string.settings, icon = Icons.Filled.Settings),
     Profile(title = R.string.profile, icon = Icons.Filled.AccountBox),
-    History(title = R.string.history, icon = Icons.Default.Refresh),Favorite(title = R.string.favorite, icon = Icons.Default.Favorite),
+    History(
+        title = R.string.history,
+        icon = Icons.Default.Refresh
+    ),
+    Favorite(title = R.string.favorite, icon = Icons.Default.Favorite),
     Download(title = R.string.download, icon = Icons.Default.KeyboardArrowDown),
     Playlist(title = R.string.playlist, icon = Icons.Default.AccountBox),
-    ArtistsFollowing(title = R.string.artistsFollowing, icon = Icons.Default.Person)
+    ArtistsFollowing(title = R.string.artistsFollowing, icon = Icons.Default.Person),
+    ForgotPassword(title = R.string.forgotPassword, icon = Icons.Default.Info),
+    Verification(title = R.string.verification, icon = Icons.Default.Info),
+    NewPassword(title = R.string.newPassword, icon = Icons.Default.Lock),
+
 
 }
 
@@ -101,6 +114,9 @@ fun HarmonyHubApp() {
                         },
                         onRegisterButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Register.name)
+                        },
+                        onForgotPasswordButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.ForgotPassword.name)
                         }
                     )
                 }
@@ -156,13 +172,11 @@ fun HarmonyHubApp() {
                         onSearchQueryChanged = { /* Handle search query change */ },
                     )
                 }
-                composable(route = HarmonyHubScreen.Play.name) { backStackEntry ->
+                composable(route = HarmonyHubScreen.Play.name) {
                     PlayScreen(
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
-
-
 
                 composable(route = HarmonyHubScreen.Library.name) {
                     LibraryScreen(
@@ -192,9 +206,6 @@ fun HarmonyHubApp() {
                 }
                 composable(route = HarmonyHubScreen.Profile.name) {
                     ProfileScreen(
-                        onHomeButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Home.name)
-                        },
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
@@ -227,6 +238,36 @@ fun HarmonyHubApp() {
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
+
+                composable(route = HarmonyHubScreen.ForgotPassword.name) {
+                    ForgotPasswordScreen(
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onVerifyButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Verification.name)
+                        },
+                        onRegisterButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Register.name)
+                        }
+                    )
+                }
+                composable(route = HarmonyHubScreen.Verification.name) {
+                    VerificationScreen(
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onVerifyCodeButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.NewPassword.name)
+                        },
+                        onResendButtonClicked = { /* Handle resend code button click */ }
+                    )
+                }
+                composable(route = HarmonyHubScreen.NewPassword.name) {
+                    NewPasswordScreen(
+                        onVerifyButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Login.name)
+                        }
+                    )
+                }
+
+
             }
         }
     }

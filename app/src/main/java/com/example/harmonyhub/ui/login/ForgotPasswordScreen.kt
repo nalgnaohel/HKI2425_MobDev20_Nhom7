@@ -1,0 +1,230 @@
+package com.example.harmonyhub.ui.login
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.harmonyhub.R
+import com.example.harmonyhub.ui.theme.NotoSans
+
+private val gradientBackground = Brush.verticalGradient(
+    colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
+)
+
+@Composable
+fun ForgotPasswordScreen(
+    onBackButtonClicked: () -> Unit,
+    onVerifyButtonClicked: () -> Unit,
+    onRegisterButtonClicked: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var isValidEmail by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Thanh tiêu đề
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = { onBackButtonClicked() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Quên mật khẩu",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = Color.White
+                ),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(100.dp))
+
+        Text(
+            text = "Nhập email",
+            style = TextStyle(
+                fontFamily = NotoSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = {
+                email = it
+                isValidEmail = isValidEmail(email)
+                errorMessage = "" // Xóa thông báo lỗi khi người dùng nhập email
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            placeholder = { Text("example@gmail.com", color = Color.Gray) },
+            isError = !isValidEmail,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (isValidEmail) Color(0xFF00FAF2) else Color.Red,
+                unfocusedBorderColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                cursorColor = Color.White
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            )
+        )
+        if (!isValidEmail || errorMessage.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = errorMessage.ifEmpty { "Định dạng email không hợp lệ" },
+                color = Color.Red,
+                fontFamily = NotoSans,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .align(Alignment.Start)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Button(
+            onClick = {
+                when {
+                    email.isEmpty() -> {
+                        errorMessage = "Vui lòng nhập đầy đủ thông tin"
+                        isValidEmail = false
+                    }
+
+                    !isValidEmail -> {
+                        errorMessage = "Định dạng email không hợp lệ"
+                    }
+
+                    else -> {
+                        errorMessage = ""
+                        onVerifyButtonClicked()
+                    }
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .height(50.dp)
+                .background(gradientBackground, shape = MaterialTheme.shapes.medium),
+            contentPadding = PaddingValues(0.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(text = "Gửi mã xác thực", color = Color.White, fontSize = 18.sp)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Don’t have an account? ",
+                fontFamily = NotoSans,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = AnnotatedString("Sign Up"),
+                fontFamily = NotoSans,
+                fontSize = 14.sp,
+                modifier = Modifier.clickable {
+                    onRegisterButtonClicked()
+                },
+                color = Color(0xFF00FAF2)
+            )
+        }
+    }
+}
+
+// Hàm kiểm tra định dạng email
+fun isValidEmail(email: String): Boolean {
+    val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$")
+    return emailRegex.matches(email)
+}
+
+@Preview
+@Composable
+fun ForgotPasswordScreenPreview() {
+    ForgotPasswordScreen(
+        onBackButtonClicked = {},
+        onVerifyButtonClicked = {},
+        onRegisterButtonClicked = {}
+    )
+}
