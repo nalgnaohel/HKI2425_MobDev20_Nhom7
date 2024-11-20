@@ -1,8 +1,12 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("dagger.hilt.android.plugin")
+//    alias(libs.plugins.android.application)
+//    alias(libs.plugins.kotlin.android)
+//    id("dagger.hilt.android.plugin")
+//    id("kotlin-kapt")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -12,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "com.example.harmonyhub"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -32,17 +36,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -72,8 +76,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //Hilt
-    val hiltVersion = 2.48
-    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
 }
