@@ -1,7 +1,7 @@
 name: Test debug
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
   run_tests:
