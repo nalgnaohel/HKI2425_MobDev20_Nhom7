@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,10 +8,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -21,7 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.AuthState
+import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 
 
 private val gradientBackground = Brush.verticalGradient(
@@ -32,12 +38,33 @@ private val gradientBackground = Brush.verticalGradient(
 @Composable
 fun LoginScreen(
     onLoginButtonClicked: () -> Unit = {},
-    onRegisterButtonClicked: () -> Unit = {}
+    onRegisterButtonClicked: () -> Unit = {},
+//    onForgotPasswordClicked: () -> Unit = {},
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+
+    val authState = authenticationViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                onLoginButtonClicked()
+            }
+            is AuthState.Error -> {
+                val errorMessage = (authState.value as AuthState.Error).message
+                // Show error message to the user
+                // For example, you can use a Toast or a Snackbar
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+            else -> { }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +72,6 @@ fun LoginScreen(
             .clickable { focusManager.clearFocus() }, // Clear focus when tapping outside
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
 
         Spacer(modifier = Modifier.height(80.dp))
 
@@ -160,7 +186,7 @@ fun LoginScreen(
         // Login Button
         Button(
             onClick = {
-                onLoginButtonClicked()
+                authenticationViewModel.login(email, password)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
