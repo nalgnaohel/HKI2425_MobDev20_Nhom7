@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,9 +54,12 @@ fun RegisterScreen(
         mutableStateOf("")
     }
 
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
     var confirmPassword by remember {
         mutableStateOf("")
     }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
     val authState = authenticationViewModel.authState.observeAsState()
     val context = LocalContext.current
@@ -155,14 +158,17 @@ fun RegisterScreen(
             onValueChange = {password = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
-            visualTransformation = PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.icons8_hide_60), // Replace with your visibility icon
+                    painter = painterResource(id = if (isPasswordVisible) R.drawable.icons8_hide_60 else R.drawable.icons8_eye_60),
                     contentDescription = "Toggle Password Visibility",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable {
+                        isPasswordVisible = !isPasswordVisible
+                    }
                 )
             },
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF00FAF2),
                 unfocusedBorderColor = Color.Gray,
@@ -184,12 +190,15 @@ fun RegisterScreen(
             onValueChange = {confirmPassword = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Confirm Password", color = Color.Gray, fontFamily = NotoSans) },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.icons8_hide_60), // Replace with your visibility icon
+                    painter = painterResource(id = if (isConfirmPasswordVisible) R.drawable.icons8_hide_60 else R.drawable.icons8_eye_60),
                     contentDescription = "Toggle Password Visibility",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable {
+                        isConfirmPasswordVisible = !isConfirmPasswordVisible
+                    }
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
