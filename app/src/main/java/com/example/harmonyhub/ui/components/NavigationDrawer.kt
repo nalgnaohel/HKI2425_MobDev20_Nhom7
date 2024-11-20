@@ -1,4 +1,4 @@
-package com.example.harmonyhub.components
+package com.example.harmonyhub.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
@@ -204,15 +203,6 @@ fun DrawerContent(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun abcPreview()
-{
-    AppScaffoldWithDrawer({},{},{},{})
-    DrawerContent({},{},{})
-
 }
 
 

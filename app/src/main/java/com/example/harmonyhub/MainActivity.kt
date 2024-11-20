@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.theme.HarmonyHubTheme
@@ -18,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HarmonyHubTheme {
                 //HarmonyHubApp()
-                PlayScreen(modifier = Modifier)
+                PlayScreen({})
             }
         }
     }

@@ -2,46 +2,31 @@ package com.example.harmonyhub
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -49,24 +34,37 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.harmonyhub.ui.home.HomeScreen
+import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
+import com.example.harmonyhub.ui.library.DownloadScreen
+import com.example.harmonyhub.ui.library.FavoriteScreen
+import com.example.harmonyhub.ui.library.HistoryScreen
 import com.example.harmonyhub.ui.library.LibraryScreen
+import com.example.harmonyhub.ui.library.PlaylistsScreen
+import com.example.harmonyhub.ui.login.LoginScreen
+import com.example.harmonyhub.ui.login.RegisterScreen
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
 
 enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
+    Login(title = R.string.login, icon = Icons.Filled.AccountBox),
+    Register(title = R.string.register, icon = Icons.Filled.AccountBox),
     Home(title = R.string.home, icon = Icons.Filled.Home),
     Search(title = R.string.search, icon = Icons.Filled.Search),
     Play(title = R.string.play, icon = Icons.Filled.PlayArrow),
     Library(title = R.string.library, icon = Icons.Filled.AccountBox),
     Settings(title = R.string.settings, icon = Icons.Filled.Settings),
     Profile(title = R.string.profile, icon = Icons.Filled.AccountBox),
+    History(title = R.string.history, icon = Icons.Default.Refresh),Favorite(title = R.string.favorite, icon = Icons.Default.Favorite),
+    Download(title = R.string.download, icon = Icons.Default.KeyboardArrowDown),
+    Playlist(title = R.string.playlist, icon = Icons.Default.AccountBox),
+    ArtistsFollowing(title = R.string.artistsFollowing, icon = Icons.Default.Person)
 
 }
 
-val gradientBackground = Brush.verticalGradient(
+private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
-        Color(0xFF1E1E1E),
+        Color(0xFF252525),
         Color.Black
     )
 )
@@ -83,16 +81,39 @@ fun HarmonyHubApp() {
         modifier = Modifier
             .fillMaxSize(),
         bottomBar = {
-            BottomNavigationBar(navController = navController) },
+            BottomNavigationBar(navController = navController)
+        },
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize().background(gradientBackground),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradientBackground),
         ) {
             NavHost(
                 navController = navController,
                 startDestination = HarmonyHubScreen.Home.name,
                 modifier = Modifier.padding(innerPadding)
             ) {
+                composable(route = HarmonyHubScreen.Login.name) {
+                    LoginScreen(
+                        onLoginButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Home.name)
+                        },
+                        onRegisterButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Register.name)
+                        }
+                    )
+                }
+                composable(route = HarmonyHubScreen.Register.name) {
+                    RegisterScreen(
+                        onRegisterButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Home.name)
+                        },
+                        onLoginButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Login.name)
+                        }
+                    )
+                }
                 composable(route = HarmonyHubScreen.Home.name) {
                     HomeScreen(
                         onSearchButtonClicked = {
@@ -125,45 +146,87 @@ fun HarmonyHubApp() {
 //                    onPrivacyButtonClicked = {
 //                        navController.navigate(HarmonyHubScreen.Privacy.name)
 //                    },
-//                    onLogoutButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Logout.name)
-//                    },
-//                    onLoginButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Login.name)
-//                    },
-//                    onRegisterButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.Register.name)
-//                    },
-//                    onForgotPasswordButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.ForgotPassword.name)
-//                    },
-//                    onResetPasswordButtonClicked = {
-//                        navController.navigate(HarmonyHubScreen.ResetPassword.name)
-//                    }
+                        onLogoutButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Login.name)
+                        }
                     )
                 }
                 composable(route = HarmonyHubScreen.Search.name) {
                     SearchScreen(
                         onSearchQueryChanged = { /* Handle search query change */ },
-                        onSearchButtonClicked = { /* Handle search button click */ }
                     )
                 }
-                composable(route = HarmonyHubScreen.Play.name) {
-                    // Play screen content
-                    PlayScreen()
+                composable(route = HarmonyHubScreen.Play.name) { backStackEntry ->
+                    PlayScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
                 }
+
+
+
                 composable(route = HarmonyHubScreen.Library.name) {
-                    // Library screen content
-                    LibraryScreen()
+                    LibraryScreen(
+                        onProfileButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Profile.name)
+                        },
+                        onViewAllRecentCLicked = {
+                            navController.navigate(HarmonyHubScreen.History.name)
+                        },
+                        onFavoriteButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Favorite.name)
+                        },
+                        onDownloadButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Download.name)
+                        },
+                        onPlaylistButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Playlist.name)
+                        },
+                        onArtistsFollowingButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+                        },
+                        onPlaySongClicked = {
+                            navController.navigate(HarmonyHubScreen.Play.name)
+                        }
+
+                    )
                 }
                 composable(route = HarmonyHubScreen.Profile.name) {
                     ProfileScreen(
                         onHomeButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Home.name)
-                        }
+                        },
+                        onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
+                composable(route = HarmonyHubScreen.History.name) {
+                    HistoryScreen(
+                        onBackButtonClicked = { navController.popBackStack() },
 
+
+                        )
+                }
+                composable(route = HarmonyHubScreen.Favorite.name) {
+                    FavoriteScreen(
+                        onBackButtonClicked = { navController.popBackStack() },
+
+                        )
+                }
+                composable(route = HarmonyHubScreen.Download.name) {
+                    DownloadScreen(
+                        onBackButtonClicked = { navController.popBackStack() },
+
+                        )
+                }
+                composable(route = HarmonyHubScreen.Playlist.name) {
+                    PlaylistsScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
+                }
+                composable(route = HarmonyHubScreen.ArtistsFollowing.name) {
+                    ArtistsFollowingScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }
@@ -187,7 +250,8 @@ fun HarmonyHubApp() {
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
     val screens =
@@ -214,5 +278,3 @@ fun BottomNavigationBar(
         }
     }
 }
-
-
