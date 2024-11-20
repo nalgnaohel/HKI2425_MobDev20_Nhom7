@@ -104,7 +104,7 @@ fun HarmonyHubApp() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = HarmonyHubScreen.Home.name,
+                startDestination = HarmonyHubScreen.Login.name,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(route = HarmonyHubScreen.Login.name) {
