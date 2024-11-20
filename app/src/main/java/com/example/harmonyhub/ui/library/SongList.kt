@@ -168,7 +168,7 @@ fun SongList(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(name = song.name, artists = song.artists, songImg = song.songImg)
+                SongCard(song = song , onSongClick = {})
             }
         }
     }

@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
+import com.example.harmonyhub.SongRepository
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
@@ -50,19 +51,19 @@ private val gradientBackground = Brush.verticalGradient(
 
 @Composable
 fun LibraryScreen(
+    onPlaySongClicked: (String) -> Unit,
     onProfileButtonClicked: () -> Unit,
     onViewAllRecentCLicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
     onDownloadButtonClicked: () -> Unit,
     onPlaylistButtonClicked: () -> Unit,
     onArtistsFollowingButtonClicked: () -> Unit,
-    onLogoutButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
         onSettingsClicked = {},
-        onLogoutClicked = onLogoutButtonClicked
+        onLogoutClicked = {}
     ) { onOpenDrawer ->
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -74,132 +75,124 @@ fun LibraryScreen(
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { onOpenDrawer() }) {
-                        Image(
-                            painter = painterResource(id = R.drawable.hip),
-                            contentDescription = "Profile",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Thư viện",
-                        style = TextStyle(
-                            fontFamily = NotoSans,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        )
-                    )
-                }
-            }
-
-            // Lưới các thẻ trong thư viện
-            LazyColumn(
+            )   {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = { onOpenDrawer() }) {
+            Image(
+                painter = painterResource(id = R.drawable.hip),
+                contentDescription = "Profile",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Top
-            ) {
-                // Phần nội dung đầu tiên
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        LibraryCard(
-                            icon = R.drawable.favorite,
-                            title = "Bài hát đã thích",
-                            count = 120,
-                            type = "bài hát",
-                            onCardClicked = onFavoriteButtonClicked
-                        )
-                        LibraryCard(
-                            icon = R.drawable.download_for_offline,
-                            title = "Tải xuống",
-                            count = 20,
-                            type = "bài hát",
-                            onCardClicked = onDownloadButtonClicked
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        LibraryCard(
-                            icon = R.drawable.queue_music,
-                            title = "Danh sách phát",
-                            count = 12,
-                            type = "danh sách phát",
-                            onCardClicked = onPlaylistButtonClicked
-                        )
-                        LibraryCard(
-                            icon = R.drawable.mdi_account_music_outline,
-                            title = "Nghệ sĩ",
-                            count = 3,
-                            type = "nghệ sĩ",
-                            onCardClicked = onArtistsFollowingButtonClicked
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Nghe gần đây",
-                            style = TextStyle(
-                                fontFamily = NotoSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
-                            )
-                        )
-                        Text(
-                            text = "Xem tất cả",
-                            style = TextStyle(
-                                fontFamily = NotoSans,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF00FAF2)
-                            ),
-                            modifier = Modifier.clickable{
-                                onViewAllRecentCLicked()
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                // Hiển thị 5 bài hát gần đây
-                items(
-                    listOf(
-                        Song("Inside Out", "The Chainsmokers, Charlee", R.drawable.v),
-                        Song("Young", "The Chainsmokers", R.drawable.v),
-                        Song("Beach House", "The Chainsmokers, Sick", R.drawable.v),
-                        Song("Kills You Slowly", "The Chainsmokers", R.drawable.v),
-                        Song("Setting Fires", "The Chainsmokers, XYLO", R.drawable.v),
-                        Song("The Real Slim Shady", "Eminem", R.drawable.v),
-                        Song("Lose Yourself", "Eminem", R.drawable.v),
-                    ).take(5) // Giới hạn hiển thị 5 bài hát
-                ) { song ->
-                    SongCard(name = song.name, artists = song.artists, songImg = song.songImg)
-                }
-            }
-
+                    .size(50.dp)
+                    .clip(CircleShape)
+            )
         }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "Thư viện",
+            style = TextStyle(
+                fontFamily = NotoSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+        )
     }
 }
+
+LazyColumn(
+modifier = Modifier
+.fillMaxSize()
+.padding(8.dp),
+verticalArrangement = Arrangement.Top
+) {
+    // Phần nội dung đầu tiên
+    item {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            LibraryCard(
+                icon = R.drawable.favorite,
+                title = "Bài hát đã thích",
+                count = 120,
+                type = "bài hát",
+                onCardClicked = onFavoriteButtonClicked
+            )
+            LibraryCard(
+                icon = R.drawable.download_for_offline,
+                title = "Tải xuống",
+                count = 20,
+                type = "bài hát",
+                onCardClicked = onDownloadButtonClicked
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            LibraryCard(
+                icon = R.drawable.queue_music,
+                title = "Danh sách phát",
+                count = 12,
+                type = "danh sách phát",
+                onCardClicked = onPlaylistButtonClicked
+            )
+            LibraryCard(
+                icon = R.drawable.mdi_account_music_outline,
+                title = "Nghệ sĩ",
+                count = 3,
+                type = "nghệ sĩ",
+                onCardClicked = onArtistsFollowingButtonClicked
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Nghe gần đây",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+            )
+            Text(
+                text = "Xem tất cả",
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF00FAF2)
+                ),
+                modifier = Modifier.clickable {
+                    onViewAllRecentCLicked()
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    // Hiển thị 5 bài hát gần đây từ SongRepository
+    items(SongRepository.allSongs.take(5)) { song ->
+        SongCard(
+            song = song,
+            onSongClick = { onPlaySongClicked(song.id)}
+        )
+    }
+}
+}
+}
+}
+
 
 
 @Composable
@@ -235,8 +228,7 @@ fun LibraryCard(icon: Int, title: String, count: Int, type: String, onCardClicke
                 )
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "$count $type",
+            Text(text = "$count $type",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontSize = 14.sp,
@@ -247,6 +239,3 @@ fun LibraryCard(icon: Int, title: String, count: Int, type: String, onCardClicke
 
     }
 }
-
-
-

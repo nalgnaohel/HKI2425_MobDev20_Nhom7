@@ -55,8 +55,7 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     Library(title = R.string.library, icon = Icons.Filled.AccountBox),
     Settings(title = R.string.settings, icon = Icons.Filled.Settings),
     Profile(title = R.string.profile, icon = Icons.Filled.AccountBox),
-    History(title = R.string.history, icon = Icons.Default.Refresh),
-    Favorite(title = R.string.favorite, icon = Icons.Default.Favorite),
+    History(title = R.string.history, icon = Icons.Default.Refresh),Favorite(title = R.string.favorite, icon = Icons.Default.Favorite),
     Download(title = R.string.download, icon = Icons.Default.KeyboardArrowDown),
     Playlist(title = R.string.playlist, icon = Icons.Default.AccountBox),
     ArtistsFollowing(title = R.string.artistsFollowing, icon = Icons.Default.Person)
@@ -108,7 +107,7 @@ fun HarmonyHubApp() {
                 composable(route = HarmonyHubScreen.Register.name) {
                     RegisterScreen(
                         onRegisterButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Login.name)
+                            navController.navigate(HarmonyHubScreen.Home.name)
                         },
                         onLoginButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Login.name)
@@ -157,12 +156,15 @@ fun HarmonyHubApp() {
                         onSearchQueryChanged = { /* Handle search query change */ },
                     )
                 }
-                composable(route = HarmonyHubScreen.Play.name) {
-                    // Play screen content
-                    PlayScreen()
+                composable(route = HarmonyHubScreen.Play.name) { backStackEntry ->
+                    PlayScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
                 }
+
+
+
                 composable(route = HarmonyHubScreen.Library.name) {
-                    // Library screen content
                     LibraryScreen(
                         onProfileButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Profile.name)
@@ -182,9 +184,10 @@ fun HarmonyHubApp() {
                         onArtistsFollowingButtonClicked = {
                             navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
                         },
-                        onLogoutButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Login.name)
+                        onPlaySongClicked = {
+                            navController.navigate(HarmonyHubScreen.Play.name)
                         }
+
                     )
                 }
                 composable(route = HarmonyHubScreen.Profile.name) {
@@ -197,18 +200,22 @@ fun HarmonyHubApp() {
                 }
                 composable(route = HarmonyHubScreen.History.name) {
                     HistoryScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
+                        onBackButtonClicked = { navController.popBackStack() },
+
+
+                        )
                 }
                 composable(route = HarmonyHubScreen.Favorite.name) {
                     FavoriteScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
+                        onBackButtonClicked = { navController.popBackStack() },
+
+                        )
                 }
                 composable(route = HarmonyHubScreen.Download.name) {
                     DownloadScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
+                        onBackButtonClicked = { navController.popBackStack() },
+
+                        )
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
                     PlaylistsScreen(
@@ -271,5 +278,3 @@ fun BottomNavigationBar(
         }
     }
 }
-
-

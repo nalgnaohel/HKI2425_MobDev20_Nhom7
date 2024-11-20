@@ -51,7 +51,7 @@ fun LoginScreen(
 
         // Logo
         Image(
-            painter = painterResource(id = R.drawable.music), // Replace with your logo icon
+            painter = painterResource(id = R.drawable.music),
             contentDescription = "Logo",
             modifier = Modifier.size(150.dp)
         )
