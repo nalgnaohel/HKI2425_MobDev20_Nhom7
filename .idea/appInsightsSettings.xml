@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.harmonyhub" />
+                  <option name="mobileSdkAppId" value="1:685182964616:android:da9e0fb6520489c15be03d" />
+                  <option name="projectId" value="harmonyhub-829f9" />
+                  <option name="projectNumber" value="685182964616" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
