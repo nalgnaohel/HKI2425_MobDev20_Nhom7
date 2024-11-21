@@ -15,14 +15,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.harmonyhub.R
-import com.example.harmonyhub.SongRepository
-import com.example.harmonyhub.ui.components.Song
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable

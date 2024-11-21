@@ -98,7 +98,17 @@ fun HarmonyHubApp(
         modifier = Modifier
             .fillMaxSize(),
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            if (currentScreen !in listOf(
+                    HarmonyHubScreen.Login,
+                    HarmonyHubScreen.Register,
+                    HarmonyHubScreen.ForgotPassword,
+                    HarmonyHubScreen.Verification,
+                    HarmonyHubScreen.NewPassword,
+                    HarmonyHubScreen.Profile
+                )
+            ) {
+                BottomNavigationBar(navController = navController)
+            }
         },
     ) { innerPadding ->
         Box(
