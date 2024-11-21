@@ -1,0 +1,16 @@
+name: Pull Request And Push
+
+on:
+  pull_request:
+    branches: [ main,  frontend, backend, entry, minhnhat_branch]
+  push:
+    branches: [ main,  frontend, backend, entry, minhnhat_branch]
+
+jobs:
+  lint:
+    name: Lint Debug Variant
+    uses: ./.github/workflows/lint_debug.yml
+
+  test:
+    name: Test Debug Variant
+    uses: ./.github/workflows/test_debug.yml
