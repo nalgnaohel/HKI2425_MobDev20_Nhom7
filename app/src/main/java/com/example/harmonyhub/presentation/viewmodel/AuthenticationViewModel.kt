@@ -57,6 +57,7 @@ class AuthenticationViewModel @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    auth.signOut()
                     _authState.value = AuthState.SuccessfullyRegistered
                 } else {
                     _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
