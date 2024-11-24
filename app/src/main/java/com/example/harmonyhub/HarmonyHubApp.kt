@@ -215,7 +215,12 @@ fun HarmonyHubApp(
                         },
                         onPlaySongClicked = {
                             navController.navigate(HarmonyHubScreen.Play.name)
+                        },
+                        onLogoutButtonClicked = {
+                            authenticationMainViewModel.signOut()
+                            navController.navigate(HarmonyHubScreen.Login.name)
                         }
+
 
                     )
                 }

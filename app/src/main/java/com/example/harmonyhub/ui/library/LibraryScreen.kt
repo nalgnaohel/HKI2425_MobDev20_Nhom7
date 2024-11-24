@@ -54,12 +54,13 @@ fun LibraryScreen(
     onDownloadButtonClicked: () -> Unit,
     onPlaylistButtonClicked: () -> Unit,
     onArtistsFollowingButtonClicked: () -> Unit,
+    onLogoutButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
         onSettingsClicked = {},
-        onLogoutClicked = {}
+        onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
             modifier = Modifier.fillMaxSize(),
