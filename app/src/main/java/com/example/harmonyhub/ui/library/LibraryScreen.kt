@@ -55,11 +55,12 @@ fun LibraryScreen(
     onPlaylistButtonClicked: () -> Unit,
     onArtistsFollowingButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = {},
+        onSettingsClicked = onSettingsButtonClicked,
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
