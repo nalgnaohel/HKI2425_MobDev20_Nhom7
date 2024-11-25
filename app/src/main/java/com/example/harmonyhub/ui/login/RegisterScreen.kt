@@ -71,7 +71,7 @@ fun RegisterScreen(
             }
             is AuthState.Error -> {
                 val errorMessage = (authState.value as AuthState.Error).message
-                // Show error message to the user
+                // Show error message to the
                 // For example, you can use a Toast or a Snackbar
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
