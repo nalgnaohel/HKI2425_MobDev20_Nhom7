@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -61,13 +61,15 @@ fun RegisterScreen(
     }
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
+    var showVerificationDialog by remember { mutableStateOf(false) }
+
     val authState = authenticationViewModel.authState.observeAsState()
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.EmailNotVerified -> {
-                onLoginButtonClicked()
+                showVerificationDialog = true
             }
             is AuthState.Error -> {
                 val errorMessage = (authState.value as AuthState.Error).message
@@ -77,6 +79,34 @@ fun RegisterScreen(
             }
             else -> {}
         }
+    }
+
+    if (showVerificationDialog) {
+        AlertDialog(
+            onDismissRequest = { showVerificationDialog = false },
+            title = { Text("Xác thực tài khoản", fontFamily = NotoSans, fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "Xác thực Gmail của bạn trước khi đăng nhập.",
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showVerificationDialog = false
+                        onRegisterButtonClicked() // Điều hướng tới trang đăng nhập
+                    }
+                ) {
+                    Text("OK",
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color(0xFF00FAF2))
+                }
+            }
+        )
     }
     
     Column(

@@ -1,11 +1,9 @@
 package com.example.harmonyhub.ui.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,17 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
@@ -35,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -47,10 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
-
-private val gradientBackground = Brush.verticalGradient(
-    colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,41 +90,28 @@ fun ProfileScreen(
             },
 
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = { isNameDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
-
-                    ) {
+                ) {
                     Text(
                         text = "Lưu",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color(0xFF00FAF2)
                     )
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = { isNameDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
                 ) {
                     Text(
                         text = "Hủy",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color(0xFF00FAF2)
                     )
                 }
             }
@@ -149,40 +126,29 @@ fun ProfileScreen(
                 Text("Chọn ảnh từ thư viện hoặc máy của bạn.")
             },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = { isImageDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
                 ) {
                     Text(
-                        text = "Lưu ảnh mới",
+                        text = "Lưu",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = Color(0xFF00FAF2)
                     )
+
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = { isImageDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
                 ) {
                     Text(
                         text = "Hủy",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = Color(0xFF00FAF2)
                     )
                 }
             }
