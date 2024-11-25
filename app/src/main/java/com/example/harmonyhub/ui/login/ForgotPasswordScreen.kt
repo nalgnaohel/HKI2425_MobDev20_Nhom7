@@ -45,7 +45,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 
 private val gradientBackground = Brush.verticalGradient(
@@ -56,7 +58,8 @@ private val gradientBackground = Brush.verticalGradient(
 fun ForgotPasswordScreen(
     onBackButtonClicked: () -> Unit,
     onVerifyButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit
+    onRegisterButtonClicked: () -> Unit,
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var isValidEmail by remember { mutableStateOf(true) }
@@ -158,21 +161,7 @@ fun ForgotPasswordScreen(
 
         Button(
             onClick = {
-                when {
-                    email.isEmpty() -> {
-                        errorMessage = "Vui lòng nhập đầy đủ thông tin"
-                        isValidEmail = false
-                    }
-
-                    !isValidEmail -> {
-                        errorMessage = "Định dạng email không hợp lệ"
-                    }
-
-                    else -> {
-                        errorMessage = ""
-                        onVerifyButtonClicked()
-                    }
-                }
+                authenticationViewModel.resetPassword(email)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent

@@ -227,7 +227,7 @@ fun LoginScreen(
             color = Color(0xFF00FAF2),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .clickable { /* TODO: Handle forgot password */ },
+                .clickable { onForgotPasswordButtonClicked() },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
