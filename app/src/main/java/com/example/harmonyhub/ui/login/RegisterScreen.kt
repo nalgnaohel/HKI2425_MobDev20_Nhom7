@@ -66,8 +66,8 @@ fun RegisterScreen(
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
-            is AuthState.SuccessfullyRegistered -> {
-                onRegisterButtonClicked()
+            is AuthState.EmailNotVerified -> {
+                onLoginButtonClicked()
             }
             is AuthState.Error -> {
                 val errorMessage = (authState.value as AuthState.Error).message

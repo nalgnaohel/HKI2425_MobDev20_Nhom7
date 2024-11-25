@@ -39,8 +39,15 @@ class AuthenticationViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.Authenticated
+                    val user = auth.currentUser
+                    if (user?.isEmailVerified == true && user != null) {
+                        _authState.value = AuthState.Authenticated
+                    } else {
+                        auth.signOut()
+                        _authState.value = AuthState.Error("Email not verified. Please check your email verification link.")
+                    }
                 } else {
+
                     _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
                 }
             }
@@ -57,8 +64,16 @@ class AuthenticationViewModel @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    user?.sendEmailVerification()
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                _authState.value = AuthState.EmailNotVerified
+                            } else {
+                                _authState.value = AuthState.Error(task.exception?.message ?: "Failed to send verification email")
+                            }
+                        }
                     auth.signOut()
-                    _authState.value = AuthState.SuccessfullyRegistered
                 } else {
                     _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
                 }
@@ -81,7 +96,7 @@ class AuthenticationViewModel @Inject constructor(
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.SuccessfullyRegistered
+                    _authState.value = AuthState.Unauthenticated
                 } else {
                     _authState.value = AuthState.Error(task.exception?.message ?: "An unknown error occurred")
                 }
@@ -90,9 +105,9 @@ class AuthenticationViewModel @Inject constructor(
 }
 
 sealed class AuthState {
+    object EmailNotVerified : AuthState()
     object Unauthenticated : AuthState()
     object Authenticated : AuthState()
     object Loading : AuthState()
-    object SuccessfullyRegistered : AuthState()
     data class Error(val message: String) : AuthState()
 }
