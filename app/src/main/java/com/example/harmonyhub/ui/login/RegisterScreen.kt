@@ -54,6 +54,10 @@ fun RegisterScreen(
         mutableStateOf("")
     }
 
+    var username by remember {
+        mutableStateOf("")
+    }
+
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     var confirmPassword by remember {
@@ -130,27 +134,27 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mobile Number Input Field
-//        OutlinedTextField(
-//            value = "",
-//            onValueChange = {},
-//            modifier = Modifier.fillMaxWidth(),
-//            placeholder = { Text("Mobile Number", color = Color.Gray) },
-//            colors = OutlinedTextFieldDefaults.colors(
-//                focusedBorderColor = Color(0xFF00FAF2),
-//                unfocusedBorderColor = Color.Gray,
-//                focusedTextColor = Color.White,
-//                unfocusedTextColor = Color.White,
-//                cursorColor = Color.White
-//            ),
-//            singleLine = true,
-//            keyboardOptions = KeyboardOptions(
-//                imeAction = ImeAction.Next,
-//                keyboardType = KeyboardType.Phone
-//            )
-//        )
-//
-//        Spacer(modifier = Modifier.height(16.dp))
+        // Username input field
+        OutlinedTextField(
+            value = username,
+            onValueChange = {username = it},
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Username", color = Color.Gray) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF00FAF2),
+                unfocusedBorderColor = Color.Gray,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                cursorColor = Color.White
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Text
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Password Input Field
         OutlinedTextField(
@@ -222,7 +226,7 @@ fun RegisterScreen(
                 if (password != confirmPassword) {
                     Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                 } else {
-                    authenticationViewModel.signup(email, password)
+                    authenticationViewModel.signup(email, password, username)
                 }
             },
             colors = ButtonDefaults.buttonColors(
