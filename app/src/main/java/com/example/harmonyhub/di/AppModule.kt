@@ -1,5 +1,7 @@
 package com.example.harmonyhub.di
 
+import com.example.harmonyhub.data.repository.UserDataRepoImpl
+import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,5 +30,17 @@ object AppModule {
     @Singleton
     fun provideFirestore(): FirebaseFirestore {
         return Firebase.firestore
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDataRepo(
+        FirebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): UserDataRepo {
+        return UserDataRepoImpl(
+            FirebaseAuth,
+            firestore
+        )
     }
 }

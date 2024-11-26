@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val userRepo: UserDataRepo,
 ) : ViewModel() {
 
     private val _authState = MutableLiveData<AuthState>()
@@ -73,18 +74,7 @@ class AuthenticationViewModel @Inject constructor(
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 _authState.value = AuthState.EmailNotVerified
-                                val userMap = hashMapOf(
-                                    "username" to username,
-                                )
-                                firestore.collection("users")
-                                    .document(user.uid)
-                                    .set(userMap)
-                                    .addOnSuccessListener {
-                                        Log.d(TAG, "DocumentSnapshot successfully written!")
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w(TAG, "Error writing document", e)
-                                    }
+                                userRepo.setUserName(username, user.uid)
                             } else {
                                 _authState.value = AuthState.Error(task.exception?.message ?: "Failed to send verification email")
                             }
