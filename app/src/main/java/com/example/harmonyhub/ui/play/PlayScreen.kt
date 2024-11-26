@@ -42,9 +42,6 @@ fun RoundedImageCard(
     }
 }
 
-
-
-
 @Composable
 fun PlayScreen(
     onBackButtonClicked: () -> Unit = {}
@@ -52,7 +49,7 @@ fun PlayScreen(
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
     var playlist by remember { mutableStateOf(SongRepository.allSongs) }
-    var currentSongIndex by remember { mutableStateOf(0) }
+    var currentSongIndex by remember { mutableIntStateOf(0) }
     //var currentSong by remember { mutableStateOf(playlist[currentSongIndex]) }
     var isPlaying by remember { mutableStateOf(false) }
 

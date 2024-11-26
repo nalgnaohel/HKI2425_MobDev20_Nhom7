@@ -63,7 +63,6 @@ fun ForgotPasswordScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var isValidEmail by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -71,11 +70,7 @@ fun ForgotPasswordScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            },
+            .clickable { focusManager.clearFocus() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -126,8 +121,11 @@ fun ForgotPasswordScreen(
             onValueChange = {
                 email = it
                 isValidEmail = isValidEmail(email)
-                errorMessage = "" // Xóa thông báo lỗi khi người dùng nhập email
             },
+            textStyle = TextStyle(
+                fontFamily = NotoSans,
+                fontSize = 16.sp
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
@@ -145,18 +143,6 @@ fun ForgotPasswordScreen(
                 imeAction = ImeAction.Done
             )
         )
-        if (!isValidEmail || errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = errorMessage.ifEmpty { "Định dạng email không hợp lệ" },
-                color = Color.Red,
-                fontFamily = NotoSans,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .align(Alignment.Start)
-            )
-        }
 
         Spacer(modifier = Modifier.height(50.dp))
 
@@ -165,8 +151,6 @@ fun ForgotPasswordScreen(
                 if (isValidEmail(email)) {
                     authenticationViewModel.resetPassword(email)
                     showDialog = true
-                } else {
-                    errorMessage = "Định dạng email không hợp lệ"
                 }
             },
             colors = ButtonDefaults.buttonColors(

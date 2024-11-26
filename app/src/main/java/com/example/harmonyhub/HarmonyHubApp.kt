@@ -101,7 +101,8 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Verification,
                     HarmonyHubScreen.NewPassword,
                     HarmonyHubScreen.Profile,
-                    HarmonyHubScreen.Settings
+                    HarmonyHubScreen.Settings,
+                    HarmonyHubScreen.Play
                 )
             ) {
                 BottomNavigationBar(navController = navController)
