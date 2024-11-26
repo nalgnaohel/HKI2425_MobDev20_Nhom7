@@ -1,6 +1,5 @@
-package com.example.harmonyhub.data
+package com.example.harmonyhub.data.network
 
-import com.example.harmonyhub.ui.components.Song
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -81,6 +80,6 @@ object APIService {
 fun main() {
 
     val api = APIService
-    api.getHomePageOverview()
-    println("${api.listPopularArtist?.size}")
+    APIService.getHomePageOverview()
+    println("${APIService.listPopularArtist?.size}")
 }

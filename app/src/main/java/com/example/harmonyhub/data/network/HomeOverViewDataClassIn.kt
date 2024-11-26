@@ -1,4 +1,4 @@
-package com.example.harmonyhub.data
+package com.example.harmonyhub.data.network
 
 data class Avatar(
     val url: String,
@@ -42,12 +42,12 @@ data class ArtistOut(
 
 
 data class PopularItem(
-   val type: String,
-   val id: String,
-   val name: String,
-   val cover: List<Avatar>,//album
-   val artists: List<Artist>,//album
-   val visuals: Avatars? = null,//Artist
+    val type: String,
+    val id: String,
+    val name: String,
+    val cover: List<Avatar>,//album
+    val artists: List<Artist>,//album
+    val visuals: Avatars? = null,//Artist
 
 
 )
@@ -73,5 +73,10 @@ data class Response(
     val status: Boolean,
     val errorId: String,
     val sections: Sections
+)
+
+data class ResponseHomeScreenData(
+    val listPopularArtist: MutableList<ArtistOut>?,
+    val listPopularAlbums: MutableList<AlbumOut>?
 )
 

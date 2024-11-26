@@ -35,7 +35,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.harmonyhub.ui.HomeViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
 import com.example.harmonyhub.ui.library.DownloadScreen
@@ -71,7 +70,7 @@ private val gradientBackground = Brush.verticalGradient(
         Color.Black
     )
 )
-private val homeViewModel = HomeViewModel()
+
 @Composable
 fun HarmonyHubApp() {
     val navController = rememberNavController()
@@ -152,7 +151,7 @@ fun HarmonyHubApp() {
                         onLogoutButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Login.name)
                         },
-                        viewModel = homeViewModel
+
                     )
                 }
                 composable(route = HarmonyHubScreen.Search.name) {

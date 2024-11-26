@@ -22,7 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -38,17 +40,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
-import com.example.harmonyhub.ui.HomeViewModel
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.theme.NotoSans
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.harmonyhub.data.network.ArtistOut
+import com.example.harmonyhub.data.network.ResponseHomeScreenData
 
 
 private val gradientBackground = Brush.verticalGradient(
@@ -59,6 +61,42 @@ private val gradientBackground = Brush.verticalGradient(
 )
 
 @Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = Color.Blue)
+    }
+}
+
+@Composable
+fun ErrorScreen(
+    onRefreshContent: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_connection_error),
+                contentDescription = stringResource(R.string.connection_error)
+            )
+            IconButton(onClick = onRefreshContent) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.refresh)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun HomeScreen(
     onSearchButtonClicked: () -> Unit,
     onPlayButtonClicked: () -> Unit,
@@ -66,39 +104,47 @@ fun HomeScreen(
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel() // Khởi tạo ViewModel
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
 
     //add view model
-    val state by viewModel.state.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchHomePageData()
-        Log.d("HomeScreen", "Popular Artists: ${state.listPopularArtist?.size}")
-    }
-
-    // Loading UI
-    if (state.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Loading...")
+    val homeUiState = viewModel.state.collectAsStateWithLifecycle().value
+    when (homeUiState) {
+        is HomeUIState.Loading -> {
+            LoadingScreen()
         }
-        return
-    }
-
-    // Error UI
-    state.errorMessage?.let { error ->
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Error: $error")
+        is HomeUIState.Error -> {
+            ErrorScreen(
+                onRefreshContent = { viewModel.fetchHomePageData() }
+            )
         }
-        return
+        is HomeUIState.Success -> {
+            // Truy cập vào thuộc tính popularItem khi trạng thái là Success
+            val popularItems = homeUiState.popularItem
+            MainHomeScreen(
+                onSearchButtonClicked,
+                onPlayButtonClicked,
+                onLibraryButtonClicked,
+                onProfileButtonClicked,
+                onLogoutButtonClicked,
+                modifier,
+                popularItems
+            )
+        }
     }
 
+}
+
+@Composable
+fun MainHomeScreen(
+    onSearchButtonClicked: () -> Unit,
+    onPlayButtonClicked: () -> Unit,
+    onLibraryButtonClicked: () -> Unit,
+    onProfileButtonClicked: () -> Unit,
+    onLogoutButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    resPopularItem: ResponseHomeScreenData
+) {
     //Main UI
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
@@ -195,20 +241,8 @@ fun HomeScreen(
                             fontSize = 24.sp
                         )
                     )
-                    LazyRow(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(state.listPopularArtist?: emptyList()) { artist ->
-                            // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
-                            ArtistsCard(
-                                artist.name,  // Tên nghệ sĩ
-                                artist.image,  // URL ảnh
-                                artist.id  // ID nghệ sĩ
-                            )
 
-                        }
-                    }
+                    LazyRowArtist(resPopularItem.listPopularArtist)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -274,7 +308,6 @@ fun HomeScreen(
         }
     }
 }
-
 
 
 @Composable
@@ -367,11 +400,26 @@ fun ChartsCard(chartImg: Int) {
 }
 
 
-
-@Preview
 @Composable
-fun HomeScreenPre() {
-    val homeViewModel = HomeViewModel()
-    HomeScreen({},{},{},{},{}, modifier = Modifier, viewModel = homeViewModel
-    )
+fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
+    LazyRow(
+        modifier = Modifier.padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val listArtist: MutableList<ArtistOut>? = temple
+        if (listArtist != null) {
+            Log.d("CheckMDKMWKAMD", "${listArtist.size}")
+            items(listArtist) { artist ->
+                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
+                ArtistsCard(
+                    artist.name,  // Tên nghệ sĩ
+                    artist.image,  // URL ảnh
+                    artist.id  // ID nghệ sĩ
+                )
+            }
+        }
+
+    }
+
 }
+
