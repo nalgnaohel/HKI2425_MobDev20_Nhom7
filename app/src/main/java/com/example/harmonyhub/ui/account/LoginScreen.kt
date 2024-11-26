@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +38,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 
@@ -64,6 +64,7 @@ fun ForgotPasswordScreen(
     var email by remember { mutableStateOf("") }
     var isValidEmail by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -161,7 +162,12 @@ fun ForgotPasswordScreen(
 
         Button(
             onClick = {
-                authenticationViewModel.resetPassword(email)
+                if (isValidEmail(email)) {
+                    authenticationViewModel.resetPassword(email)
+                    showDialog = true
+                } else {
+                    errorMessage = "Định dạng email không hợp lệ"
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
@@ -199,6 +205,36 @@ fun ForgotPasswordScreen(
                 color = Color(0xFF00FAF2)
             )
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text("Thông báo", fontWeight = FontWeight.Bold, fontFamily = NotoSans)
+            },
+            text = {
+                Text(
+                    "Kiểm tra Gmail của bạn để đặt lại mật khẩu.",
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onVerifyButtonClicked() // Chuyển hướng đến trang đăng nhập
+                    }
+                ) {
+                    Text("OK",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF00FAF2))
+                }
+            }
+        )
     }
 }
 

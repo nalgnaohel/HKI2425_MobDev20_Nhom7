@@ -44,11 +44,11 @@ import com.example.harmonyhub.ui.library.FavoriteScreen
 import com.example.harmonyhub.ui.library.HistoryScreen
 import com.example.harmonyhub.ui.library.LibraryScreen
 import com.example.harmonyhub.ui.library.PlaylistsScreen
-import com.example.harmonyhub.ui.login.ForgotPasswordScreen
-import com.example.harmonyhub.ui.login.LoginScreen
-import com.example.harmonyhub.ui.login.NewPasswordScreen
-import com.example.harmonyhub.ui.login.RegisterScreen
-import com.example.harmonyhub.ui.login.VerificationScreen
+import com.example.harmonyhub.ui.account.ForgotPasswordScreen
+import com.example.harmonyhub.ui.account.LoginScreen
+import com.example.harmonyhub.ui.account.NewPasswordScreen
+import com.example.harmonyhub.ui.account.RegisterScreen
+import com.example.harmonyhub.ui.account.VerificationScreen
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -266,7 +266,7 @@ fun HarmonyHubApp(
                     ForgotPasswordScreen(
                         onBackButtonClicked = { navController.popBackStack() },
                         onVerifyButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Verification.name)
+                            navController.navigate(HarmonyHubScreen.Login.name)
                         },
                         onRegisterButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Register.name)
