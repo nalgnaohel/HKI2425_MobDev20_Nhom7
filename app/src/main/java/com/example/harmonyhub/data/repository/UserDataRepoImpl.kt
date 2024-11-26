@@ -9,8 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class UserDataRepoImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ): UserDataRepo {
 
     fun getUserDataRef(userId: String?): DocumentReference {
@@ -18,13 +18,34 @@ class UserDataRepoImpl @Inject constructor(
         return userRef
     }
 
-    override fun getUserName() {
-        // TODO("Not yet implemented")
+    override fun getUserInfor(callback: (String?, String?) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+
+                    val username = document.getString("userName")
+                    val email = document.getString("email")
+
+                    Log.d("OwO", "DocumentSnapshot data: ${username}")
+                    callback(username, email)
+                } else {
+                    Log.d("OwO", "No such document")
+                    callback(null, null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback(null, null)
+            }
     }
 
-    override fun setUserName(userName: String, userId: String?) {
+    override fun setUserInfor(userName: String, email: String, userId: String?) {
         val userMap = hashMapOf(
-            "userName" to userName
+            "userName" to userName,
+            "email" to email
         )
 
         val userRef = getUserDataRef(userId)
@@ -49,5 +70,4 @@ class UserDataRepoImpl @Inject constructor(
     override fun getSong() {
         // TODO("Not yet implemented")
     }
-
 }

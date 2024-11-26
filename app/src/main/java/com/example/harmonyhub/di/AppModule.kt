@@ -35,12 +35,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserDataRepo(
-        FirebaseAuth: FirebaseAuth,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
     ): UserDataRepo {
         return UserDataRepoImpl(
-            FirebaseAuth,
-            firestore
+            firestore,
+            auth
         )
     }
 }

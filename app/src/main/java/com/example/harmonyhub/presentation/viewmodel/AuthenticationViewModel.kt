@@ -1,13 +1,10 @@
 package com.example.harmonyhub.presentation.viewmodel
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -59,8 +56,8 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     fun signup(email: String, password: String, username: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("Email and password must not be empty")
+        if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
+            _authState.value = AuthState.Error("Email, password ans username must not be empty")
             return
         }
 
@@ -74,7 +71,7 @@ class AuthenticationViewModel @Inject constructor(
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 _authState.value = AuthState.EmailNotVerified
-                                userRepo.setUserName(username, user.uid)
+                                userRepo.setUserInfor(username, email, user.uid)
                             } else {
                                 _authState.value = AuthState.Error(task.exception?.message ?: "Failed to send verification email")
                             }
