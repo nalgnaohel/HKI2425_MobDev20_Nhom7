@@ -16,8 +16,7 @@ class MainActivity : ComponentActivity() {
         setLightStatusBarIcons(this, lightIcons = false)
         setContent {
             HarmonyHubTheme {
-                //HarmonyHubApp()
-                PlayScreen({})
+                HarmonyHubApp()
             }
         }
     }

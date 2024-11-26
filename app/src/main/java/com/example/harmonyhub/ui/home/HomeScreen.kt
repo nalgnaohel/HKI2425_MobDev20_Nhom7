@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,12 +38,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
+import com.example.harmonyhub.ui.HomeViewModel
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.theme.NotoSans
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
@@ -58,8 +65,41 @@ fun HomeScreen(
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel() // Khởi tạo ViewModel
 ) {
+
+    //add view model
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchHomePageData()
+        Log.d("HomeScreen", "Popular Artists: ${state.listPopularArtist?.size}")
+    }
+
+    // Loading UI
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Loading...")
+        }
+        return
+    }
+
+    // Error UI
+    state.errorMessage?.let { error ->
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Error: $error")
+        }
+        return
+    }
+
+    //Main UI
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
         onSettingsClicked = {},
@@ -159,16 +199,14 @@ fun HomeScreen(
                         modifier = Modifier.padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(
-                            listOf(
-                                "Alan Walker" to R.drawable.v,
-                                "Ed Sheeran" to R.drawable.v,
-                                "The Weeknd" to R.drawable.v,
-                                "Adele" to R.drawable.v,
-                                "Taylor Swift" to R.drawable.v
+                        items(state.listPopularArtist?: emptyList()) { artist ->
+                            // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
+                            ArtistsCard(
+                                artist.name,  // Tên nghệ sĩ
+                                artist.image,  // URL ảnh
+                                artist.id  // ID nghệ sĩ
                             )
-                        ) {
-                            ArtistsCard(it.first, it.second)
+
                         }
                     }
 
@@ -236,6 +274,8 @@ fun HomeScreen(
         }
     }
 }
+
+
 
 @Composable
 fun GenreCard(genre: String) {
@@ -324,4 +364,14 @@ fun ChartsCard(chartImg: Int) {
             )
         }
     }
+}
+
+
+
+@Preview
+@Composable
+fun HomeScreenPre() {
+    val homeViewModel = HomeViewModel()
+    HomeScreen({},{},{},{},{}, modifier = Modifier, viewModel = homeViewModel
+    )
 }

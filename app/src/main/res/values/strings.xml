@@ -13,4 +13,7 @@
     <string name="playlist">Playlist</string>
     <string name="download">Download</string>
     <string name="artistsFollowing">Artists Following</string>
+    <string name="connection_error">Connection error</string>
+    <string name="refresh">Refresh</string>
+
 </resources>

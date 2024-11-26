@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -63,7 +62,7 @@ fun ArtistsFollowingScreen(
     val focusManager = LocalFocusManager.current
 
     val allArtists = listOf(
-        Artist("The Chainsmokers", R.drawable.v),
+        Artist("The Chainsmokers", R.drawable.v,),
         Artist("Sia", R.drawable.v),
         Artist("Adele", R.drawable.v)
     )
@@ -115,7 +114,7 @@ fun ArtistsFollowingScreen(
         }
 
 
-        // Ô tìm kiếm
+        // Ô tìm kiếm nghee six
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -190,7 +189,8 @@ fun ArtistsFollowingScreen(
                     artistPair.forEach { artist ->
                         ArtistsCard(
                             artistName = artist.name,
-                            artistImg = artist.img,
+                            artistImg = "https://i.scdn.co/image/ab67616d00001e02fd8d7a8d96871e791cb1f626",
+                            idArtist = "111111",
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(8.dp)

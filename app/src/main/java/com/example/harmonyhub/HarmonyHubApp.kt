@@ -1,5 +1,6 @@
 package com.example.harmonyhub
 
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,12 +28,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.harmonyhub.ui.HomeViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
 import com.example.harmonyhub.ui.library.DownloadScreen
@@ -68,7 +71,7 @@ private val gradientBackground = Brush.verticalGradient(
         Color.Black
     )
 )
-
+private val homeViewModel = HomeViewModel()
 @Composable
 fun HarmonyHubApp() {
     val navController = rememberNavController()
@@ -148,7 +151,8 @@ fun HarmonyHubApp() {
 //                    },
                         onLogoutButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Login.name)
-                        }
+                        },
+                        viewModel = homeViewModel
                     )
                 }
                 composable(route = HarmonyHubScreen.Search.name) {
