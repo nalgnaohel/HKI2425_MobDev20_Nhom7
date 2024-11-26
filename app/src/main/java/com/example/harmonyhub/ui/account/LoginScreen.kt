@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -227,7 +227,7 @@ fun LoginScreen(
             color = Color(0xFF00FAF2),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .clickable { /* TODO: Handle forgot password */ },
+                .clickable { onForgotPasswordButtonClicked() },
         )
 
         Spacer(modifier = Modifier.height(8.dp))

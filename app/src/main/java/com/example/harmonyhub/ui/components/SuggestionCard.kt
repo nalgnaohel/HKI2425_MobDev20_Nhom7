@@ -27,24 +27,18 @@ import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
 
-data class Playlist(val name: String, val img: Int)
-
-fun Playlist.contains(query: String, ignoreCase: Boolean = true): Boolean {
-    return this.name.contains(query, ignoreCase)
-}
-
 @Composable
-fun PlaylistCard(playlistName: String, playlistImg: Int) {
+fun SuggestionCard(songName: String, artistName: String) {
     Surface(
         modifier = Modifier
-            .size(width = 155.dp, height = 210.dp)
+            .size(width = 125.dp, height = 180.dp)
             .clickable {  },
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))
         {
             Box(
-                modifier = Modifier.size(width = 155.dp, height = 155.dp)
+                modifier = Modifier.size(width = 125.dp, height = 125.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.v),
@@ -55,7 +49,7 @@ fun PlaylistCard(playlistName: String, playlistImg: Int) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = playlistName,
+                text = songName,
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.SemiBold,
@@ -64,7 +58,15 @@ fun PlaylistCard(playlistName: String, playlistImg: Int) {
                 maxLines = 1,
                 overflow = Ellipsis
             )
-
+            Text(
+                text = artistName,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 14.sp
+                ),
+                color = Color.Gray,
+                maxLines = 1, overflow = Ellipsis
+            )
         }
     }
 }
