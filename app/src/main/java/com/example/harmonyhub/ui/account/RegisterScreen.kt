@@ -78,12 +78,14 @@ fun RegisterScreen(
             is AuthState.EmailNotVerified -> {
                 showVerificationDialog = true
             }
+
             is AuthState.Error -> {
                 val errorMessage = (authState.value as AuthState.Error).message
                 // Show error message to the
                 // For example, you can use a Toast or a Snackbar
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
+
             else -> {}
         }
     }
@@ -91,7 +93,13 @@ fun RegisterScreen(
     if (showVerificationDialog) {
         AlertDialog(
             onDismissRequest = { showVerificationDialog = false },
-            title = { Text("Xác thực tài khoản", fontFamily = NotoSans, fontWeight = FontWeight.Bold) },
+            title = {
+                Text(
+                    "Xác thực tài khoản",
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold
+                )
+            },
             text = {
                 Text(
                     "Xác thực Gmail của bạn trước khi đăng nhập.",
@@ -106,16 +114,18 @@ fun RegisterScreen(
                         onRegisterButtonClicked() // Điều hướng tới trang đăng nhập
                     }
                 ) {
-                    Text("OK",
+                    Text(
+                        "OK",
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = Color(0xFF00FAF2))
+                        color = Color(0xFF00FAF2)
+                    )
                 }
             }
         )
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -150,7 +160,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = email,
             textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
-            onValueChange = {email = it},
+            onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Email ID", color = Color.Gray, fontFamily = NotoSans) },
             colors = OutlinedTextFieldDefaults.colors(
@@ -172,7 +182,7 @@ fun RegisterScreen(
         // Username input field
         OutlinedTextField(
             value = username,
-            onValueChange = {username = it},
+            onValueChange = { username = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Username", color = Color.Gray) },
             colors = OutlinedTextFieldDefaults.colors(
@@ -195,7 +205,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
-            onValueChange = {password = it},
+            onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             trailingIcon = {
@@ -228,7 +238,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = confirmPassword,
             textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
-            onValueChange = {confirmPassword = it},
+            onValueChange = { confirmPassword = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Confirm Password", color = Color.Gray, fontFamily = NotoSans) },
             visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),

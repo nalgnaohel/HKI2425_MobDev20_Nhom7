@@ -2,6 +2,7 @@ package com.example.harmonyhub.ui.library
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,20 +23,26 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.ui.components.SongCard
+import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
 fun ArtistScreen(
     artist: String,
-    onSongClick: (Song) -> Unit = {}
+    onSongClick: (String) -> Unit
 ) {
     val songs = SongRepository.allSongs.filter { it.artist == artist }
     val artistName = songs.firstOrNull()?.artist ?: "Unknown Artist"
@@ -54,6 +61,17 @@ fun ArtistScreen(
                     .fillMaxWidth()
                     .height(240.dp)
             )
+
+            // Gradient overlay to darken the image and improve text visibility
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.4f)
+                    )
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,13 +81,8 @@ fun ArtistScreen(
                 Text(
                     text = artistName,
                     color = Color.White,
-                    fontSize = 28.sp,
+                    fontSize = 36.sp,
                     fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Artist",
-                    color = Color.White,
-                    fontSize = 16.sp
                 )
             }
         }
@@ -83,31 +96,37 @@ fun ArtistScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "${songs.size} songs",
-                color = Color.White,
-                fontSize = 18.sp
-            )
+            Box(
+                modifier = Modifier
+                    .border(1.dp, Color.White, RoundedCornerShape(16.dp))
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Follow",
+                    color = Color.White,
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp
+                )
+            }
             Row {
-                IconButton(onClick = { /* Share Action */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icons8_heart_90),
-                        contentDescription = "Share",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = { /* Play Action */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.icons8_circled_play_64),
                         contentDescription = "Play",
+                        tint = Color(0xFF00FAF2),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+                IconButton(onClick = { /* Share Action */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
                         tint = Color.White,
-                        modifier = Modifier.size(42.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
         }
-
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -116,7 +135,8 @@ fun ArtistScreen(
                 Text(
                     text = "Popular releases",
                     color = Color.White,
-                    fontSize = 18.sp,
+                    fontFamily = NotoSans,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -124,7 +144,7 @@ fun ArtistScreen(
 
                 LazyColumn {
                     items(songs) { song ->
-                        PopularReleaseItem(song = song, onClick = { onSongClick(song) })
+                        SongCard(song = song, onSongClick = onSongClick)
                     }
                 }
             }
@@ -139,49 +159,12 @@ fun ArtistScreen(
     }
 }
 
-@Composable
-fun PopularReleaseItem(song: Song, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
-    ) {
-        Image(
-            painter = painterResource(id = song.imageResId),
-            contentDescription = null,
-            modifier = Modifier
-                .size(60.dp)
-                .clip(RoundedCornerShape(8.dp))
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = song.name,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = song.artist,
-                color = Color.Gray,
-                fontSize = 14.sp
-            )
-        }
-        IconButton(onClick = { /* Open song menu */ }) {
-            Icon(
-                painter = painterResource(id = R.drawable.icons8_more_90),
-                contentDescription = "More options",
-                tint = Color.White,
-                modifier = Modifier.size(30.dp)
-            )
-        }
-    }
-}
+
 @Preview(showBackground = true)
 @Composable
 fun ArtistScreenPreview() {
     ArtistScreen(
         artist = "The Chainsmokers, Charlee",
+        onSongClick = {}
     )
 }

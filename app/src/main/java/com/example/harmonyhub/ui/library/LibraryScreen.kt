@@ -117,7 +117,7 @@ fun LibraryScreen(
                         ) {
                             LibraryCard(
                                 icon = R.drawable.favorite,
-                                title = "Bài hát đã thích",
+                                title = "Đã thích",
                                 count = 120,
                                 type = "bài hát",
                                 onCardClicked = onFavoriteButtonClicked,
@@ -146,9 +146,9 @@ fun LibraryScreen(
                         ) {
                             LibraryCard(
                                 icon = R.drawable.queue_music,
-                                title = "Danh sách phát",
+                                title = "Playlists",
                                 count = 12,
-                                type = "danh sách phát",
+                                type = "playlists",
                                 onCardClicked = onPlaylistButtonClicked,
                             )
                         }

@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
 
 data class Playlist(val name: String, val img: Int)
@@ -34,11 +33,11 @@ fun Playlist.contains(query: String, ignoreCase: Boolean = true): Boolean {
 }
 
 @Composable
-fun PlaylistCard(playlistName: String, playlistImg: Int) {
+fun PlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier = Modifier
             .size(width = 155.dp, height = 210.dp)
-            .clickable {  },
+            .clickable { onClick() },
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))
@@ -47,7 +46,7 @@ fun PlaylistCard(playlistName: String, playlistImg: Int) {
                 modifier = Modifier.size(width = 155.dp, height = 155.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.v),
+                    painter = painterResource(id = playlist.img),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
@@ -55,7 +54,7 @@ fun PlaylistCard(playlistName: String, playlistImg: Int) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = playlistName,
+                text = playlist.name,
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.SemiBold,

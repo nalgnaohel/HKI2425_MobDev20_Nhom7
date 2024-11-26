@@ -49,6 +49,7 @@ import com.example.harmonyhub.ui.account.LoginScreen
 import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
+import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -71,6 +72,7 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     ForgotPassword(title = R.string.forgotPassword, icon = Icons.Default.Info),
     Verification(title = R.string.verification, icon = Icons.Default.Info),
     NewPassword(title = R.string.newPassword, icon = Icons.Default.Lock),
+    PlaylistSongList(title = R.string.playlistSongList, icon = Icons.Default.AccountBox),
 }
 
 private val gradientBackground = Brush.verticalGradient(
@@ -254,7 +256,12 @@ fun HarmonyHubApp(
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
                     PlaylistsScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onAddNewPlaylistClicked = {
+                        },
+                        onPlaylistClicked = {
+                            navController.navigate(HarmonyHubScreen.PlaylistSongList.name)
+                        },
                     )
                 }
                 composable(route = HarmonyHubScreen.ArtistsFollowing.name) {
@@ -292,6 +299,12 @@ fun HarmonyHubApp(
                 }
                 composable(route = HarmonyHubScreen.Settings.name) {
                     SettingsScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
+                }
+                composable(route = HarmonyHubScreen.PlaylistSongList.name){
+                    PlaylistSongListScreen(
+                        playlistName = "Playlist 1",
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
