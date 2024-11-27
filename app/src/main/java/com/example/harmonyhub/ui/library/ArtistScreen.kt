@@ -26,6 +26,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +55,20 @@ fun ArtistScreen(
                     .fillMaxWidth()
                     .height(240.dp)
             )
+
+            // Gradient Overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black),
+                            startY = 0f
+                        )
+                    )
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,7 +104,7 @@ fun ArtistScreen(
                 fontSize = 18.sp
             )
             Row {
-                IconButton(onClick = { /* Share Action */ }) {
+                IconButton(onClick = { /* Favourite Action */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.icons8_heart_90),
                         contentDescription = "Share",
@@ -107,7 +122,6 @@ fun ArtistScreen(
                 }
             }
         }
-
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -182,6 +196,6 @@ fun PopularReleaseItem(song: Song, onClick: () -> Unit) {
 @Composable
 fun ArtistScreenPreview() {
     ArtistScreen(
-        artist = "The Chainsmokers, Charlee",
+        artist = "The Chainsmokers",
     )
 }
