@@ -1,10 +1,7 @@
 package com.example.harmonyhub.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,38 +15,32 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
+import com.example.harmonyhub.ui.components.ChartCard
+import com.example.harmonyhub.ui.components.GenreCard
+import com.example.harmonyhub.ui.components.SuggestionCard
 import com.example.harmonyhub.ui.theme.NotoSans
 
-private val gradientBackground = Brush.verticalGradient(
-    colors = listOf(
-        Color(0xFF00FAF2),
-        Color(0xFF1E3264)
-    )
-)
 
 @Composable
 fun HomeScreen(
@@ -58,11 +49,15 @@ fun HomeScreen(
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val username = userDataViewModel.userName.observeAsState()
+
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = {},
+        onSettingsClicked = onSettingsButtonClicked,
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
@@ -77,10 +72,12 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { onOpenDrawer() }) {
+                    IconButton(
+                        onClick = { onOpenDrawer() },
+                        modifier = Modifier.testTag("DrawerButton")) {
                         Image(
                             painter = painterResource(id = R.drawable.hip),
-                            contentDescription = "Profile",
+                            contentDescription = "Avatar",
                             modifier = Modifier
                                 .size(50.dp)
                                 .clip(CircleShape)
@@ -88,7 +85,8 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Thomas",
+                        text = username.value.toString(),
+                        modifier = Modifier.testTag("Username"),
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
@@ -97,17 +95,10 @@ fun HomeScreen(
                     )
                 }
                 Row {
-                    IconButton(onClick = { /* Notification */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    IconButton(onClick = { /* Settings */ }) {
+                    IconButton(onClick = { onSettingsButtonClicked() }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = "Settings Icon",
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -121,7 +112,6 @@ fun HomeScreen(
             ) {
                 item {
                     //Header with avatar, username, and profile button
-
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -139,7 +129,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
-                            GenreCard(genre)
+                            GenreCard(genre, modifier = Modifier.testTag("GenreCard_$genre"))
                         }
                     }
 
@@ -228,7 +218,7 @@ fun HomeScreen(
 
                                 )
                         ) { chart ->
-                            ChartsCard(chart)
+                            ChartCard(chart)
                         }
                     }
                 }
@@ -237,91 +227,7 @@ fun HomeScreen(
     }
 }
 
-@Composable
-fun GenreCard(genre: String) {
-    Surface(
-        modifier = Modifier
-            .size(width = 150.dp, height = 150.dp)
-            .padding(4.dp)
-            .clickable {  },
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize().background(gradientBackground),
-            contentAlignment = Alignment.Center) {
-            Text(
-                text = genre,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 20.sp
-                )
-            )
-        }
-    }
-}
 
-@Composable
-fun SuggestionCard(songName: String, artistName: String) {
-    Surface(
-        modifier = Modifier
-            .size(width = 125.dp, height = 180.dp)
-            .clickable {  },
-        color = Color.Transparent
-    ) {
-        Column(modifier = Modifier.padding(4.dp))
-        {
-            Box(
-                modifier = Modifier.size(width = 125.dp, height = 125.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.v),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = songName,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
-                ),
-                maxLines = 1,
-                overflow = Ellipsis
-            )
-            Text(
-                text = artistName,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 14.sp
-                ),
-                color = Color.Gray,
-                maxLines = 1, overflow = Ellipsis
-            )
-        }
-    }
-}
 
-@Composable
-fun ChartsCard(chartImg: Int) {
-    Surface(
-        modifier = Modifier
-            .size(width = 150.dp, height = 150.dp)
-            .clickable {  },
-        color = Color.Transparent
-    ) {
-        Box(contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.padding(4.dp)) {
-            // Placeholder for the image
-            Image(
-                painter = painterResource(id = chartImg),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp))
-            )
-        }
-    }
-}
+
+

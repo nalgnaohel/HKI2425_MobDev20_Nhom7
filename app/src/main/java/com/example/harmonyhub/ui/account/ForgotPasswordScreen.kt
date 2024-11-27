@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +38,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.harmonyhub.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 
 private val gradientBackground = Brush.verticalGradient(
@@ -56,22 +58,19 @@ private val gradientBackground = Brush.verticalGradient(
 fun ForgotPasswordScreen(
     onBackButtonClicked: () -> Unit,
     onVerifyButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit
+    onRegisterButtonClicked: () -> Unit,
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var isValidEmail by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            },
+            .clickable { focusManager.clearFocus() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -122,8 +121,11 @@ fun ForgotPasswordScreen(
             onValueChange = {
                 email = it
                 isValidEmail = isValidEmail(email)
-                errorMessage = "" // Xóa thông báo lỗi khi người dùng nhập email
             },
+            textStyle = TextStyle(
+                fontFamily = NotoSans,
+                fontSize = 16.sp
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
@@ -141,37 +143,14 @@ fun ForgotPasswordScreen(
                 imeAction = ImeAction.Done
             )
         )
-        if (!isValidEmail || errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = errorMessage.ifEmpty { "Định dạng email không hợp lệ" },
-                color = Color.Red,
-                fontFamily = NotoSans,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .align(Alignment.Start)
-            )
-        }
 
         Spacer(modifier = Modifier.height(50.dp))
 
         Button(
             onClick = {
-                when {
-                    email.isEmpty() -> {
-                        errorMessage = "Vui lòng nhập đầy đủ thông tin"
-                        isValidEmail = false
-                    }
-
-                    !isValidEmail -> {
-                        errorMessage = "Định dạng email không hợp lệ"
-                    }
-
-                    else -> {
-                        errorMessage = ""
-                        onVerifyButtonClicked()
-                    }
+                if (isValidEmail(email)) {
+                    authenticationViewModel.resetPassword(email)
+                    showDialog = true
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -210,6 +189,36 @@ fun ForgotPasswordScreen(
                 color = Color(0xFF00FAF2)
             )
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text("Thông báo", fontWeight = FontWeight.Bold, fontFamily = NotoSans)
+            },
+            text = {
+                Text(
+                    "Kiểm tra Gmail của bạn để đặt lại mật khẩu.",
+                    fontFamily = NotoSans,
+                    fontSize = 16.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onVerifyButtonClicked() // Chuyển hướng đến trang đăng nhập
+                    }
+                ) {
+                    Text("OK",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF00FAF2))
+                }
+            }
+        )
     }
 }
 

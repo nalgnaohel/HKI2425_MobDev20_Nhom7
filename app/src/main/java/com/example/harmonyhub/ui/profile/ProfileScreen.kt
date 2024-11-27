@@ -1,11 +1,11 @@
 package com.example.harmonyhub.ui.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +24,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,101 +43,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
-
-private val gradientBackground = Brush.verticalGradient(
-    colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBackButtonClicked: () -> Unit,
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
-    val username = remember { mutableStateOf("Thomas") }
+
     val profileImage = remember { mutableIntStateOf(R.drawable.hip) }
+    val username = userDataViewModel.userName.observeAsState()
+    val email = userDataViewModel.email.observeAsState()
 
-    val isNameDialogOpen = remember { mutableStateOf(false) }
     val isImageDialogOpen = remember { mutableStateOf(false) }
-
-    if (isNameDialogOpen.value) {
-        AlertDialog(
-            onDismissRequest = { isNameDialogOpen.value = false },
-            title = {
-                Text(
-                    text = "Đổi tên",
-                    style = TextStyle(
-                        fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
-                )
-            },
-            text = {
-                TextField(
-                    value = username.value,
-                    onValueChange = { newName -> username.value = newName },
-                    placeholder = { Text("Tên mới") },
-                    singleLine = true,
-                    maxLines = 1,
-                    textStyle = TextStyle(
-                        fontFamily = NotoSans,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    colors = textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        containerColor = Color.Gray.copy(alpha = 0.2f)
-                    ),
-                )
-            },
-
-            confirmButton = {
-                Button(
-                    onClick = { isNameDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
-
-                    ) {
-                    Text(
-                        text = "Lưu",
-                        fontFamily = NotoSans,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = { isNameDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
-                ) {
-                    Text(
-                        text = "Hủy",
-                        fontFamily = NotoSans,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            }
-        )
-    }
 
     if (isImageDialogOpen.value) {
         AlertDialog(
@@ -149,40 +70,29 @@ fun ProfileScreen(
                 Text("Chọn ảnh từ thư viện hoặc máy của bạn.")
             },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = { isImageDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
                 ) {
                     Text(
-                        text = "Lưu ảnh mới",
+                        text = "Lưu",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = Color(0xFF00FAF2)
                     )
+
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = { isImageDialogOpen.value = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(gradientBackground, shape = RoundedCornerShape(32.dp)),
                 ) {
                     Text(
                         text = "Hủy",
                         fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = Color(0xFF00FAF2)
                     )
                 }
             }
@@ -195,7 +105,6 @@ fun ProfileScreen(
             .padding(8.dp)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
-                    isNameDialogOpen.value = false
                     isImageDialogOpen.value = false
                     focusManager.clearFocus()
                 })
@@ -254,7 +163,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 // Khi nhấn vào tên, mở hộp thoại thay đổi tên
                 Text(
-                    text = username.value,
+                    text = username.value.toString(),
                     style = TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
@@ -263,7 +172,6 @@ fun ProfileScreen(
                     ),
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures(onTap = {
-                            isNameDialogOpen.value = true
                         })
                     }
                 )
@@ -285,7 +193,7 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "thomas.todd@gmail.com",
+                text = email.value.toString(),
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontSize = 18.sp,

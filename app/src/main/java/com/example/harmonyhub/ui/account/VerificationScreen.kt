@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

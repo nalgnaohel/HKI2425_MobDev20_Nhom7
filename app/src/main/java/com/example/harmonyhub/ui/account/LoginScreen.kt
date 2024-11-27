@@ -1,4 +1,4 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -104,7 +104,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            textStyle = TextStyle(fontFamily = NotoSans),
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Account", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {
@@ -133,7 +133,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            textStyle = TextStyle(fontFamily = NotoSans),
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {
@@ -227,7 +227,7 @@ fun LoginScreen(
             color = Color(0xFF00FAF2),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .clickable { /* TODO: Handle forgot password */ },
+                .clickable { onForgotPasswordButtonClicked() },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
