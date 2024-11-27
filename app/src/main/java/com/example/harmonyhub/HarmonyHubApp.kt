@@ -3,6 +3,7 @@ package com.example.harmonyhub
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -51,6 +52,7 @@ import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
+import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -95,8 +97,7 @@ fun HarmonyHubApp(
     )
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (currentScreen !in listOf(
                     HarmonyHubScreen.Login,
@@ -109,10 +110,21 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Play
                 )
             ) {
-                BottomNavigationBar(navController = navController)
+                Column {
+                    NowPlayingBar(
+                        songName = "Closer",
+                        artistName = "The Chainsmokers, Halsey",
+                        isPlaying = true,
+                        onPlayPauseClick = { /* Handle play/pause logic */ },
+                        onNextClick = { /* Handle next song logic */ },
+                        onPreviousClick = { /* Handle previous song logic */ },
+                        onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
+                    )
+                    BottomNavigationBar(navController = navController)
+                }
             }
-        },
-    ) { innerPadding ->
+        }
+    )  { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
