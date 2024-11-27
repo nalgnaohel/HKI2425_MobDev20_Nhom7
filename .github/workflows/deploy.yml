@@ -30,11 +30,17 @@ jobs:
       - name: Execute Gradle command - assembleDebug
         run: ./gradlew assembleDebug
 
+      - name: Get app name
+        id: app-name
+        run: |
+          APP_NAME=$(echo <.build/apk/debug/app-debug.apk)
+          echo "::set-output name=APP_NAME::${APP_NAME}"
+
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: app/build/apk/debug/app-debug.apk
+          file: ${{ steps.app-name.outputs.APP_NAME }}
           releaseNotes: ${{ inputs.release_notes }}
