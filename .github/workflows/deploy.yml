@@ -33,7 +33,7 @@ jobs:
       - name: Get app name
         id: app-name
         run: |
-          APP_NAME=$(echo <.build/apk/debug/app-debug.apk)
+          APP_NAME=$(echo </build/intermediates/apk/debug/app-debug.apk)
           echo "::set-output name=APP_NAME::${APP_NAME}"
 
       - name: Upload Artifact to Firebase App Distribution
