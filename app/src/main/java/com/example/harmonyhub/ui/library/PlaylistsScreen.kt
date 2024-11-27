@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +34,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,14 +45,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Playlist
 import com.example.harmonyhub.ui.components.PlaylistCard
 import com.example.harmonyhub.ui.components.contains
@@ -60,7 +68,29 @@ import com.example.harmonyhub.ui.theme.NotoSans
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
     onPlaylistClicked: (String) -> Unit,
+    userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
+
+    val dataFetchingState = userDataViewModel.dataFetchingState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(dataFetchingState.value) {
+        when (dataFetchingState.value) {
+            is DataFetchingState.Success -> {
+                // Thành công
+                val message = (dataFetchingState.value as DataFetchingState.Success).data
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show()
+
+            }
+            is DataFetchingState.Error -> {
+                // Lỗi
+                val message = (dataFetchingState.value as DataFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+            else -> { }
+        }
+    }
+
     var query by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
@@ -247,6 +277,7 @@ fun PlaylistsScreen(
                 }
             }
         }
+
         // Dialog để nhập tên playlist mới
         if (showDialog) {
             AlertDialog(
@@ -298,7 +329,8 @@ fun PlaylistsScreen(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            onPlaylistClicked(newPlaylistName)
+//                            onPlaylistClicked(newPlaylistName)
+                            userDataViewModel.setAlbums(newPlaylistName)
                             showDialog = false
                         },
                         enabled = newPlaylistName.isNotBlank()
@@ -325,7 +357,11 @@ fun PlaylistsScreen(
                 }
             )
         }
-
-
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PlaylistsScreenPreview() {
+    PlaylistsScreen(onBackButtonClicked = {}, onPlaylistClicked = {})
 }
