@@ -16,11 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,12 +37,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
@@ -52,17 +49,16 @@ import com.example.harmonyhub.ui.theme.NotoSans
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistSongListScreen(
+fun AddSongToPlaylistScreen(
     playlistName: String,
     onBackButtonClicked: () -> Unit,
-    onAddButtonClicked: () -> Unit,
 ) {
     val allSongs: List<Song> = SongRepository.allSongs
 
     var query by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-    var showDialog by remember { mutableStateOf(false) }
+    // Lọc danh sách bài hát theo từ khóa
     val searchResults = allSongs.filter { it.contains(query, ignoreCase = true) }
 
     Column(
@@ -95,7 +91,7 @@ fun PlaylistSongListScreen(
                     )
                 }
                 Text(
-                    text = playlistName,
+                    text = "Thêm bài hát vào playlist",
                     style = TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
@@ -105,26 +101,22 @@ fun PlaylistSongListScreen(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            Row {
-                IconButton(onClick = { onAddButtonClicked() }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                IconButton(onClick = { /* Handle sort button click */ }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
+
+            IconButton(onClick = {
+                /* Handle saving playlist when clicked */
+                onBackButtonClicked()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Done",
+                    tint = Color(0xFF00FAF2),
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Ô tìm kiếm
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -158,50 +150,21 @@ fun PlaylistSongListScreen(
                 }
             },
         )
+        Text(
+            text = if (query.isEmpty()) "Phát gần đây" else "Kết quả tìm kiếm",
+            fontFamily = NotoSans,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(8.dp)
+        )
 
-        // Thông tin số bài hát
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${searchResults.size} bài hát",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 20.sp,
-                    color = Color.Gray
-                )
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Row {
-                IconButton(onClick = { /* Play Action */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icons8_circled_play_64),
-                        contentDescription = "Play",
-                        tint = Color(0xFF00FAF2),
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
-                IconButton(onClick = { /* Share Action */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = Color.White,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            }
-        }
-
-        // Danh sách bài hát
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song, more = Icons.Default.MoreVert, onSongClick = {})
+                SongCard(song = song, more = Icons.Default.AddCircle, onSongClick = {})
             }
         }
     }
+
 }

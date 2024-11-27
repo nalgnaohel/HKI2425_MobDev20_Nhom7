@@ -94,7 +94,6 @@ fun ArtistsFollowingScreen(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Nghệ sĩ đang theo dõi",
                 style = TextStyle(
@@ -114,6 +113,7 @@ fun ArtistsFollowingScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Ô tìm kiếm
         TextField(

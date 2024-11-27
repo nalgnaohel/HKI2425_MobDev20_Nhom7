@@ -21,13 +21,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class Song(val id: String,val name: String, val artist: String, val imageResId: Int, val url: String)
+data class Song(
+    val id: String,
+    val name: String,
+    val artist: String,
+    val imageResId: Int,
+    val url: String
+)
 
 fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
     return this.name.contains(query, ignoreCase) || this.artist.contains(query, ignoreCase)
@@ -36,13 +43,14 @@ fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
 @Composable
 fun SongCard(
     song: Song,
+    more: ImageVector,
     onSongClick: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable{onSongClick(song.id)},
+            .clickable { onSongClick(song.id) },
 
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -79,9 +87,9 @@ fun SongCard(
             // Xử lý menu hành động tại đây
         }) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
+                imageVector = more,
                 contentDescription = "More Options",
-                tint = Color.Gray
+                tint = if (more == Icons.Default.MoreVert) Color.Gray else Color.White
             )
         }
     }

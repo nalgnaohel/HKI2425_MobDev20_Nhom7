@@ -1,8 +1,6 @@
 package com.example.harmonyhub.ui.library
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,19 +55,15 @@ import com.example.harmonyhub.ui.components.PlaylistCard
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
-    onAddNewPlaylistClicked: (String) -> Unit,
     onPlaylistClicked: (String) -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
-
-    var isDeleteDialogVisible by remember { mutableStateOf(false) }
-    var selectedPlaylist by remember { mutableStateOf<Playlist?>(null) }
 
     val focusManager = LocalFocusManager.current
 
@@ -106,7 +100,6 @@ fun PlaylistsScreen(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Danh sách phát của tôi",
                 style = TextStyle(
@@ -205,13 +198,6 @@ fun PlaylistsScreen(
                         PlaylistCard(
                             playlist = playlist,
                             onClick = { onPlaylistClicked(playlist.name) },
-                            modifier = Modifier.combinedClickable (
-                                onClick = { onPlaylistClicked(playlist.name) },
-                                onLongClick = {
-                                    selectedPlaylist = playlist
-                                    isDeleteDialogVisible = true
-                                }
-                            )
                         )
                     }
                     // Nếu hàng có lẻ số nghệ sĩ, bạn có thể thêm một khoảng trống để cân đối
@@ -267,7 +253,7 @@ fun PlaylistsScreen(
                 onDismissRequest = { showDialog = false },
                 title = {
                     Text(
-                        "Tạo Playlist Mới",
+                        "Tạo playlist mới",
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold
                     )
@@ -278,7 +264,7 @@ fun PlaylistsScreen(
                         onValueChange = { newPlaylistName = it },
                         placeholder = {
                             Text(
-                                "Tên Playlist",
+                                "Tên playlist",
                                 fontFamily = NotoSans,
                                 fontSize = 16.sp
                             )
@@ -312,16 +298,17 @@ fun PlaylistsScreen(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            onAddNewPlaylistClicked(newPlaylistName)
+                            onPlaylistClicked(newPlaylistName)
                             showDialog = false
-                        }
+                        },
+                        enabled = newPlaylistName.isNotBlank()
                     ) {
                         Text(
                             "OK",
                             fontFamily = NotoSans,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF00FAF2)
+                            color = if (newPlaylistName.isNotBlank()) Color(0xFF00FAF2) else Color.Gray
                         )
                     }
                 },
@@ -339,28 +326,6 @@ fun PlaylistsScreen(
             )
         }
 
-        // Dialog xác nhận xóa playlist
-        if (isDeleteDialogVisible) {
-            AlertDialog(
-                onDismissRequest = { isDeleteDialogVisible = false },
-                title = { Text("Xóa playlist") },
-                text = { Text("Bạn có chắc chắn muốn xóa playlist này?") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        selectedPlaylist?.let {
-                            // Logic xóa playlist ở đây
-                        }
-                        isDeleteDialogVisible = false
-                    }) {
-                        Text("Xóa")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { isDeleteDialogVisible = false }) {
-                        Text("Hủy")
-                    }
-                }
-            )
-        }
+
     }
 }

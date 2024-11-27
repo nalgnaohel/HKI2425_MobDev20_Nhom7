@@ -114,7 +114,7 @@ fun ArtistScreen(
                         painter = painterResource(id = R.drawable.icons8_circled_play_64),
                         contentDescription = "Play",
                         tint = Color(0xFF00FAF2),
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(50.dp)
                     )
                 }
                 IconButton(onClick = { /* Share Action */ }) {
@@ -122,7 +122,7 @@ fun ArtistScreen(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Share",
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(25.dp)
                     )
                 }
             }
@@ -144,7 +144,11 @@ fun ArtistScreen(
 
                 LazyColumn {
                     items(songs) { song ->
-                        SongCard(song = song, onSongClick = onSongClick)
+                        SongCard(
+                            song = song,
+                            more = Icons.Default.MoreVert,
+                            onSongClick = onSongClick
+                        )
                     }
                 }
             }

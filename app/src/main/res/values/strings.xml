@@ -17,5 +17,6 @@
     <string name="verification">Verification</string>
     <string name="newPassword">New Password</string>
     <string name="playlistSongList">Playlist Song List</string>
+    <string name="addSongToPlaylist">Add Song To Playlist</string>
 
 </resources>

@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -201,6 +203,7 @@ fun LibraryScreen(
                 items(SongRepository.allSongs.take(5)) { song ->
                     SongCard(
                         song = song,
+                        more = Icons.Default.MoreVert,
                         onSongClick = { onPlaySongClicked(song.id) }
                     )
                 }

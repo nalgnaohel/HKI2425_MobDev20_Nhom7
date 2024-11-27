@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -48,6 +49,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun SongList(
     title: String, // Tiêu đề trang
+    more: ImageVector, // Hành động thêm
     songs: List<Song>, // Danh sách bài hát
     onBackButtonClicked: () -> Unit, // Xử lý nút Back
 ) {
@@ -82,7 +84,6 @@ fun SongList(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
                 style = TextStyle(
@@ -168,7 +169,7 @@ fun SongList(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song , onSongClick = {})
+                SongCard(song = song , more = more, onSongClick = {})
             }
         }
     }
