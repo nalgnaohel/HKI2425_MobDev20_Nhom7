@@ -1,5 +1,6 @@
-package com.example.harmonyhub.ui.login
+package com.example.harmonyhub.ui.account
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,21 +8,29 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.AuthState
+import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
+import com.example.harmonyhub.ui.theme.NotoSans
 
 
 private val gradientBackground = Brush.verticalGradient(
@@ -32,12 +41,34 @@ private val gradientBackground = Brush.verticalGradient(
 @Composable
 fun LoginScreen(
     onLoginButtonClicked: () -> Unit = {},
-    onRegisterButtonClicked: () -> Unit = {}
+    onRegisterButtonClicked: () -> Unit = {},
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel(),
+    onForgotPasswordButtonClicked: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) } // Trạng thái hiển thị mật khẩu
     val focusManager = LocalFocusManager.current
+
+    val authState = authenticationViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                onLoginButtonClicked()
+            }
+            is AuthState.Error -> {
+                val errorMessage = (authState.value as AuthState.Error).message
+                // Show error message to the user
+                // For example, you can use a Toast or a Snackbar
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+            else -> { }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +76,6 @@ fun LoginScreen(
             .clickable { focusManager.clearFocus() }, // Clear focus when tapping outside
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
 
         Spacer(modifier = Modifier.height(80.dp))
 
@@ -61,6 +91,7 @@ fun LoginScreen(
         // Title
         Text(
             text = "Login to your account",
+            fontFamily = NotoSans,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -73,8 +104,9 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Account", color = Color.Gray) },
+            placeholder = { Text("Account", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.icons8_google_48), // Replace with your email icon
@@ -101,8 +133,9 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Password", color = Color.Gray) },
+            placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.icons8_google_48), // Replace with your password icon
@@ -112,13 +145,15 @@ fun LoginScreen(
             },
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.icons8_hide_60),
+                    painter = painterResource(id = if (passwordVisible) R.drawable.icons8_hide_60 else R.drawable.icons8_eye_60), // Thay đổi biểu tượng mắt
                     contentDescription = "Toggle Password Visibility",
                     tint = Color.Gray,
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable {
+                        passwordVisible = !passwordVisible // Chuyển đổi trạng thái hiển thị mật khẩu
+                    }
                 )
             },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(), // Thay đổi cách hiển thị mật khẩu
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF00FAF2),
                 unfocusedBorderColor = Color.Gray,
@@ -150,6 +185,7 @@ fun LoginScreen(
             )
             Text(
                 text = "Remember me",
+                fontFamily = NotoSans,
                 color = Color.Gray,
                 modifier = Modifier.padding(start = 8.dp)
             )
@@ -160,7 +196,7 @@ fun LoginScreen(
         // Login Button
         Button(
             onClick = {
-                onLoginButtonClicked()
+                authenticationViewModel.login(email, password)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
@@ -172,7 +208,13 @@ fun LoginScreen(
             contentPadding = PaddingValues(0.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = "Log in", color = Color.White, fontSize = 18.sp)
+            Text(
+                text = "Log in",
+                fontFamily = NotoSans,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 18.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -180,55 +222,14 @@ fun LoginScreen(
         // Forgot Password
         Text(
             text = AnnotatedString("Forgot the password?"),
+            fontFamily = NotoSans,
+            fontSize = 14.sp,
             color = Color(0xFF00FAF2),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .clickable { /* TODO: Handle forgot password */ },
+                .clickable { onForgotPasswordButtonClicked() },
         )
 
-//        Spacer(modifier = Modifier.height(16.dp))
-
-        // Or Continue With
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
-//            Text(
-//                text = " or continue with ",
-//                color = Color.Gray,
-//                modifier = Modifier.padding(horizontal = 8.dp)
-//            )
-//            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
-//        }
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-
-//        // Social Media Icons
-//        Row(
-//            horizontalArrangement = Arrangement.spacedBy(24.dp),
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        ) {
-//            Icon(
-//                painter = painterResource(id =R.drawable.icons8_google_48), // Replace with your Google icon
-//                contentDescription = "Google",
-//                modifier = Modifier.size(40.dp),
-//                tint = Color.Unspecified
-//            )
-//            Icon(
-//                painter = painterResource(id = R.drawable.icons8_google_48), // Replace with your Facebook icon
-//                contentDescription = "Facebook",
-//                modifier = Modifier.size(40.dp),
-//                tint = Color.Unspecified
-//            )
-//            Icon(
-//                painter = painterResource(id = R.drawable.icons8_google_48), // Replace with your Apple icon
-//                contentDescription = "Apple",
-//                modifier = Modifier.size(40.dp),
-//                tint = Color.Unspecified
-//            )
-//        }
         Spacer(modifier = Modifier.height(8.dp))
 
         // Sign Up
@@ -236,9 +237,16 @@ fun LoginScreen(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Don’t have an account? ", color = Color.Gray)
+            Text(
+                text = "Don’t have an account? ",
+                fontFamily = NotoSans,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
             Text(
                 text = AnnotatedString("Sign Up"),
+                fontFamily = NotoSans,
+                fontSize = 14.sp,
                 modifier = Modifier.clickable {
                     onRegisterButtonClicked()
                 },
@@ -253,3 +261,4 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen()
 }
+

@@ -22,12 +22,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
@@ -57,8 +59,12 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
+    onPlaylistClicked: (String) -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
+    var newPlaylistName by remember { mutableStateOf("") }
+
     val focusManager = LocalFocusManager.current
 
     val allPlaylists = listOf(
@@ -66,7 +72,6 @@ fun PlaylistsScreen(
         Playlist("Playlist 2", R.drawable.v),
         Playlist("Playlist 3", R.drawable.v),
         Playlist("Playlist 4", R.drawable.v),
-        Playlist("Playlist 5", R.drawable.v),
     )
     // Lọc danh sách bài hát theo từ khóa
     val searchResults = allPlaylists.filter { it.contains(query, ignoreCase = true) }
@@ -95,9 +100,8 @@ fun PlaylistsScreen(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Danh sách phát của bạn",
+                text = "Danh sách phát của tôi",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.Bold,
@@ -106,7 +110,7 @@ fun PlaylistsScreen(
                 )
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /* Handle settings button click */ }) {
+            IconButton(onClick = { showDialog = true }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add",
@@ -192,8 +196,8 @@ fun PlaylistsScreen(
                 ) {
                     playlistPair.forEach { playlist ->
                         PlaylistCard(
-                            playlistName = playlist.name,
-                            playlistImg = playlist.img
+                            playlist = playlist,
+                            onClick = { onPlaylistClicked(playlist.name) },
                         )
                     }
                     // Nếu hàng có lẻ số nghệ sĩ, bạn có thể thêm một khoảng trống để cân đối
@@ -201,7 +205,7 @@ fun PlaylistsScreen(
                         Surface(
                             modifier = Modifier
                                 .size(width = 155.dp, height = 200.dp)
-                                .clickable {  },
+                                .clickable { },
                             color = Color.Transparent
                         ) {
                             Column(
@@ -210,7 +214,9 @@ fun PlaylistsScreen(
                                 modifier = Modifier.padding(4.dp)
                             ) {
                                 Box(
-                                    modifier = Modifier.size(width = 155.dp, height = 145.dp),
+                                    modifier = Modifier
+                                        .size(width = 155.dp, height = 145.dp)
+                                        .clickable { showDialog = true },
                                 ) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.add),
@@ -241,5 +247,85 @@ fun PlaylistsScreen(
                 }
             }
         }
+        // Dialog để nhập tên playlist mới
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = {
+                    Text(
+                        "Tạo playlist mới",
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    TextField(
+                        value = newPlaylistName,
+                        onValueChange = { newPlaylistName = it },
+                        placeholder = {
+                            Text(
+                                "Tên playlist",
+                                fontFamily = NotoSans,
+                                fontSize = 16.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp)),
+                        singleLine = true,
+                        maxLines = 1,
+                        textStyle = TextStyle(fontFamily = NotoSans, fontSize = 20.sp),
+                        colors = textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            containerColor = Color.Gray.copy(alpha = 0.2f)
+                        ),
+                        trailingIcon = {
+                            // Hiển thị icon xóa nếu TextField có dữ liệu
+                            if (newPlaylistName.isNotEmpty()) {
+                                IconButton(onClick = { newPlaylistName = "" }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = "Clear"
+                                    )
+                                }
+                            }
+                        },
+                    )
+                },
+
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onPlaylistClicked(newPlaylistName)
+                            showDialog = false
+                        },
+                        enabled = newPlaylistName.isNotBlank()
+                    ) {
+                        Text(
+                            "OK",
+                            fontFamily = NotoSans,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (newPlaylistName.isNotBlank()) Color(0xFF00FAF2) else Color.Gray
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text(
+                            "Hủy",
+                            fontFamily = NotoSans,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF00FAF2)
+                        )
+                    }
+                }
+            )
+        }
+
+
     }
 }

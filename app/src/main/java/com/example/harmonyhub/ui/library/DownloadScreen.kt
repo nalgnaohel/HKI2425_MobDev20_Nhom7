@@ -1,8 +1,9 @@
 package com.example.harmonyhub.ui.library
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
-import com.example.harmonyhub.R
-import com.example.harmonyhub.SongRepository
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 
 @Composable
@@ -12,6 +13,7 @@ fun DownloadScreen(onBackButtonClicked: () -> Unit)
 
     SongList(
         title = "Tải xuống",
+        more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
     )

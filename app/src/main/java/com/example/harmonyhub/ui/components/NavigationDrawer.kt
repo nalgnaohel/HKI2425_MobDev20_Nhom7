@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +40,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 import kotlinx.coroutines.launch
 import java.time.format.TextStyle
@@ -91,8 +94,11 @@ fun AppScaffoldWithDrawer(
 fun DrawerContent(
     onProfileClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
-    onLogoutClicked: () -> Unit
+    onLogoutClicked: () -> Unit,
+    userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
+    val username = userDataViewModel.userName.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -116,7 +122,7 @@ fun DrawerContent(
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    text = "Thomas", // Thay bằng tên người dùng thực tế
+                    text = username.value.toString(), // Thay bằng tên người dùng thực tế
                     style = androidx.compose.ui.text.TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,

@@ -48,6 +48,7 @@ data class PopularItem(
     val cover: List<Avatar>,//album
     val artists: List<Artist>,//album
     val visuals: Avatars? = null,//Artist
+    val images: List<List<Image>>? = null
 
 
 )
@@ -77,6 +78,36 @@ data class Response(
 
 data class ResponseHomeScreenData(
     val listPopularArtist: MutableList<ArtistOut>?,
-    val listPopularAlbums: MutableList<AlbumOut>?
+    val listPopularAlbums: MutableList<AlbumOut>?,
+    val listChart: MutableList<ChartOut>?
 )
 
+// Lớp cho từng playlist
+data class PlaylistItem(
+    val type: String,
+    val id: String,
+    val name: String,
+    val shareUrl: String,
+    val description: String,
+    val owner: Owner,
+    val images: List<List<Image>>
+)
+
+// Lớp owner chứa thông tin về người sở hữu playlist
+data class Owner(
+    val name: String,
+    val type: String
+)
+
+// Lớp hình ảnh của playlist
+data class Image(
+    val url: String,
+    val width: Int?,
+    val height: Int?
+)
+
+data class ChartOut(
+    val name: String,
+    val image: String?,
+    val id: String
+)

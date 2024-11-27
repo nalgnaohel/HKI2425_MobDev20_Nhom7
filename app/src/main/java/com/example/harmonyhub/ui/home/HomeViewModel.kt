@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.harmonyhub.HarmonyHubApplication
-import com.example.harmonyhub.data.network.APIService
+import com.example.harmonyhub.MyApplication
 import com.example.harmonyhub.data.repository.HomeScreenRepo
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ class HomeViewModel(
     }
 
     fun fetchHomePageData() {
-        viewModelScope.launch {
+        viewModelScope.launch (Dispatchers.IO){
             _state.value = HomeUIState.Loading
             val result = homeScreenRepo.updatePopularItem()
 
@@ -40,7 +40,7 @@ class HomeViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as HarmonyHubApplication)
+                val application = (this[APPLICATION_KEY] as MyApplication)
                 val homeRepository = application.container
                 HomeViewModel(homeScreenRepo = homeRepository)
             }
