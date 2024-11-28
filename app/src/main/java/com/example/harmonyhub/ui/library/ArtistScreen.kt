@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -131,7 +132,7 @@ fun ArtistScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (songs.isNotEmpty()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp).testTag("Song List")) {
                 Text(
                     text = "Popular releases",
                     color = Color.White,
