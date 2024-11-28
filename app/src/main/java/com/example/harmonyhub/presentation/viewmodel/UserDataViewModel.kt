@@ -23,7 +23,7 @@ class UserDataViewModel @Inject constructor(
 
     init {
         getUserInfor()
-        _dataFetchingState.value = DataFetchingState.Pending
+        getAlbums()
     }
 
     fun getUserInfor() {
@@ -33,8 +33,14 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
-    fun setAlbums(albumName: String) {
-        userRepo.setAlbums(albumName, callback = {
+    fun getAlbums() {
+        userRepo.getAlbums(callback = {
+            _dataFetchingState.value = it
+        })
+    }
+
+    fun setAlbum(albumName: String) {
+        userRepo.setAlbum(albumName, callback = {
             _dataFetchingState.value = it
         })
     }

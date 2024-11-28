@@ -73,11 +73,26 @@ class UserDataRepoImpl @Inject constructor(
             }
     }
 
-    override fun getAlbums(callback: (List<String?>) -> Unit) {
+    override fun getAlbums(callback: (DataFetchingState) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val albumsRef = getAlbumsRef(userId)
 
+        albumsRef.get()
+            .addOnSuccessListener { result ->
+                val albums = mutableListOf<String?>()
+                for (document in result) {
+                    Log.d("album", "${document.id} => ${document.data}")
+                    albums.add(document.getString("albumName"))
+                }
+                callback(DataFetchingState.Success(albums))
+            }
+            .addOnFailureListener { exception ->
+                Log.d("album", "Error getting documents: ", exception)
+                callback(DataFetchingState.Error("Failed to get albums"))
+            }
     }
 
-    override fun setAlbums(albumName: String, callback: (DataFetchingState) -> Unit) {
+    override fun setAlbum(albumName: String, callback: (DataFetchingState) -> Unit) {
         val userId = auth.currentUser?.uid
         val albumRef = getAlbumRef(userId, albumName)
 
@@ -88,7 +103,7 @@ class UserDataRepoImpl @Inject constructor(
         albumRef.set(albumMap)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully written!")
-                callback(DataFetchingState.Success("Album added successfully"))
+                getAlbums(callback)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error writing document", e)

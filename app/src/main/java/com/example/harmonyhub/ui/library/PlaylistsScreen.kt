@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -74,15 +75,22 @@ fun PlaylistsScreen(
     val dataFetchingState = userDataViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
 
+    val allPlaylists = remember {mutableListOf<Playlist>()}
+
     LaunchedEffect(dataFetchingState.value) {
         when (dataFetchingState.value) {
             is DataFetchingState.Success -> {
-                val message = (dataFetchingState.value as DataFetchingState.Success).data
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show()
+                allPlaylists.clear()
+                val albums = (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
+                albums.forEach { albumName ->
+                    if (albumName != null) {
+                        allPlaylists.add(Playlist(albumName, R.drawable.v))
+                        Log.d("Album", "Album name: $albumName")
+                    }
+                }
                 userDataViewModel.resetDataFetchingState()
             }
             is DataFetchingState.Error -> {
-
                 val message = (dataFetchingState.value as DataFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 userDataViewModel.resetDataFetchingState()
@@ -97,12 +105,6 @@ fun PlaylistsScreen(
 
     val focusManager = LocalFocusManager.current
 
-    val allPlaylists = listOf(
-        Playlist("Playlist 1", R.drawable.v),
-        Playlist("Playlist 2", R.drawable.v),
-        Playlist("Playlist 3", R.drawable.v),
-        Playlist("Playlist 4", R.drawable.v),
-    )
     // Lọc danh sách bài hát theo từ khóa
     val searchResults = allPlaylists.filter { it.contains(query, ignoreCase = true) }
     Column(
@@ -330,7 +332,8 @@ fun PlaylistsScreen(
                     TextButton(
                         onClick = {
 //                            onPlaylistClicked(newPlaylistName)
-                            userDataViewModel.setAlbums(newPlaylistName)
+
+                            userDataViewModel.setAlbum(newPlaylistName)
                             showDialog = false
                         },
                         enabled = newPlaylistName.isNotBlank()
