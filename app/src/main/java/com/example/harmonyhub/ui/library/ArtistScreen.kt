@@ -78,6 +78,7 @@ fun ArtistScreen(
                     .fillMaxWidth()
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
+                    .testTag("Song Name")
             ) {
                 Text(
                     text = artistName,
@@ -169,7 +170,7 @@ fun ArtistScreen(
 @Composable
 fun ArtistScreenPreview() {
     ArtistScreen(
-        artist = "The Chainsmokers, Charlee",
+        artist = "Jack - J97",
         onSongClick = {}
     )
 }

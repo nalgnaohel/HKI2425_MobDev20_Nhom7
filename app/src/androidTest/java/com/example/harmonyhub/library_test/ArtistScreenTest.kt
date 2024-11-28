@@ -21,7 +21,7 @@ class ArtistScreenTest {
         composeTestRule.setContent {
             HarmonyHubTheme {
                 ArtistScreen(
-                    artist = "The Chainsmokers, Charlee",
+                    artist = "Jack - J97",
                     onSongClick = {}
                 )
             }
@@ -29,7 +29,7 @@ class ArtistScreenTest {
 
         // Kiểm tra tên nghệ sĩ được hiển thị
         composeTestRule
-            .onNodeWithText("The Chainsmokers, Charlee")
+            .onNodeWithTag("Song Name")
             .assertIsDisplayed()
 
         // Kiểm tra nút "Follow" được hiển thị
@@ -53,7 +53,7 @@ class ArtistScreenTest {
         composeTestRule.setContent {
             HarmonyHubTheme {
                 ArtistScreen(
-                    artist = "The Chainsmokers, Charlee",
+                    artist = "Jack - J97",
                     onSongClick = {}
                 )
             }
@@ -65,11 +65,11 @@ class ArtistScreenTest {
             .assertIsDisplayed()
 
         // Kiểm tra danh sách bài hát được hiển thị
-        val songTitles = listOf("Song 1", "Song 2", "Song 3") // Mock tên bài hát
+        val songTitles = listOf("Thiên Lý Ơi") // Mock tên bài hát
         songTitles.forEach { title ->
             composeTestRule
                 .onNodeWithText(title)
-//                .assertIsDisplayed()
+                .assertIsDisplayed()
         }
     }
 
