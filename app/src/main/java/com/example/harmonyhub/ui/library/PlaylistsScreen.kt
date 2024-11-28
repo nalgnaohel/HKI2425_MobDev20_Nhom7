@@ -237,7 +237,7 @@ fun PlaylistsScreen(
                         Surface(
                             modifier = Modifier
                                 .size(width = 155.dp, height = 200.dp)
-                                .clickable { },
+                                .clickable {  },
                             color = Color.Transparent
                         ) {
                             Column(
@@ -361,10 +361,4 @@ fun PlaylistsScreen(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PlaylistsScreenPreview() {
-    PlaylistsScreen(onBackButtonClicked = {}, onPlaylistClicked = {})
 }

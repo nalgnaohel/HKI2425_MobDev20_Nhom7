@@ -190,7 +190,8 @@ fun ArtistsFollowingScreen(
                     artistPair.forEach { artist ->
                         ArtistsCard(
                             artistName = artist.name,
-                            artistImg = artist.img,
+                            artistImg = "https://i.scdn.co/image/ab67616d00001e02fd8d7a8d96871e791cb1f626",
+                            idArtist = "111111",
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(8.dp)
