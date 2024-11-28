@@ -3,6 +3,7 @@ package com.example.harmonyhub
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -49,6 +50,9 @@ import com.example.harmonyhub.ui.account.LoginScreen
 import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
+import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
+import com.example.harmonyhub.ui.library.PlaylistSongListScreen
+import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -71,6 +75,8 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     ForgotPassword(title = R.string.forgotPassword, icon = Icons.Default.Info),
     Verification(title = R.string.verification, icon = Icons.Default.Info),
     NewPassword(title = R.string.newPassword, icon = Icons.Default.Lock),
+    PlaylistSongList(title = R.string.playlistSongList, icon = Icons.Default.AccountBox),
+    AddSongToPlaylist(title = R.string.addSongToPlaylist, icon = Icons.Default.AccountBox),
 }
 
 private val gradientBackground = Brush.verticalGradient(
@@ -91,8 +97,7 @@ fun HarmonyHubApp(
     )
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (currentScreen !in listOf(
                     HarmonyHubScreen.Login,
@@ -101,13 +106,25 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Verification,
                     HarmonyHubScreen.NewPassword,
                     HarmonyHubScreen.Profile,
-                    HarmonyHubScreen.Settings
+                    HarmonyHubScreen.Settings,
+                    HarmonyHubScreen.Play
                 )
             ) {
-                BottomNavigationBar(navController = navController)
+                Column {
+                    NowPlayingBar(
+                        songName = "Closer",
+                        artistName = "The Chainsmokers, Halsey",
+                        isPlaying = true,
+                        onPlayPauseClick = { /* Handle play/pause logic */ },
+                        onNextClick = { /* Handle next song logic */ },
+                        onPreviousClick = { /* Handle previous song logic */ },
+                        onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
+                    )
+                    BottomNavigationBar(navController = navController)
+                }
             }
-        },
-    ) { innerPadding ->
+        }
+    )  { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -253,7 +270,10 @@ fun HarmonyHubApp(
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
                     PlaylistsScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onPlaylistClicked = {
+                            navController.navigate(HarmonyHubScreen.PlaylistSongList.name)
+                        },
                     )
                 }
                 composable(route = HarmonyHubScreen.ArtistsFollowing.name) {
@@ -291,6 +311,19 @@ fun HarmonyHubApp(
                 }
                 composable(route = HarmonyHubScreen.Settings.name) {
                     SettingsScreen(
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
+                }
+                composable(route = HarmonyHubScreen.PlaylistSongList.name){
+                    PlaylistSongListScreen(
+                        playlistName = "Playlist 1",
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onAddButtonClicked = { navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) }
+                    )
+                }
+                composable(route = HarmonyHubScreen.AddSongToPlaylist.name) {
+                    AddSongToPlaylistScreen(
+                        playlistName = "Playlist 1",
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }

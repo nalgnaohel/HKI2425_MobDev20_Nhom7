@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -97,7 +98,7 @@ fun SearchScreen(
         )
 
         Text(
-            text = if (query.isEmpty()) "Tìm kiếm gần đây" else "Kết quả tìm kiếm",
+            text = if (query.isEmpty()) "Phát gần đây" else "Kết quả tìm kiếm",
             fontFamily = NotoSans,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -108,7 +109,7 @@ fun SearchScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song , onSongClick = {} )
+                SongCard(song = song , more = Icons.Default.MoreVert, onSongClick = {} )
             }
         }
     }

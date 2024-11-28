@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -24,11 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-fun SuggestionCard(songName: String, artistName: String) {
+fun SuggestionCard(songName: String, artistName: String, songId: String, songImg: String) {
     Surface(
         modifier = Modifier
             .size(width = 125.dp, height = 180.dp)
@@ -40,9 +43,14 @@ fun SuggestionCard(songName: String, artistName: String) {
             Box(
                 modifier = Modifier.size(width = 125.dp, height = 125.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.v),
-                    contentDescription = null,
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(songImg)
+                        .crossfade(true)
+                        .build(),
+                    error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                    placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                    contentDescription = "Photo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )

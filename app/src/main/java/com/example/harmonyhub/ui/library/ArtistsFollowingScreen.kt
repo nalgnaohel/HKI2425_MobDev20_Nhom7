@@ -94,7 +94,6 @@ fun ArtistsFollowingScreen(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Nghệ sĩ đang theo dõi",
                 style = TextStyle(
@@ -114,6 +113,7 @@ fun ArtistsFollowingScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Ô tìm kiếm
         TextField(
@@ -190,7 +190,8 @@ fun ArtistsFollowingScreen(
                     artistPair.forEach { artist ->
                         ArtistsCard(
                             artistName = artist.name,
-                            artistImg = artist.img,
+                            artistImg = "https://i.scdn.co/image/ab67616d00001e02fd8d7a8d96871e791cb1f626",
+                            idArtist = "111111",
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(8.dp)

@@ -104,7 +104,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            textStyle = TextStyle(fontFamily = NotoSans),
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Account", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {
@@ -133,7 +133,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            textStyle = TextStyle(fontFamily = NotoSans),
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             leadingIcon = {

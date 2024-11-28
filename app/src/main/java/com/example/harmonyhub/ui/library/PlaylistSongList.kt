@@ -1,7 +1,7 @@
 package com.example.harmonyhub.ui.library
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +16,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,13 +36,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.harmonyhub.R
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -47,17 +52,18 @@ import com.example.harmonyhub.ui.theme.NotoSans
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SongList(
-    title: String, // Tiêu đề trang
-    more: ImageVector, // Hành động thêm
-    songs: List<Song>, // Danh sách bài hát
-    onBackButtonClicked: () -> Unit, // Xử lý nút Back
+fun PlaylistSongListScreen(
+    playlistName: String,
+    onBackButtonClicked: () -> Unit,
+    onAddButtonClicked: () -> Unit,
 ) {
+    val allSongs: List<Song> = SongRepository.allSongs
+
     var query by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-    // Lọc danh sách bài hát theo từ khóa
-    val searchResults = songs.filter { it.contains(query, ignoreCase = true) }
+    var showDialog by remember { mutableStateOf(false) }
+    val searchResults = allSongs.filter { it.contains(query, ignoreCase = true) }
 
     Column(
         modifier = Modifier
@@ -75,29 +81,50 @@ fun SongList(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = { onBackButtonClicked() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.size(24.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onBackButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Text(
+                    text = playlistName,
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color.White
+                    )
                 )
             }
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = Color.White
-                )
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            Row {
+                IconButton(onClick = { onAddButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                IconButton(onClick = { /* Handle sort button click */ }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Ô tìm kiếm
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -148,28 +175,32 @@ fun SongList(
                 )
             )
             Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "Xóa tất cả",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 16.sp,
-                    color = Color(0xFF00FAF2),
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.clickable {
-
+            Row {
+                IconButton(onClick = { /* Play Action */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icons8_circled_play_64),
+                        contentDescription = "Play",
+                        tint = Color(0xFF00FAF2),
+                        modifier = Modifier.size(50.dp)
+                    )
                 }
-            )
+                IconButton(onClick = { /* Share Action */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
+                        tint = Color.White,
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+            }
         }
-
 
         // Danh sách bài hát
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song , more = more, onSongClick = {})
+                SongCard(song = song, more = Icons.Default.MoreVert, onSongClick = {})
             }
         }
     }

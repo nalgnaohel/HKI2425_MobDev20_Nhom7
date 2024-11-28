@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,6 +70,7 @@ fun RegisterScreen(
     var showVerificationDialog by remember { mutableStateOf(false) }
 
     val authState = authenticationViewModel.authState.observeAsState()
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
@@ -75,12 +78,14 @@ fun RegisterScreen(
             is AuthState.EmailNotVerified -> {
                 showVerificationDialog = true
             }
+
             is AuthState.Error -> {
                 val errorMessage = (authState.value as AuthState.Error).message
                 // Show error message to the
                 // For example, you can use a Toast or a Snackbar
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
+
             else -> {}
         }
     }
@@ -88,7 +93,13 @@ fun RegisterScreen(
     if (showVerificationDialog) {
         AlertDialog(
             onDismissRequest = { showVerificationDialog = false },
-            title = { Text("Xác thực tài khoản", fontFamily = NotoSans, fontWeight = FontWeight.Bold) },
+            title = {
+                Text(
+                    "Xác thực tài khoản",
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold
+                )
+            },
             text = {
                 Text(
                     "Xác thực Gmail của bạn trước khi đăng nhập.",
@@ -103,20 +114,23 @@ fun RegisterScreen(
                         onRegisterButtonClicked() // Điều hướng tới trang đăng nhập
                     }
                 ) {
-                    Text("OK",
+                    Text(
+                        "OK",
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = Color(0xFF00FAF2))
+                        color = Color(0xFF00FAF2)
+                    )
                 }
             }
         )
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .clickable { focusManager.clearFocus() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(80.dp))
@@ -145,7 +159,8 @@ fun RegisterScreen(
         // Email Input Field
         OutlinedTextField(
             value = email,
-            onValueChange = {email = it},
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+            onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Email ID", color = Color.Gray, fontFamily = NotoSans) },
             colors = OutlinedTextFieldDefaults.colors(
@@ -167,7 +182,7 @@ fun RegisterScreen(
         // Username input field
         OutlinedTextField(
             value = username,
-            onValueChange = {username = it},
+            onValueChange = { username = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Username", color = Color.Gray) },
             colors = OutlinedTextFieldDefaults.colors(
@@ -189,7 +204,8 @@ fun RegisterScreen(
         // Password Input Field
         OutlinedTextField(
             value = password,
-            onValueChange = {password = it},
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+            onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = Color.Gray, fontFamily = NotoSans) },
             trailingIcon = {
@@ -221,7 +237,8 @@ fun RegisterScreen(
         // Confirm Password Input Field
         OutlinedTextField(
             value = confirmPassword,
-            onValueChange = {confirmPassword = it},
+            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+            onValueChange = { confirmPassword = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Confirm Password", color = Color.Gray, fontFamily = NotoSans) },
             visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),

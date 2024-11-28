@@ -1,6 +1,5 @@
 package com.example.harmonyhub.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,44 +16,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.harmonyhub.ui.theme.NotoSans
 
-data class Playlist(val name: String, val img: Int)
-
-fun Playlist.contains(query: String, ignoreCase: Boolean = true): Boolean {
-    return this.name.contains(query, ignoreCase)
-}
-
 @Composable
-fun PlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AlbumCard(songName: String, albumImg: String, id : String, listArtist: List<String>) {
     Surface(
         modifier = Modifier
-            .size(width = 155.dp, height = 210.dp)
-            .clickable { onClick() },
+            .size(width = 125.dp, height = 180.dp)
+            .clickable {  },
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))
         {
             Box(
-                modifier = Modifier.size(width = 155.dp, height = 155.dp)
+                modifier = Modifier.size(width = 125.dp, height = 125.dp)
             ) {
-                Image(
-                    painter = painterResource(id = playlist.img),
-                    contentDescription = null,
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(albumImg)
+                        .crossfade(true)
+                        .build(),
+                    error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                    placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                    contentDescription = "Photo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = playlist.name,
+                text = songName,
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.SemiBold,
@@ -63,7 +63,16 @@ fun PlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = M
                 maxLines = 1,
                 overflow = Ellipsis
             )
-
+            val joinedNames = listArtist.joinToString(separator = ", ")
+            Text(
+                text = joinedNames,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 14.sp
+                ),
+                color = Color.Gray,
+                maxLines = 1, overflow = Ellipsis
+            )
         }
     }
 }

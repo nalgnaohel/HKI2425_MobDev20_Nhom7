@@ -1,7 +1,7 @@
 package com.example.harmonyhub.ui.library
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,13 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -47,17 +49,17 @@ import com.example.harmonyhub.ui.theme.NotoSans
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SongList(
-    title: String, // Tiêu đề trang
-    more: ImageVector, // Hành động thêm
-    songs: List<Song>, // Danh sách bài hát
-    onBackButtonClicked: () -> Unit, // Xử lý nút Back
+fun AddSongToPlaylistScreen(
+    playlistName: String,
+    onBackButtonClicked: () -> Unit,
 ) {
+    val allSongs: List<Song> = SongRepository.allSongs
+
     var query by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
     // Lọc danh sách bài hát theo từ khóa
-    val searchResults = songs.filter { it.contains(query, ignoreCase = true) }
+    val searchResults = allSongs.filter { it.contains(query, ignoreCase = true) }
 
     Column(
         modifier = Modifier
@@ -75,26 +77,43 @@ fun SongList(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = { onBackButtonClicked() }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onBackButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Text(
+                    text = "Thêm bài hát vào playlist",
+                    style = TextStyle(
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color.White
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(onClick = {
+                /* Handle saving playlist when clicked */
+                onBackButtonClicked()
+            }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Done",
+                    tint = Color(0xFF00FAF2),
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = Color.White
-                )
-            )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         // Ô tìm kiếm
@@ -131,46 +150,21 @@ fun SongList(
                 }
             },
         )
+        Text(
+            text = if (query.isEmpty()) "Phát gần đây" else "Kết quả tìm kiếm",
+            fontFamily = NotoSans,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(8.dp)
+        )
 
-        // Thông tin số bài hát
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${searchResults.size} bài hát",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 20.sp,
-                    color = Color.Gray
-                )
-            )
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "Xóa tất cả",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 16.sp,
-                    color = Color(0xFF00FAF2),
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.clickable {
-
-                }
-            )
-        }
-
-
-        // Danh sách bài hát
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song , more = more, onSongClick = {})
+                SongCard(song = song, more = Icons.Default.AddCircle, onSongClick = {})
             }
         }
     }
+
 }

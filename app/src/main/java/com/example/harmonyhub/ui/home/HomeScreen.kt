@@ -2,6 +2,7 @@ package com.example.harmonyhub.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +17,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -26,14 +30,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
+import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.data.network.AlbumOut
+import com.example.harmonyhub.data.network.ArtistOut
+import com.example.harmonyhub.data.network.ChartOut
+import com.example.harmonyhub.data.network.ResponseHomeScreenData
+import com.example.harmonyhub.ui.components.AlbumCard
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.components.ChartCard
@@ -41,7 +55,41 @@ import com.example.harmonyhub.ui.components.GenreCard
 import com.example.harmonyhub.ui.components.SuggestionCard
 import com.example.harmonyhub.ui.theme.NotoSans
 
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = Color.Blue)
+    }
+}
 
+@Composable
+fun ErrorScreen(
+    onRefreshContent: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_connection_error),
+                contentDescription = stringResource(R.string.connection_error)
+            )
+            IconButton(onClick = onRefreshContent) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.refresh)
+                )
+            }
+        }
+    }
+}
 @Composable
 fun HomeScreen(
     onSearchButtonClicked: () -> Unit,
@@ -51,10 +99,54 @@ fun HomeScreen(
     onLogoutButtonClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 ) {
-    val username = userDataViewModel.userName.observeAsState()
 
+    //add view model
+    val homeUiState = viewModel.state.collectAsStateWithLifecycle().value
+    val username = userDataViewModel.userName.observeAsState()
+    when (homeUiState) {
+        is HomeUIState.Loading -> {
+            LoadingScreen()
+        }
+        is HomeUIState.Error -> {
+            ErrorScreen(
+                onRefreshContent = { viewModel.fetchHomePageData() }
+            )
+        }
+        is HomeUIState.Success -> {
+            // Truy cập vào thuộc tính popularItem khi trạng thái là Success
+            val popularItems = homeUiState.popularItem
+            MainHomeScreen(
+                onSearchButtonClicked,
+                onPlayButtonClicked,
+                onLibraryButtonClicked,
+                onProfileButtonClicked,
+                onLogoutButtonClicked,
+                onSettingsButtonClicked,
+                modifier,
+                username.value.toString(),
+                popularItems,
+
+            )
+        }
+    }
+
+}
+@Composable
+fun MainHomeScreen(
+    onSearchButtonClicked: () -> Unit,
+    onPlayButtonClicked: () -> Unit,
+    onLibraryButtonClicked: () -> Unit,
+    onProfileButtonClicked: () -> Unit,
+    onLogoutButtonClicked: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    nameUser : String,
+    resPopularItem: ResponseHomeScreenData
+) {
+    //Main UI
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
         onSettingsClicked = onSettingsButtonClicked,
@@ -85,8 +177,8 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = username.value.toString(),
                         modifier = Modifier.testTag("Username"),
+                        text = nameUser,
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
@@ -98,7 +190,7 @@ fun HomeScreen(
                     IconButton(onClick = { onSettingsButtonClicked() }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings Icon",
+                            contentDescription = "Settings",
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -112,6 +204,7 @@ fun HomeScreen(
             ) {
                 item {
                     //Header with avatar, username, and profile button
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -138,29 +231,28 @@ fun HomeScreen(
 
                     // Artists Section
                     Text(
-                        text = "Nghệ sĩ",
+                        text = "Nghệ sĩ phổ biến",
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp
                         )
                     )
-                    LazyRow(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            listOf(
-                                "Alan Walker" to R.drawable.v,
-                                "Ed Sheeran" to R.drawable.v,
-                                "The Weeknd" to R.drawable.v,
-                                "Adele" to R.drawable.v,
-                                "Taylor Swift" to R.drawable.v
-                            )
-                        ) {
-                            ArtistsCard(it.first, it.second)
-                        }
-                    }
+
+                    LazyRowArtist(resPopularItem.listPopularArtist)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    // Album Section
+                    Text(
+                        text = "Album phổ biến",
+                        style = TextStyle(
+                            fontFamily = NotoSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
+                    )
+
+                    LazyRowAlbum(resPopularItem.listPopularAlbums)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -179,15 +271,9 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(
-                            listOf(
-                                "Faded" to "Alan Walker",
-                                "Shape of You" to "Ed Sheeran",
-                                "Perfect" to "Ed Sheeran",
-                                "Blinding Lights" to "The Weeknd",
-                                "Thinking Out Loud" to "Ed Sheeran"
-                            )
-                        ) { (suggestion, artistName) ->
-                            SuggestionCard(suggestion, artistName)
+                            SongRepository.allSongs
+                        ) { song ->
+                            SuggestionCard(song.name, song.artist, song.id, song.imageResId )
                         }
                     }
 
@@ -203,29 +289,75 @@ fun HomeScreen(
                         )
                     )
 
-                    LazyRow(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            listOf(
-                                R.drawable.top100,
-                                R.drawable.top100,
-                                R.drawable.top100,
-                                R.drawable.top100,
-                                R.drawable.top100,
-                                R.drawable.top100,
+                    LazyRowChart(resPopularItem.listChart)
 
-                                )
-                        ) { chart ->
-                            ChartCard(chart)
-                        }
-                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
     }
 }
+@Composable
+fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
+    LazyRow(
+        modifier = Modifier.padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val listArtist: MutableList<ArtistOut>? = temple
+        if (listArtist != null) {
+            items(listArtist) { artist ->
+                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
+                ArtistsCard(
+                    artist.name,  // Tên nghệ sĩ
+                    artist.image,  // URL ảnh
+                    artist.id  // ID nghệ sĩ
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LazyRowAlbum(temple: MutableList<AlbumOut>?) {
+    LazyRow(
+        modifier = Modifier.padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val listAlbum: MutableList<AlbumOut>? = temple
+        if (listAlbum != null) {
+            items(listAlbum) { album ->
+                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
+                AlbumCard(
+                    album.name,  // Tên nghệ sĩ
+                    album.image,  // URL ảnh
+                    album.id,  // ID nghệ sĩ
+                    album.listArtist
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LazyRowChart(temple: MutableList<ChartOut>?) {
+    LazyRow(
+        modifier = Modifier.padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val listChart: MutableList<ChartOut>? = temple
+        if (listChart != null) {
+            items(listChart) { chart ->
+                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
+                ChartCard(
+                    chart.image,
+                    chart.name,
+                    chart.id,
+                )
+            }
+        }
+    }
+}
+
 
 
 

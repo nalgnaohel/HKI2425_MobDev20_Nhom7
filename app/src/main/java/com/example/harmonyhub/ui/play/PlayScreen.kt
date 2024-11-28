@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.theme.NotoSans
@@ -42,9 +44,6 @@ fun RoundedImageCard(
     }
 }
 
-
-
-
 @Composable
 fun PlayScreen(
     onBackButtonClicked: () -> Unit = {}
@@ -52,9 +51,18 @@ fun PlayScreen(
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
     var playlist by remember { mutableStateOf(SongRepository.allSongs) }
-    var currentSongIndex by remember { mutableStateOf(0) }
+    var currentSongIndex by remember { mutableIntStateOf(0) }
     //var currentSong by remember { mutableStateOf(playlist[currentSongIndex]) }
     var isPlaying by remember { mutableStateOf(false) }
+
+    if (playlist.size == 0) {
+        DisposableEffect(Unit) {
+            onDispose {
+                exoPlayer.release() // Giải phóng tài nguyên
+            }
+        }
+        onBackButtonClicked
+    }
 
 
     // Load song
@@ -136,11 +144,19 @@ fun PlayScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            RoundedImageCard(
-                imageResId = playlist[currentSongIndex].imageResId,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(playlist[currentSongIndex].imageResId)
+                    .crossfade(true)
+                    .build(),
+                error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                contentDescription = "Photo",
+
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
+                                .fillMaxWidth()
+                                .height(350.dp)
+                                .clip(RoundedCornerShape(12.dp)),
             )
 
             Spacer(modifier = Modifier.height(32.dp))
