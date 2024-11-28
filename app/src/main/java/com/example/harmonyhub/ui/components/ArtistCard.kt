@@ -83,5 +83,4 @@ fun ArtistsCard(artistName: String, artistImg: String? = null, idArtist:String? 
 
         }
     }
-
 }

@@ -149,7 +149,7 @@ fun MainHomeScreen(
     //Main UI
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = {},
+        onSettingsClicked = onSettingsButtonClicked,
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
@@ -175,6 +175,7 @@ fun MainHomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
+                        modifier = Modifier.testTag("Username"),
                         text = nameUser,
                         style = TextStyle(
                             fontFamily = NotoSans,
@@ -184,14 +185,7 @@ fun MainHomeScreen(
                     )
                 }
                 Row {
-                    IconButton(onClick = { /* Notification */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    IconButton(onClick = { /* Settings */ }) {
+                    IconButton(onClick = { onSettingsButtonClicked() }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",
@@ -226,7 +220,7 @@ fun MainHomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
-                            GenreCard(genre)
+                            GenreCard(genre, modifier = Modifier.testTag("GenreCard_$genre"))
                         }
                     }
 

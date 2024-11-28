@@ -18,8 +18,12 @@ open class UserDataViewModel @Inject constructor(
     private val _email = MutableLiveData<String?>()
     open val email: LiveData<String?> get() = _email
 
+    private val _dataFetchingState = MutableLiveData<DataFetchingState>()
+    val dataFetchingState: LiveData<DataFetchingState> get() = _dataFetchingState
+
     init {
         getUserInfor()
+        getAlbums()
     }
 
     fun getUserInfor() {
@@ -28,5 +32,28 @@ open class UserDataViewModel @Inject constructor(
             _email.value = email
         }
     }
+
+    fun getAlbums() {
+        userRepo.getAlbums(callback = {
+            _dataFetchingState.value = it
+        })
+    }
+
+    fun setAlbum(albumName: String) {
+        userRepo.setAlbum(albumName, callback = {
+            _dataFetchingState.value = it
+        })
+    }
+
+    fun resetDataFetchingState() {
+        _dataFetchingState.value = DataFetchingState.Pending
+    }
+
+}
+
+sealed class DataFetchingState {
+    object Pending : DataFetchingState()
+    data class Success(val data: Any) : DataFetchingState()
+    data class Error(val message: String) : DataFetchingState()
 }
 

@@ -53,6 +53,17 @@ fun ChartCard(chartImg: String?, chartName: String, chartId: String) {
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )
             }
+//            Spacer(modifier = Modifier.height(4.dp))
+//            Text(
+//                text = chartName,
+//                style = TextStyle(
+//                    fontFamily = NotoSans,
+//                    fontWeight = FontWeight.SemiBold,
+//                    fontSize = 16.sp
+//                ),
+//                maxLines = 1,
+//                overflow = Ellipsis
+//            )
         }
     }
 }

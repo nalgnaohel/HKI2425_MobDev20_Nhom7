@@ -5,7 +5,7 @@ import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.components.Song
 
 object SongRepository{
-    var allSongs = listOf(
+    val allSongs = listOf(
         Song(id = "3ztP5O7dJSha2PG429eUCb", name = "Thiên Lý Ơi", artist = "Jack - J97",
             imageResId = "https://i.scdn.co/image/ab67616d00001e0233a31cc1175e787bfea17a65",
             url = "https://p.scdn.co/mp3-preview/8ede412058d9e95de0b4b3a735fe3c999498336c?cid=d8a5ed958d274c2e8ee717e6a4b0971d"),
