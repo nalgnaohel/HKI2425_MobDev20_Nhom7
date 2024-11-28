@@ -5,16 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SearchScreenTest">
+      <SelectionState runConfigName="PlayScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSearchScreen_searchQuery()">
+      <SelectionState runConfigName="playScreen_showsErrorMessageWhenNoSongs()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LoginScreenUITest">
+      <SelectionState runConfigName="playScreen_playPauseTogglesCorrectly()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testLoginScreen_initialState()">
+      <SelectionState runConfigName="playScreen_navigateToNextSong()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="playScreen_navigateToPreviousSong()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

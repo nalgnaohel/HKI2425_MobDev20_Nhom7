@@ -92,8 +92,7 @@ class SearchScreenTest {
         // Kiểm tra tiêu đề thay đổi thành 'Kết quả tìm kiếm'
         composeTestRule.onNodeWithText("Kết quả tìm kiếm").assertIsDisplayed()
 
-        // Sử dụng `useUnmergedTree` để kiểm tra văn bản trong kết quả tìm kiếm
-        composeTestRule.onNodeWithText("Thiên Lý Ơi", useUnmergedTree = true)
+        composeTestRule.onNodeWithText("Thiên Lý Ơi")
             .assertIsDisplayed()
     }
 
