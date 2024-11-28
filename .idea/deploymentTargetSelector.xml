@@ -5,19 +5,16 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PlaylistSongListScreenTest">
+      <SelectionState runConfigName="SearchScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PlaylistsScreenTest">
+      <SelectionState runConfigName="testSearchScreen_searchQuery()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="test_AddPlaylistDialog()">
+      <SelectionState runConfigName="LoginScreenUITest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SongListTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="LibraryScreenTest">
+      <SelectionState runConfigName="testLoginScreen_initialState()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
