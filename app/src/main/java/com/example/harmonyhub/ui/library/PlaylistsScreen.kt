@@ -77,15 +77,15 @@ fun PlaylistsScreen(
     LaunchedEffect(dataFetchingState.value) {
         when (dataFetchingState.value) {
             is DataFetchingState.Success -> {
-                // Thành công
                 val message = (dataFetchingState.value as DataFetchingState.Success).data
                 Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show()
-
+                userDataViewModel.resetDataFetchingState()
             }
             is DataFetchingState.Error -> {
-                // Lỗi
+
                 val message = (dataFetchingState.value as DataFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                userDataViewModel.resetDataFetchingState()
             }
             else -> { }
         }

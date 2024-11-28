@@ -23,7 +23,7 @@ class UserDataViewModel @Inject constructor(
 
     init {
         getUserInfor()
-        _dataFetchingState.value = DataFetchingState.Loading
+        _dataFetchingState.value = DataFetchingState.Pending
     }
 
     fun getUserInfor() {
@@ -39,10 +39,14 @@ class UserDataViewModel @Inject constructor(
         })
     }
 
+    fun resetDataFetchingState() {
+        _dataFetchingState.value = DataFetchingState.Pending
+    }
+
 }
 
 sealed class DataFetchingState {
-    object Loading : DataFetchingState()
+    object Pending : DataFetchingState()
     data class Success(val data: Any) : DataFetchingState()
     data class Error(val message: String) : DataFetchingState()
 }
