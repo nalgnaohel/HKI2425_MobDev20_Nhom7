@@ -2,6 +2,7 @@ package com.example.harmonyhub.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,11 +17,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-<<<<<<< HEAD
-=======
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
->>>>>>> minhnhat_branch
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -31,11 +29,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-<<<<<<< HEAD
-import androidx.compose.ui.platform.testTag
-=======
 import androidx.compose.ui.graphics.Color
->>>>>>> minhnhat_branch
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -43,10 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-<<<<<<< HEAD
-import com.example.harmonyhub.R
-import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
-=======
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.harmonyhub.R
@@ -57,7 +47,6 @@ import com.example.harmonyhub.data.network.ChartOut
 import com.example.harmonyhub.data.network.ResponseHomeScreenData
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.AlbumCard
->>>>>>> minhnhat_branch
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.components.ChartCard
@@ -65,8 +54,6 @@ import com.example.harmonyhub.ui.components.GenreCard
 import com.example.harmonyhub.ui.components.SuggestionCard
 import com.example.harmonyhub.ui.theme.NotoSans
 
-<<<<<<< HEAD
-=======
 @Composable
 fun LoadingScreen() {
     Box(
@@ -76,7 +63,6 @@ fun LoadingScreen() {
         CircularProgressIndicator(color = Color.Blue)
     }
 }
->>>>>>> minhnhat_branch
 
 @Composable
 fun ErrorScreen(
@@ -111,13 +97,6 @@ fun HomeScreen(
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
-<<<<<<< HEAD
-    userDataViewModel: UserDataViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
-) {
-    val username = userDataViewModel.userName.observeAsState()
-
-=======
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     userDataViewModel: UserDataViewModel = hiltViewModel(),
@@ -167,10 +146,9 @@ fun MainHomeScreen(
     resPopularItem: ResponseHomeScreenData
 ) {
     //Main UI
->>>>>>> minhnhat_branch
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = onSettingsButtonClicked,
+        onSettingsClicked = {},
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
@@ -185,12 +163,10 @@ fun MainHomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = { onOpenDrawer() },
-                        modifier = Modifier.testTag("DrawerButton")) {
+                    IconButton(onClick = { onOpenDrawer() }) {
                         Image(
                             painter = painterResource(id = R.drawable.hip),
-                            contentDescription = "Avatar",
+                            contentDescription = "Profile",
                             modifier = Modifier
                                 .size(50.dp)
                                 .clip(CircleShape)
@@ -198,12 +174,7 @@ fun MainHomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-<<<<<<< HEAD
-                        text = username.value.toString(),
-                        modifier = Modifier.testTag("Username"),
-=======
                         text = nameUser,
->>>>>>> minhnhat_branch
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
@@ -212,10 +183,17 @@ fun MainHomeScreen(
                     )
                 }
                 Row {
-                    IconButton(onClick = { onSettingsButtonClicked() }) {
+                    IconButton(onClick = { /* Notification */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Notifications",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* Settings */ }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings Icon",
+                            contentDescription = "Settings",
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -229,6 +207,7 @@ fun MainHomeScreen(
             ) {
                 item {
                     //Header with avatar, username, and profile button
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -246,7 +225,7 @@ fun MainHomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
-                            GenreCard(genre, modifier = Modifier.testTag("GenreCard_$genre"))
+                            GenreCard(genre)
                         }
                     }
 
@@ -314,25 +293,12 @@ fun MainHomeScreen(
 
                     LazyRowChart(resPopularItem.listChart)
 
-<<<<<<< HEAD
-                                )
-                        ) { chart ->
-                            ChartCard(chart)
-                        }
-                    }
-=======
                     Spacer(modifier = Modifier.height(16.dp))
->>>>>>> minhnhat_branch
                 }
             }
         }
     }
 }
-<<<<<<< HEAD
-
-
-
-=======
 @Composable
 fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
     LazyRow(
@@ -397,6 +363,5 @@ fun LazyRowChart(temple: MutableList<ChartOut>?) {
 
 
 
->>>>>>> minhnhat_branch
 
 

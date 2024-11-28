@@ -17,10 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-<<<<<<< HEAD
-=======
 import androidx.compose.ui.platform.LocalContext
->>>>>>> minhnhat_branch
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,20 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD
-=======
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
->>>>>>> minhnhat_branch
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-<<<<<<< HEAD
-fun SuggestionCard(songName: String, artistName: String) {
-=======
 fun SuggestionCard(songName: String, artistName: String, songId: String, songImg: String) {
->>>>>>> minhnhat_branch
     Surface(
         modifier = Modifier
             .size(width = 125.dp, height = 180.dp)
@@ -53,11 +43,6 @@ fun SuggestionCard(songName: String, artistName: String, songId: String, songImg
             Box(
                 modifier = Modifier.size(width = 125.dp, height = 125.dp)
             ) {
-<<<<<<< HEAD
-                Image(
-                    painter = painterResource(id = R.drawable.v),
-                    contentDescription = null,
-=======
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
                         .data(songImg)
@@ -66,7 +51,6 @@ fun SuggestionCard(songName: String, artistName: String, songId: String, songImg
                     error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
                     placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
                     contentDescription = "Photo",
->>>>>>> minhnhat_branch
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )

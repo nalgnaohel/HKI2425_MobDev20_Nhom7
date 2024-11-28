@@ -91,8 +91,6 @@ dependencies {
     implementation ("org.json:json:20210307") // org.json để xử lý JSON
     implementation ("androidx.media3:media3-exoplayer:1.1.0")
     implementation ("androidx.media3:media3-ui:1.1.0")
-<<<<<<< HEAD
-=======
 
     implementation("io.coil-kt:coil-compose:2.2.2") // Phiên bản mới nhất
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
@@ -100,5 +98,4 @@ dependencies {
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
->>>>>>> minhnhat_branch
 }
