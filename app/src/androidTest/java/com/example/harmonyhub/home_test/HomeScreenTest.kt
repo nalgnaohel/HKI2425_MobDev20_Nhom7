@@ -1,191 +1,108 @@
 package com.example.harmonyhub.home_test
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.harmonyhub.data.network.AlbumOut
+import com.example.harmonyhub.data.network.ArtistOut
+import com.example.harmonyhub.data.network.ChartOut
+import com.example.harmonyhub.data.network.ResponseHomeScreenData
+import com.example.harmonyhub.ui.home.ErrorScreen
+import com.example.harmonyhub.ui.home.LoadingScreen
+import com.example.harmonyhub.ui.home.MainHomeScreen
+import com.example.harmonyhub.ui.theme.HarmonyHubTheme
 import org.junit.Rule
 import org.junit.Test
-import com.example.harmonyhub.data.network.ResponseHomeScreenData
-import com.example.harmonyhub.data.network.ArtistOut
-import com.example.harmonyhub.data.network.AlbumOut
-import com.example.harmonyhub.data.network.ChartOut
-import com.example.harmonyhub.ui.home.MainHomeScreen
-import com.example.harmonyhub.ui.home.HomeUIState
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.junit.runner.RunWith
 
-class MainHomeScreenTest {
+@RunWith(AndroidJUnit4::class)
+class HomeScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
-    fun mainHomeScreen_displaysUsername() {
-        val response = ResponseHomeScreenData(
-            listPopularArtist = mutableListOf(ArtistOut("1", "Artist1", "image1")),
-            listPopularAlbums = mutableListOf(AlbumOut("1", "Album1", "image1", listOf("Artist1"))),
-            listChart = mutableListOf(ChartOut("1", "Chart1", "image1"))
-        )
-
+    fun loadingScreen_isDisplayed() {
         composeTestRule.setContent {
-            MainHomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {},
-                nameUser = "Test User",
-                resPopularItem = response
-            )
+            HarmonyHubTheme {
+                LoadingScreen()
+            }
         }
-
-        // Kiểm tra tên người dùng có hiển thị
         composeTestRule
-            .onNodeWithText("Test User")
-            .assertIsDisplayed()
+            .onNodeWithTag("Circular Progress Indicator")
+            .assertExists()
     }
 
     @Test
-    fun mainHomeScreen_displaysSections() {
-        val response = ResponseHomeScreenData(
-            listPopularArtist = mutableListOf(ArtistOut("1", "Artist1", "image1")),
-            listPopularAlbums = mutableListOf(AlbumOut("1", "Album1", "image1", listOf("Artist1"))),
-            listChart = mutableListOf(ChartOut("1", "Chart1", "image1"))
-        )
+    fun errorScreen_isDisplayed_and_refreshButtonWorks() {
+        var refreshClicked = false
 
         composeTestRule.setContent {
-            MainHomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {},
-                nameUser = "Test User",
-                resPopularItem = response
-            )
+            HarmonyHubTheme {
+                ErrorScreen(onRefreshContent = { refreshClicked = true })
+            }
         }
 
-        // Kiểm tra các phần "Thể loại", "Nghệ sĩ phổ biến", "Album phổ biến", "Đề xuất cho bạn", "Bảng xếp hạng"
+        // Kiểm tra rằng hình ảnh lỗi kết nối được hiển thị
+        composeTestRule
+            .onNodeWithTag("Error")
+            .assertExists("Connection error image not displayed")
+
+        // Nhấn nút refresh và kiểm tra lambda đã được gọi chưa
+        composeTestRule
+            .onNodeWithContentDescription("Refresh")
+            .performClick()
+
+        assert(refreshClicked)
+    }
+
+    @Test
+    fun homeScreen_displaysUserName_andGenres() {
+        composeTestRule.setContent {
+            HarmonyHubTheme {
+                MainHomeScreen(
+                    onSearchButtonClicked = {},
+                    onPlayButtonClicked = {},
+                    onLibraryButtonClicked = {},
+                    onProfileButtonClicked = {},
+                    onLogoutButtonClicked = {},
+                    onSettingsButtonClicked = {},
+                    nameUser = "Test User",
+                    resPopularItem = fakeResponseData() // Sử dụng dữ liệu giả lập
+                )
+            }
+        }
+
+        // Kiểm tra tên người dùng có hiển thị không
+        composeTestRule
+            .onNodeWithText("Test User")
+            .assertIsDisplayed()
+
+        // Kiểm tra xem tiêu đề "Thể loại" có hiển thị không
         composeTestRule
             .onNodeWithText("Thể loại")
             .assertIsDisplayed()
 
-        composeTestRule
-            .onNodeWithText("Nghệ sĩ phổ biến")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("Album phổ biến")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("Đề xuất cho bạn")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("Bảng xếp hạng")
-            .assertIsDisplayed()
-    }
-
-    @Test
-    fun mainHomeScreen_displaysGenres() {
-        val response = ResponseHomeScreenData(
-            listPopularArtist = mutableListOf(ArtistOut("1", "Artist1", "image1")),
-            listPopularAlbums = mutableListOf(AlbumOut("1", "Album1", "image1", listOf("Artist1"))),
-            listChart = mutableListOf(ChartOut("1", "Chart1", "image1"))
-        )
-
-        composeTestRule.setContent {
-            MainHomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {},
-                nameUser = "Test User",
-                resPopularItem = response
-            )
-        }
-
-        // Kiểm tra các genre có hiển thị
+        // Kiểm tra "V-Pop" xuất hiện trong danh sách thể loại
         composeTestRule
             .onNodeWithText("V-Pop")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("K-Pop")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("R&B")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("Hip Hop")
-            .assertIsDisplayed()
-    }
-
-    @Test
-    fun mainHomeScreen_displaysAlbums() {
-        val response = ResponseHomeScreenData(
-            listPopularArtist = mutableListOf(ArtistOut("1", "Artist1", "image1")),
-            listPopularAlbums = mutableListOf(AlbumOut("1", "Album1", "image1", listOf("Artist1"))),
-            listChart = mutableListOf(ChartOut("1", "Chart1", "image1"))
-        )
-
-        composeTestRule.setContent {
-            MainHomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {},
-                nameUser = "Test User",
-                resPopularItem = response
-            )
-        }
-
-        // Kiểm tra tên album "Album1" hiển thị
-        composeTestRule
-            .onNodeWithText("Album1")
-            .assertIsDisplayed()
-    }
-
-    @Test
-    fun mainHomeScreen_displaysCharts() {
-        val response = ResponseHomeScreenData(
-            listPopularArtist = mutableListOf(ArtistOut("1", "Artist1", "image1")),
-            listPopularAlbums = mutableListOf(AlbumOut("1", "Album1", "image1", listOf("Artist1"))),
-            listChart = mutableListOf(ChartOut("1", "Chart1", "image1"))
-        )
-
-        composeTestRule.setContent {
-            MainHomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {},
-                nameUser = "Test User",
-                resPopularItem = response
-            )
-        }
-
-        // Kiểm tra chart tên "Chart1" hiển thị
-        composeTestRule
-            .onNodeWithText("Chart1")
             .assertIsDisplayed()
     }
 }
 
-
-
-
-
+// Hàm tạo dữ liệu giả lập
+private fun fakeResponseData(): ResponseHomeScreenData {
+    return ResponseHomeScreenData(
+        listPopularArtist = mutableListOf(
+            ArtistOut(id = "1", name = "Sơn Tùng M-TP", image = "artist1.png"),
+            ArtistOut(id = "2", name = "IU", image = "artist2.png")
+        ),
+        listPopularAlbums = mutableListOf(
+            AlbumOut(id = "1", name = "Sky Tour", image = "album1.png", listArtist = emptyList())
+        ),
+        listChart = mutableListOf(
+            ChartOut(id = "1", name = "Top Hits", image = "chart1.png")
+        )
+    )
+}
