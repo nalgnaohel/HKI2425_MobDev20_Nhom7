@@ -31,7 +31,7 @@ jobs:
         uses: ./.github/workflows/pull_request_push.yml
 
       - name: build release 
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --stackTrace
       
       - name: list files
         run: ls -lrt app/build/outputs/apk/release
