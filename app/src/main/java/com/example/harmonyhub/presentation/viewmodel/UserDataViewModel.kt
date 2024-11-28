@@ -8,15 +8,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class UserDataViewModel @Inject constructor(
+open class UserDataViewModel @Inject constructor(
     private val userRepo: UserDataRepo,
 ) : ViewModel() {
 
     private val _userName = MutableLiveData<String?>()
-    val userName: LiveData<String?> get() = _userName
+    open val userName: LiveData<String?> get() = _userName
 
     private val _email = MutableLiveData<String?>()
-    val email: LiveData<String?> get() = _email
+    open val email: LiveData<String?> get() = _email
 
     init {
         getUserInfor()
