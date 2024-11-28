@@ -27,11 +27,16 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+<<<<<<< HEAD
       - name: build release 
         run: ./gradlew assembleRelease
       
       - name: list files
         run: ls -lrt app/build/outputs/apk/release
+=======
+      - name: Execute Gradle command - assembleDebug
+        run: ./gradlew assembleDebug
+>>>>>>> minhnhat_branch
 
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -39,5 +44,9 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
+<<<<<<< HEAD
           file: app/build/outputs/apk/release/app-release-unsigned.apk
+=======
+          file: app/build/apk/debug/app-debug.apk
+>>>>>>> minhnhat_branch
           releaseNotes: ${{ inputs.release_notes }}

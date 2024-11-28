@@ -1,56 +1,21 @@
 package com.example.harmonyhub.ui.components
 
-<<<<<<< HEAD
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-=======
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
->>>>>>> minhnhat_branch
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
-<<<<<<< HEAD
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-=======
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
->>>>>>> minhnhat_branch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-<<<<<<< HEAD
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-
-@Composable
-fun ChartCard(chartImg: Int) {
-    Surface(
-        modifier = Modifier
-            .size(width = 150.dp, height = 150.dp)
-            .clickable {  },
-        color = Color.Transparent
-    ) {
-        Box(contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.padding(4.dp)) {
-            // Placeholder for the image
-            Image(
-                painter = painterResource(id = chartImg),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp))
-            )
-=======
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -63,14 +28,13 @@ import coil.request.ImageRequest
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-fun ChartCard(chartImg: String?, chartName: String, chartId: String) {
+fun AlbumCard(songName: String, albumImg: String, id : String, listArtist: List<String>) {
     Surface(
         modifier = Modifier
-            .size(width = 150.dp, height = 150.dp)
-            .clickable { },
+            .size(width = 125.dp, height = 180.dp)
+            .clickable {  },
         color = Color.Transparent
     ) {
-
         Column(modifier = Modifier.padding(4.dp))
         {
             Box(
@@ -78,7 +42,7 @@ fun ChartCard(chartImg: String?, chartName: String, chartId: String) {
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(chartImg)
+                        .data(albumImg)
                         .crossfade(true)
                         .build(),
                     error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
@@ -88,18 +52,27 @@ fun ChartCard(chartImg: String?, chartName: String, chartId: String) {
                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                 )
             }
-//            Spacer(modifier = Modifier.height(4.dp))
-//            Text(
-//                text = chartName,
-//                style = TextStyle(
-//                    fontFamily = NotoSans,
-//                    fontWeight = FontWeight.SemiBold,
-//                    fontSize = 16.sp
-//                ),
-//                maxLines = 1,
-//                overflow = Ellipsis
-//            )
->>>>>>> minhnhat_branch
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = songName,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp
+                ),
+                maxLines = 1,
+                overflow = Ellipsis
+            )
+            val joinedNames = listArtist.joinToString(separator = ", ")
+            Text(
+                text = joinedNames,
+                style = TextStyle(
+                    fontFamily = NotoSans,
+                    fontSize = 14.sp
+                ),
+                color = Color.Gray,
+                maxLines = 1, overflow = Ellipsis
+            )
         }
     }
 }
