@@ -1,5 +1,7 @@
 package com.example.harmonyhub.ui.library
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,15 +20,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +49,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
@@ -53,13 +60,18 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistSongListScreen(
-    playlistName: String?,
+    playlistName: String,
+    onPlaySongClicked: () -> Unit,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
 ) {
     val allSongs: List<Song> = SongRepository.allSongs
 
     var query by remember { mutableStateOf("") }
+
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var titleBottomSheet by remember { mutableStateOf("") }
+
     val focusManager = LocalFocusManager.current
 
     var showDialog by remember { mutableStateOf(false) }
@@ -95,7 +107,7 @@ fun PlaylistSongListScreen(
                     )
                 }
                 Text(
-                    text =  playlistName ?: "Playlist",
+                    text = playlistName,
                     style = TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
@@ -113,7 +125,10 @@ fun PlaylistSongListScreen(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-                IconButton(onClick = { /* Handle sort button click */ }) {
+                IconButton(onClick = {
+                    titleBottomSheet = playlistName
+                    isBottomSheetVisible = true
+                }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "More options",
@@ -200,7 +215,15 @@ fun PlaylistSongListScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song, more = Icons.Default.MoreVert, onSongClick = {})
+                SongCard(
+                    song = song,
+                    more = Icons.Default.MoreVert,
+                    onSongClick = { onPlaySongClicked() },
+                    onMoreClick = {
+                        titleBottomSheet = playlistName
+                        isBottomSheetVisible = true
+                    }
+                )
             }
         }
     }

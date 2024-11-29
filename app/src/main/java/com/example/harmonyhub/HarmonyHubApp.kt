@@ -317,7 +317,9 @@ fun HarmonyHubApp(
                     PlaylistSongListScreen(
                         playlistName = "Playlist 1",
                         onBackButtonClicked = { navController.popBackStack() },
-                        onAddButtonClicked = { navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) }
+                        onAddButtonClicked = { navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) },
+                        onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) }
+
                     )
                 }
                 composable(route = HarmonyHubScreen.AddSongToPlaylist.name) {

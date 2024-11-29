@@ -16,9 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.harmonyhub.R
-import com.example.harmonyhub.ui.components.Song
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,8 +27,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.testTag
 
 import androidx.compose.ui.text.font.FontWeight
@@ -149,7 +145,8 @@ fun ArtistScreen(
                         SongCard(
                             song = song,
                             more = Icons.Default.MoreVert,
-                            onSongClick = onSongClick
+                            onSongClick = onSongClick,
+                            onMoreClick = { /* Handle more options click */ }
                         )
                     }
                 }

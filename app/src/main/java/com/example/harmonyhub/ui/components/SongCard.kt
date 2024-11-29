@@ -1,18 +1,15 @@
 package com.example.harmonyhub.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -26,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,8 +45,9 @@ fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
 @Composable
 fun SongCard(
     song: Song,
-    more: ImageVector,
-    onSongClick: () -> Unit
+    more: ImageVector?,
+    onSongClick: () -> Unit,
+    onMoreClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -95,14 +92,14 @@ fun SongCard(
         }
 
         // Menu hành động (tùy chọn)
-        IconButton(onClick = {
-            // Xử lý menu hành động tại đây
-        }) {
-            Icon(
-                imageVector = more,
-                contentDescription = "More Options",
-                tint = if (more == Icons.Default.MoreVert) Color.Gray else Color.White
-            )
+        IconButton(onClick = { onMoreClick() }) {
+            if (more != null) {
+                Icon(
+                    imageVector = more,
+                    contentDescription = "More Options",
+                    tint = if (more == Icons.Default.MoreVert) Color.Gray else Color.White
+                )
+            }
         }
     }
 }
