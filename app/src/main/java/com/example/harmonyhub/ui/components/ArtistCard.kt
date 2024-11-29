@@ -32,17 +32,24 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.harmonyhub.ui.theme.NotoSans
 
-data class Artist(val name: String, val img: Int, val id: String = "")
+data class Artist(val name: String, val img: String, val id: String = "")
 
 fun Artist.contains(query: String, ignoreCase: Boolean = true): Boolean {
     return this.name.contains(query, ignoreCase)
 }
+
 @Composable
-fun ArtistsCard(artistName: String, artistImg: String? = null, idArtist:String? = null, modifier: Modifier = Modifier) {
+fun ArtistsCard(
+    artistName: String,
+    artistImg: String? = null,
+    idArtist: String? = null,
+    onArtistCardClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Surface(
         modifier = Modifier
             .size(width = 130.dp, height = 170.dp)
-            .clickable {  },
+            .clickable { onArtistCardClick() },
         color = Color.Transparent
     ) {
         Column(

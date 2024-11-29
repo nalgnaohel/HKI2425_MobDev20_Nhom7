@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
@@ -68,7 +69,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
-    onPlaylistClicked: (String) -> Unit,
+    navController: NavHostController,
     userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
 
@@ -233,7 +234,7 @@ fun PlaylistsScreen(
                     playlistPair.forEach { playlist ->
                         PlaylistCard(
                             playlist = playlist,
-                            onClick = { onPlaylistClicked(playlist.name) },
+                            onPlaylistClicked = { navController.navigate("PlaylistSongList?name=${playlist.name}") },
                         )
                     }
                     // Nếu hàng có lẻ số nghệ sĩ, bạn có thể thêm một khoảng trống để cân đối

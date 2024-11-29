@@ -33,11 +33,11 @@ fun Playlist.contains(query: String, ignoreCase: Boolean = true): Boolean {
 }
 
 @Composable
-fun PlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PlaylistCard(playlist: Playlist, onPlaylistClicked: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier = Modifier
             .size(width = 155.dp, height = 210.dp)
-            .clickable { onClick() },
+            .clickable { onPlaylistClicked()},
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))

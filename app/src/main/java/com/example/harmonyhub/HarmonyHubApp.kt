@@ -33,10 +33,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
@@ -51,6 +53,7 @@ import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
+import com.example.harmonyhub.ui.library.ArtistScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
@@ -77,6 +80,7 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     NewPassword(title = R.string.newPassword, icon = Icons.Default.Lock),
     PlaylistSongList(title = R.string.playlistSongList, icon = Icons.Default.AccountBox),
     AddSongToPlaylist(title = R.string.addSongToPlaylist, icon = Icons.Default.AccountBox),
+    Artist(title =  R.string.artist, icon = Icons.Default.Person)
 }
 
 private val gradientBackground = Brush.verticalGradient(
@@ -233,9 +237,6 @@ fun HarmonyHubApp(
                         onArtistsFollowingButtonClicked = {
                             navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
                         },
-                        onPlaySongClicked = {
-                            navController.navigate(HarmonyHubScreen.Play.name)
-                        },
                         onLogoutButtonClicked = {
                             authenticationMainViewModel.signOut()
                             navController.navigate(HarmonyHubScreen.Login.name)
@@ -272,18 +273,13 @@ fun HarmonyHubApp(
                         )
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
-                    PlaylistsScreen(
-                        onBackButtonClicked = { navController.popBackStack() },
-                        onPlaylistClicked = {
-                            navController.navigate(HarmonyHubScreen.PlaylistSongList.name)
-                        },
-                    )
+                    Nav2()
                 }
-                composable(route = HarmonyHubScreen.ArtistsFollowing.name) {
-                    ArtistsFollowingScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
+
+                composable(route = "ArtistsFollowing") {
+                    Nav()
                 }
+
 
                 composable(route = HarmonyHubScreen.ForgotPassword.name) {
                     ForgotPasswordScreen(
@@ -336,6 +332,60 @@ fun HarmonyHubApp(
         }
     }
 }
+@Composable
+fun Nav() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "ArtistsFollowing") {
+        composable(route = "ArtistsFollowing") {
+            ArtistsFollowingScreen(
+                onBackButtonClicked = {navController.popBackStack()},
+                navController
+            )
+        }
+        composable(
+            route = "Artist?name={artist.name}",
+            arguments = listOf(
+                navArgument(name = "artist.name") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            ArtistScreen(
+                myArtist = backStackEntry.arguments?.getString("artist.name"),
+                onSongClick = {}
+            )
+        }
+    }
+}
+@Composable
+fun Nav2() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "Playlist") {
+        composable(route = "Playlist") {
+            PlaylistsScreen(
+                onBackButtonClicked = {navController.popBackStack()},
+                navController
+            )
+        }
+        composable(
+            route = "PlaylistSongList?name={playlist.name}",
+            arguments = listOf(
+                navArgument(name = "playlist.name") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            PlaylistSongListScreen(
+               playlistName = backStackEntry.arguments?.getString("playlist.name"),
+                onBackButtonClicked={navController.popBackStack()},
+            onAddButtonClicked={},
+            )
+        }
+    }
+}
+
 
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable

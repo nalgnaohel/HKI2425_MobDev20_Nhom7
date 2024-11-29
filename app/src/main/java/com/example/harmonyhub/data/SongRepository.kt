@@ -2,6 +2,7 @@ package com.example.harmonyhub.data
 
 
 import com.example.harmonyhub.R
+import com.example.harmonyhub.ui.components.Artist
 import com.example.harmonyhub.ui.components.Song
 
 object SongRepository{
@@ -30,5 +31,15 @@ object SongRepository{
 
     )
     val currentPLaylist : MutableList<Song> = mutableListOf()
-
+    fun getAllArtists(): List<Artist> {
+        return SongRepository.allSongs
+            .groupBy { it.artist }
+            .map { (artist, songs) ->
+                Artist(
+                    name = artist,
+                    img = songs.firstOrNull()?.imageResId ?: "", // Kiểm tra null và gán giá trị mặc định
+                    id = artist.hashCode().toString() // Tạo id duy nhất từ hash của tên nghệ sĩ
+                )
+            }
+    }
 }

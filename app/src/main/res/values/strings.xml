@@ -20,5 +20,5 @@
     <string name="addSongToPlaylist">Add Song To Playlist</string>
     <string name="connection_error">Connection error</string>
     <string name="refresh">Refresh</string>
-
+    <string name="artist">Artist</string>
 </resources>

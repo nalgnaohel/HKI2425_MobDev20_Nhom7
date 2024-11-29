@@ -53,7 +53,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistSongListScreen(
-    playlistName: String,
+    playlistName: String?,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
 ) {
@@ -95,7 +95,7 @@ fun PlaylistSongListScreen(
                     )
                 }
                 Text(
-                    text = playlistName,
+                    text =  playlistName ?: "Playlist",
                     style = TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,

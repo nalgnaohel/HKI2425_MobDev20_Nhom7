@@ -42,10 +42,10 @@ import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
 fun ArtistScreen(
-    artist: String,
+    myArtist: String?,
     onSongClick: () -> Unit
 ) {
-    val songs = SongRepository.allSongs.filter { it.artist == artist }
+    val songs = SongRepository.allSongs.filter { it.artist == myArtist }
     val artistName = songs.firstOrNull()?.artist ?: "Unknown Artist"
 
     Column(
@@ -170,7 +170,7 @@ fun ArtistScreen(
 @Composable
 fun ArtistScreenPreview() {
     ArtistScreen(
-        artist = "Jack - J97",
+        myArtist = "Jack - J97",
         onSongClick = {}
     )
 }

@@ -307,7 +307,8 @@ fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
                 ArtistsCard(
                     artist.name,  // Tên nghệ sĩ
                     artist.image,  // URL ảnh
-                    artist.id  // ID nghệ sĩ
+                    artist.id, // ID nghệ sĩ
+                    onArtistCardClick = {}
                 )
             }
         }
