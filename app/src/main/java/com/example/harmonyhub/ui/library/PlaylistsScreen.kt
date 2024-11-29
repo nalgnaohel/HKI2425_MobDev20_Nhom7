@@ -77,6 +77,10 @@ fun PlaylistsScreen(
 
     val allPlaylists = remember {mutableListOf<Playlist>()}
 
+    LaunchedEffect(Unit) {
+        userDataViewModel.getAlbums()
+    }
+
     LaunchedEffect(dataFetchingState.value) {
         when (dataFetchingState.value) {
             is DataFetchingState.Success -> {
