@@ -16,5 +16,6 @@ fun DownloadScreen(onBackButtonClicked: () -> Unit)
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
+        screenType = "Download"
     )
 }

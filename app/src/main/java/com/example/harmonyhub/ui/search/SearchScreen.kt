@@ -211,7 +211,8 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                "Thêm vào danh sách phát", modifier = Modifier.padding(vertical = 8.dp),
+                "Thêm vào danh sách phát",
+                modifier = Modifier.padding(vertical = 8.dp),
                 fontFamily = NotoSans, fontSize = 16.sp
             )
         }

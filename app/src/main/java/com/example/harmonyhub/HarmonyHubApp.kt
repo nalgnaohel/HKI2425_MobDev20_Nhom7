@@ -243,6 +243,9 @@ fun HarmonyHubApp(
                         },
                         onSettingsButtonClicked = {
                             navController.navigate(HarmonyHubScreen.Settings.name)
+                        },
+                        onPlaySongClicked = {
+                            navController.navigate(HarmonyHubScreen.Play.name)
                         }
 
 
@@ -379,11 +382,14 @@ fun Nav2() {
                 }
             )
         ) { backStackEntry ->
-            PlaylistSongListScreen(
-               playlistName = backStackEntry.arguments?.getString("playlist.name"),
-                onBackButtonClicked={navController.popBackStack()},
-            onAddButtonClicked={},
-            )
+            backStackEntry.arguments?.getString("playlist.name")?.let {
+                PlaylistSongListScreen(
+                    playlistName = it,
+                    onBackButtonClicked={navController.popBackStack()},
+                    onAddButtonClicked={},
+                    onPlaySongClicked={}
+                )
+            }
         }
     }
 }

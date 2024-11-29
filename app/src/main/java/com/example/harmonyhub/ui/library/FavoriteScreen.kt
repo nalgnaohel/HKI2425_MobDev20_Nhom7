@@ -17,5 +17,6 @@ fun FavoriteScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
+        screenType = "Favorite"
     )
 }

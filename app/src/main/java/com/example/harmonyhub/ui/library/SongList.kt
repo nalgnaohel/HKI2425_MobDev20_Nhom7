@@ -60,6 +60,7 @@ fun SongList(
     more: ImageVector, // Hành động thêm
     songs: List<Song>, // Danh sách bài hát
     onBackButtonClicked: () -> Unit, // Xử lý nút Back
+    screenType: String
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -198,14 +199,15 @@ fun SongList(
         ) {
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong
+                selectedSong = selectedSong,
+                screenType = screenType
             )
         }
     }
 }
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?, screenType: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -225,7 +227,6 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
                         .clip(RoundedCornerShape(8.dp))
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-
                 Column {
                     Text(
                         text = song.name,
@@ -247,6 +248,28 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
         HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
+        if (screenType != "Favorite") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { /* Thêm vào danh sách phát */ }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.favorite),
+                    contentDescription = "Favorite",
+                    tint = Color.LightGray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Thêm vào yêu thích",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -261,25 +284,8 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                "Thêm vào danh sách phát", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { /*Todo*/ }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.favorite),
-                contentDescription = "Favorite",
-                tint = Color.LightGray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Thêm vào yêu thích", modifier = Modifier.padding(vertical = 8.dp),
+                "Thêm vào danh sách phát",
+                modifier = Modifier.padding(vertical = 8.dp),
                 fontFamily = NotoSans, fontSize = 16.sp
             )
         }
@@ -302,6 +308,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
                 fontFamily = NotoSans, fontSize = 16.sp
             )
         }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -321,29 +328,33 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { /*Todo*/ }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.download_for_offline),
-                contentDescription = "Download",
-                tint = Color.LightGray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Tải về", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
+        if (screenType != "Download") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { /* Tải về */ }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.download_for_offline),
+                    contentDescription = "Download",
+                    tint = Color.LightGray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Tải về",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+            }
         }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { /* Chia sẻ */ }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
@@ -353,10 +364,10 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                "Chia sẻ", modifier = Modifier.padding(vertical = 8.dp),
+                "Chia sẻ",
+                modifier = Modifier.padding(vertical = 8.dp),
                 fontFamily = NotoSans, fontSize = 16.sp
             )
         }
-
     }
 }

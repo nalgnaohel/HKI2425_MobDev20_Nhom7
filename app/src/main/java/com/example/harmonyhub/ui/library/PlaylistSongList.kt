@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -70,6 +71,8 @@ fun PlaylistSongListScreen(
     var query by remember { mutableStateOf("") }
 
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isBottomTitleSheetVisible by remember { mutableStateOf(false) }
+    var selectedSong by remember { mutableStateOf<Song?>(null) }
     var titleBottomSheet by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
@@ -127,7 +130,7 @@ fun PlaylistSongListScreen(
                 }
                 IconButton(onClick = {
                     titleBottomSheet = playlistName
-                    isBottomSheetVisible = true
+                    isBottomTitleSheetVisible = true
                 }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -220,11 +223,251 @@ fun PlaylistSongListScreen(
                     more = Icons.Default.MoreVert,
                     onSongClick = { onPlaySongClicked() },
                     onMoreClick = {
-                        titleBottomSheet = playlistName
+                        selectedSong = song
                         isBottomSheetVisible = true
                     }
                 )
             }
         }
+    }
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomSheetVisible = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            BottomSheetContent(
+                onDismiss = { isBottomSheetVisible = false },
+                selectedSong = selectedSong
+            )
+        }
+    }
+    if (isBottomTitleSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomTitleSheetVisible = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ) {
+            BottomSheetTitleContent(
+                onDismiss = { isBottomTitleSheetVisible = false },
+                title = titleBottomSheet
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        selectedSong?.let { song ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(song.imageResId),
+                    contentDescription = "Song Image",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = song.name,
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = song.artist,
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+        HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.favorite),
+                contentDescription = "Favorite",
+                tint = Color.LightGray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Thêm vào yêu thích", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.mdi_account_music_outline),
+                contentDescription = "Artist",
+                tint = Color.LightGray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Chuyển tới nghệ sĩ", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.minus),
+                contentDescription = "Delete",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Xóa khỏi danh sách này", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.download_for_offline),
+                contentDescription = "Download",
+                tint = Color.LightGray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Tải về", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Chia sẻ", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = title,
+            fontFamily = NotoSans,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit",
+                tint = Color.Gray,
+                modifier = Modifier.size(23.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Đổi tên playlist", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.remove),
+                contentDescription = "Remove",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Xóa playlist", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { /*Todo*/ }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Chia sẻ", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
     }
 }
