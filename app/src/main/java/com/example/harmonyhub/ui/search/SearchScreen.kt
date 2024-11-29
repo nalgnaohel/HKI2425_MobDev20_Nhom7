@@ -42,6 +42,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun SearchScreen(
     onSearchQueryChanged: (String) -> Unit,
+    onPlaySongClicked :() -> Unit
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -109,7 +110,7 @@ fun SearchScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(searchResults) { song ->
-                SongCard(song = song , more = Icons.Default.MoreVert, onSongClick = {} )
+                SongCard(song = song , more = Icons.Default.MoreVert, onSongClick = onPlaySongClicked )
             }
         }
     }

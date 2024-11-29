@@ -202,6 +202,9 @@ fun HarmonyHubApp(
                 composable(route = HarmonyHubScreen.Search.name) {
                     SearchScreen(
                         onSearchQueryChanged = { /* Handle search query change */ },
+                        onPlaySongClicked = {
+                            navController.navigate(HarmonyHubScreen.Play.name)
+                        }
                     )
                 }
                 composable(route = HarmonyHubScreen.Play.name) {

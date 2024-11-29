@@ -51,7 +51,7 @@ private val gradientBackground = Brush.verticalGradient(
 
 @Composable
 fun LibraryScreen(
-    onPlaySongClicked: (String) -> Unit,
+    onPlaySongClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onViewAllRecentCLicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
@@ -204,7 +204,7 @@ fun LibraryScreen(
                     SongCard(
                         song = song,
                         more = Icons.Default.MoreVert,
-                        onSongClick = { onPlaySongClicked(song.id) }
+                        onSongClick = { onPlaySongClicked() }
                     )
                 }
             }

@@ -50,13 +50,13 @@ fun Song.contains(query: String, ignoreCase: Boolean = true): Boolean {
 fun SongCard(
     song: Song,
     more: ImageVector,
-    onSongClick: (String) -> Unit
+    onSongClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onSongClick(song.id) },
+            .clickable { onSongClick() },
 
         verticalAlignment = Alignment.CenterVertically
     ) {
