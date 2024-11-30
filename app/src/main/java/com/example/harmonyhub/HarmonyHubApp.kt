@@ -276,11 +276,11 @@ fun HarmonyHubApp(
                         )
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
-                    Nav2()
+                    Nav2(navController)
                 }
 
                 composable(route = "ArtistsFollowing") {
-                    Nav()
+                    Nav(navController)
                 }
 
 
@@ -338,8 +338,8 @@ fun HarmonyHubApp(
     }
 }
 @Composable
-fun Nav() {
-    val navController = rememberNavController()
+fun Nav(navController: NavHostController) {
+//    val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "ArtistsFollowing") {
         composable(route = "ArtistsFollowing") {
             ArtistsFollowingScreen(
@@ -364,7 +364,7 @@ fun Nav() {
     }
 }
 @Composable
-fun Nav2() {
+fun Nav2(navController: NavHostController) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Playlist") {
         composable(route = "Playlist") {
