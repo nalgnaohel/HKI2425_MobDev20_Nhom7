@@ -46,8 +46,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -56,16 +58,17 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongList(
-    title: String,
-    more: ImageVector,
-    songs: List<Song>,
-    onBackButtonClicked: () -> Unit,
+    title: String, // Tiêu đề trang
+    more: ImageVector, // Hành động thêm
+    songs: List<Song>, // Danh sách bài hát
+    onBackButtonClicked: () -> Unit, // Xử lý nút Back
+    screenType: String,
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
     onAddToPlaylistClicked: () -> Unit,
     onAddToFavoriteClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
-    screenType: String
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -221,6 +224,7 @@ private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedSong: Song?,
     screenType: String,
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
     onAddToPlaylistClicked: () -> Unit = {},
     onAddToFavoriteClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {},
@@ -337,8 +341,13 @@ private fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    onDismiss()
-                    onDeleteClicked() }
+                    if (screenType == "Favorite") {
+                        selectedSong?.let {
+                            favoriteSongsViewModel.removeFavoriteSong(it)
+                        }
+                        onDismiss()
+                    }
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.minus),

@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.search
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -30,7 +31,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,16 +42,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -63,11 +69,32 @@ fun SearchScreen(
     onAddToFavoriteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 ) {
     var query by remember { mutableStateOf("") }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
 
+    val dataFetchingState = favoriteSongsViewModel.dataFetchingState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+//        favoriteSongsViewModel.getFavoriteSongs()
+    }
+
+    LaunchedEffect(dataFetchingState.value) {
+        if (dataFetchingState.value is FavoriteSongFetchingState.Success) {
+            // Show toast
+            Toast.makeText(context, "Đã thêm vào danh sách yêu thích", Toast.LENGTH_SHORT).show()
+            favoriteSongsViewModel.resetDataFetchingState()
+        }
+        if (dataFetchingState.value is FavoriteSongFetchingState.Error) {
+            // Show toast
+            val message = (dataFetchingState.value as FavoriteSongFetchingState.Error).message
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            favoriteSongsViewModel.resetDataFetchingState()
+        }
+    }
 
     val focusManager = LocalFocusManager.current
 
@@ -156,7 +183,8 @@ fun SearchScreen(
                 onAddToPlaylistClicked = onAddToPlaylistClicked,
                 onAddToFavoriteClicked = onAddToFavoriteClicked,
                 onShareClicked = onShareClicked,
-                onDownloadClicked = onDownloadClicked
+                onDownloadClicked = onDownloadClicked,
+                favoriteSongsViewModel = favoriteSongsViewModel
             )
         }
     }
@@ -169,8 +197,10 @@ private fun BottomSheetContent(
     onAddToPlaylistClicked: () -> Unit,
     onAddToFavoriteClicked: () -> Unit,
     onShareClicked: () -> Unit,
-    onDownloadClicked: () -> Unit
+    onDownloadClicked: () -> Unit,
+    favoriteSongsViewModel: FavoriteSongsViewModel
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -239,8 +269,11 @@ private fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
+                    if (selectedSong != null) {
+                        favoriteSongsViewModel.addFavoriteSong(selectedSong)
+                    }
                     onDismiss()
-                    onAddToFavoriteClicked() }
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
@@ -259,7 +292,7 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {  }
+                .clickable { /*Todo*/ }
         ) {
             Icon(
                 painter = painterResource(R.drawable.mdi_account_music_outline),

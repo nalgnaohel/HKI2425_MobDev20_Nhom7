@@ -2,15 +2,17 @@ package com.example.harmonyhub.data.repository
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.ui.components.Song
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class UserDataRepoImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -30,6 +32,16 @@ class UserDataRepoImpl @Inject constructor(
     fun getAlbumRef(userId: String?, albumName: String): DocumentReference {
         val albumRef = getAlbumsRef(userId).document(albumName)
         return albumRef
+    }
+
+    fun getFavoriteSongRef(userId: String?, url: String): DocumentReference {
+        val favoriteSongsRef = firestore.collection("users").document(userId.toString()).collection("favorite").document(url)
+        return favoriteSongsRef
+    }
+
+    fun getFavoriteSongsRef(userId: String?): CollectionReference {
+        val favoriteSongsRef = firestore.collection("users").document(userId.toString()).collection("favorite")
+        return favoriteSongsRef
     }
 
     override fun getUserInfor(callback: (String?, String?) -> Unit) {
@@ -111,11 +123,112 @@ class UserDataRepoImpl @Inject constructor(
             }
     }
 
-    override fun getSongs() {
-        // TODO("Not yet implemented")
+    override fun addFavoriteSong(song: Song, callback: (FavoriteSongFetchingState) -> Unit) {
+        val userId = auth.currentUser?.uid
+
+        Log.d("uid", userId.toString())
+        Log.d("url", song.url)
+
+        val urls = mutableListOf<String>()
+
+        getFavoriteSongs { state ->
+            when (state) {
+                is FavoriteSongFetchingState.Success -> {
+                    val songs = state.data as List<Song>
+                    songs.forEach {
+                        urls.add(it.url)
+                    }
+
+                    if (urls.contains(song.url)) {
+                        callback(FavoriteSongFetchingState.Error("Song already in favorites"))
+                    } else {
+                        val encodedUrl = URLEncoder.encode(song.url, StandardCharsets.UTF_8.toString())
+
+                        val favoriteSongRef = getFavoriteSongRef(userId, encodedUrl)
+
+                        val songMap = hashMapOf(
+                            "songName" to song.name,
+                            "artist" to song.artist,
+                            "imageResId" to song.imageResId,
+                            "url" to song.url
+                        )
+
+                        favoriteSongRef.set(songMap)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "DocumentSnapshot successfully written!")
+                                callback(FavoriteSongFetchingState.Success("Successfully added favorite song"))
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error writing document", e)
+                                callback(FavoriteSongFetchingState.Error("Failed to add favorite song"))
+                            }
+                    }
+                }
+                else -> { }
+            }
+
+        }
+
+        getFavoriteSongs(callback = {
+            when (it) {
+                is FavoriteSongFetchingState.Success -> {
+                    val songs = it.data as List<Song>
+                    songs.forEach {
+                        urls.add(it.url)
+                    }
+                }
+                is FavoriteSongFetchingState.Error -> {
+                    Log.d("favorite", "Error getting documents: ")
+                }
+                else -> {}
+            }
+        })
     }
 
-    override fun getSong() {
-        // TODO("Not yet implemented")
+    override fun removeFavoriteSong(
+        song: Song,
+        callback: (FavoriteSongFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val encodedUrl = URLEncoder.encode(song.url, StandardCharsets.UTF_8.toString())
+
+        val favoriteSongRef = getFavoriteSongRef(userId, encodedUrl)
+
+        favoriteSongRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                callback(FavoriteSongFetchingState.Success("Successfully removed favorite song"))
+//                getFavoriteSongs(callback)
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+                callback(FavoriteSongFetchingState.Error("Failed to remove favorite song"))
+            }
+    }
+
+    override fun getFavoriteSongs(callback: (FavoriteSongFetchingState) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val favoriteSongsRef = getFavoriteSongsRef(userId)
+
+        favoriteSongsRef.get()
+            .addOnSuccessListener { result ->
+                val favoriteSongs = mutableListOf<Song>()
+                for (document in result) {
+                    Log.d("favorite", "${document.id} => ${document.data}")
+                    val song = Song(
+                        id = document.id,
+                        name = document.getString("songName").toString(),
+                        artist = document.getString("artist").toString(),
+                        imageResId = document.getString("imageResId").toString(),
+                        url = document.getString("url").toString()
+                    )
+                    favoriteSongs.add(song)
+                }
+                callback(FavoriteSongFetchingState.Success(favoriteSongs))
+            }
+            .addOnFailureListener { exception ->
+                Log.d("favorite", "Error getting documents: ", exception)
+                callback(FavoriteSongFetchingState.Error("Failed to get favorite songs"))
+            }
     }
 }
