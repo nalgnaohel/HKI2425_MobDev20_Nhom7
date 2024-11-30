@@ -17,12 +17,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.harmonyhub.R
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -32,9 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
-
 import androidx.compose.ui.platform.testTag
-
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -48,7 +46,8 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun ArtistScreen(
     myArtist: String?,
-    onSongClick: () -> Unit
+    onSongClick: () -> Unit,
+    onBackButtonClicked: () -> Unit
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
@@ -81,6 +80,19 @@ fun ArtistScreen(
                     )
             )
 
+            IconButton(
+                onClick = onBackButtonClicked,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier.size(25.dp)
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,7 +122,7 @@ fun ArtistScreen(
                 modifier = Modifier
                     .border(1.dp, Color.White, RoundedCornerShape(16.dp))
                     .padding(8.dp)
-                    .clickable {  }
+                    .clickable { }
             ) {
                 Text(
                     text = "Follow",
@@ -142,7 +154,9 @@ fun ArtistScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (songs.isNotEmpty()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp).testTag("Song List")) {
+            Column(modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .testTag("Song List")) {
                 Text(
                     text = "Popular releases",
                     color = Color.White,
@@ -315,7 +329,8 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
 fun ArtistScreenPreview() {
     ArtistScreen(
         myArtist = "Jack - J97",
-        onSongClick = {}
+        onSongClick = {},
+        onBackButtonClicked = {}
     )
 }
 

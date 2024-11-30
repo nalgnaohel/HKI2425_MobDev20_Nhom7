@@ -358,7 +358,8 @@ fun Nav() {
         ) { backStackEntry ->
             ArtistScreen(
                 myArtist = backStackEntry.arguments?.getString("artist.name"),
-                onSongClick = {}
+                onSongClick = {},
+                onBackButtonClicked = {navController.popBackStack()}
             )
         }
     }
