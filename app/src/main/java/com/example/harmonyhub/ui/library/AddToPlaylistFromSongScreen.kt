@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +38,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -56,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Playlist
 import com.example.harmonyhub.ui.components.contains
@@ -77,7 +82,30 @@ fun AddToPlaylistFromSongScreen(
     var showDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
 
-    val allPlaylists = remember { mutableListOf<Playlist>() }
+    val albumsFetchingState = userDataViewModel.dataFetchingState.observeAsState()
+    val context = LocalContext.current
+
+    val allPlaylists = remember { mutableListOf<String>() }
+
+    LaunchedEffect(Unit) {
+        userDataViewModel.getAlbums()
+    }
+
+    LaunchedEffect(albumsFetchingState.value) {
+        when (albumsFetchingState.value) {
+            is DataFetchingState.Success -> {
+                allPlaylists.clear()
+                allPlaylists.addAll((albumsFetchingState.value as DataFetchingState.Success).data as List<String>)
+                userDataViewModel.resetDataFetchingState()
+            }
+            is DataFetchingState.Error -> {
+                val message = (albumsFetchingState.value as DataFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                userDataViewModel.resetDataFetchingState()
+            }
+            else -> {}
+        }
+    }
 
     val searchResults = allPlaylists.filter { it.contains(query, ignoreCase = true) }
     Column(
@@ -178,7 +206,7 @@ fun AddToPlaylistFromSongScreen(
 
         // Danh sách playlist
         LazyColumn {
-            items(listOf("Playlist #1", "Playlist #2")) { playlist ->
+            items(allPlaylists) { playlist ->
                 PlaylistItem(
                     playlistName = playlist,
                     songCount = "2 bài hát"
