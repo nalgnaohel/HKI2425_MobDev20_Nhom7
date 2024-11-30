@@ -63,7 +63,12 @@ fun SongList(
     songs: List<Song>, // Danh sách bài hát
     onBackButtonClicked: () -> Unit, // Xử lý nút Back
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel()
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -203,7 +208,12 @@ fun SongList(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedSong = selectedSong,
-                screenType = screenType
+                screenType = screenType,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onDeleteClicked = onDeleteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked
             )
         }
     }
@@ -214,7 +224,12 @@ private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedSong: Song?,
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel()
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
+    onAddToPlaylistClicked: () -> Unit = {},
+    onAddToFavoriteClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -261,7 +276,9 @@ private fun BottomSheetContent(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { /* Thêm vào danh sách phát */ }
+                    .clickable {
+                        onDismiss()
+                        onAddToFavoriteClicked() }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.favorite),
@@ -282,7 +299,9 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_48),
@@ -348,7 +367,9 @@ private fun BottomSheetContent(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { /* Tải về */ }
+                    .clickable {
+                        onDismiss()
+                        onDownloadClicked() }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.download_for_offline),
@@ -369,7 +390,9 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /* Chia sẻ */ }
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,

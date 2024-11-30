@@ -24,14 +24,17 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -65,6 +68,11 @@ fun PlaylistSongListScreen(
     onPlaySongClicked: () -> Unit,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit = {},
+    onAddToFavoriteClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {}
 ) {
     val allSongs: List<Song> = SongRepository.allSongs
 
@@ -237,7 +245,11 @@ fun PlaylistSongListScreen(
         ) {
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong
+                selectedSong = selectedSong,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked
             )
         }
     }
@@ -245,7 +257,7 @@ fun PlaylistSongListScreen(
         ModalBottomSheet(
             onDismissRequest = { isBottomTitleSheetVisible = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            ) {
+        ) {
             BottomSheetTitleContent(
                 onDismiss = { isBottomTitleSheetVisible = false },
                 title = titleBottomSheet
@@ -256,7 +268,15 @@ fun PlaylistSongListScreen(
 
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    onAddToPlaylistClicked: () -> Unit = {},
+    onAddToFavoriteClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,7 +322,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToFavoriteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
@@ -313,6 +335,27 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 "Thêm vào yêu thích", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked() }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.add_48),
+                contentDescription = "Add",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Thêm vào danh sách phát", modifier = Modifier.padding(vertical = 8.dp),
                 fontFamily = NotoSans, fontSize = 16.sp
             )
         }
@@ -340,7 +383,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDeleteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.minus),
@@ -359,7 +404,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDownloadClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.download_for_offline),
@@ -377,7 +424,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
@@ -395,8 +444,12 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var newPlaylistName by remember { mutableStateOf(title) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -416,7 +469,7 @@ private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { showRenameDialog = true }
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
@@ -469,5 +522,64 @@ private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
             )
         }
 
+    }
+    if (showRenameDialog) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = {
+                Text(
+                    text = "Đổi tên Playlist",
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = newPlaylistName,
+                        onValueChange = { newPlaylistName = it },
+                        label = { Text("Tên playlist mới") },
+                        singleLine = true,
+                        textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color(0xFF00FAF2),
+                            focusedLabelColor = Color(0xFF00FAF2),
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRenameDialog = false
+                        onDismiss()
+                    },
+                    enabled = newPlaylistName.isNotBlank()
+                ) {
+                    Text(
+                        "OK",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (newPlaylistName.isNotBlank()) Color(0xFF00FAF2) else Color.Gray
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showRenameDialog = false
+                    onDismiss()
+                }) {
+                    Text(
+                        "Hủy",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF00FAF2)
+                    )
+                }
+            }
+        )
     }
 }

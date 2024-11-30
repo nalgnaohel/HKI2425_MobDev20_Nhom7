@@ -65,6 +65,10 @@ import com.example.harmonyhub.ui.theme.NotoSans
 fun SearchScreen(
     onSearchQueryChanged: (String) -> Unit,
     onPlaySongClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
     favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 ) {
     var query by remember { mutableStateOf("") }
@@ -176,6 +180,10 @@ fun SearchScreen(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedSong = selectedSong,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked,
                 favoriteSongsViewModel = favoriteSongsViewModel
             )
         }
@@ -186,6 +194,10 @@ fun SearchScreen(
 private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedSong: Song?,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
     favoriteSongsViewModel: FavoriteSongsViewModel
 ) {
 
@@ -234,7 +246,10 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked()
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_48),
@@ -296,7 +311,9 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDownloadClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.download_for_offline),
@@ -314,7 +331,9 @@ private fun BottomSheetContent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,

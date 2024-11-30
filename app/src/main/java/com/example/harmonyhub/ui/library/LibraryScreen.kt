@@ -79,9 +79,13 @@ fun LibraryScreen(
     onArtistsFollowingButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier,
     favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
-    userViewModel: UserDataViewModel = hiltViewModel()
+    userViewModel: UserDataViewModel = hiltViewModel(),
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
@@ -157,7 +161,9 @@ fun LibraryScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Box(
@@ -195,7 +201,7 @@ fun LibraryScreen(
                             LibraryCard(
                                 icon = R.drawable.queue_music,
                                 title = "Playlists",
-                                count = playlists.size,
+                                count = 12,
                                 type = "playlists",
                                 onCardClicked = onPlaylistButtonClicked,
                             )
@@ -265,7 +271,12 @@ fun LibraryScreen(
         ) {
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong
+                selectedSong = selectedSong,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onDeleteClicked = onDeleteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked
             )
         }
     }
@@ -326,7 +337,15 @@ fun LibraryCard(
 }
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    onAddToPlaylistClicked: () -> Unit = {},
+    onAddToFavoriteClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -372,7 +391,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_48),
@@ -390,7 +411,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToFavoriteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
@@ -428,7 +451,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDeleteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.minus),
@@ -447,7 +472,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDownloadClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.download_for_offline),
@@ -465,7 +492,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
