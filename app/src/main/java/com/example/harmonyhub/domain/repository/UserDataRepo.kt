@@ -13,5 +13,4 @@ interface UserDataRepo {
     fun addFavoriteSong(song: Song)
     fun removeFavoriteSong(song: Song, callback: (FavoriteSongFetchingState) -> Unit)
     fun getFavoriteSongs(callback: (FavoriteSongFetchingState) -> Unit)
-
 }
