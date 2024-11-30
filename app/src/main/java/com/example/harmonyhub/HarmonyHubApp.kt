@@ -120,15 +120,16 @@ fun HarmonyHubApp(
                 )
             ) {
                 Column {
-                    NowPlayingBar(
-                        songName = "Closer",
-                        artistName = "The Chainsmokers, Halsey",
-                        isPlaying = true,
-                        onPlayPauseClick = { /* Handle play/pause logic */ },
-                        onNextClick = { /* Handle next song logic */ },
-                        onPreviousClick = { /* Handle previous song logic */ },
-                        onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
-                    )
+                    if (currentScreen != HarmonyHubScreen.AddToPlaylistFromSong)
+                        NowPlayingBar(
+                            songName = "Closer",
+                            artistName = "The Chainsmokers, Halsey",
+                            isPlaying = true,
+                            onPlayPauseClick = { /* Handle play/pause logic */ },
+                            onNextClick = { /* Handle next song logic */ },
+                            onPreviousClick = { /* Handle previous song logic */ },
+                            onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
+                        )
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -308,11 +309,11 @@ fun HarmonyHubApp(
                     )
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
-                    Nav2(parentNavController = navController)
+                    Nav2()
                 }
 
                 composable(route = "ArtistsFollowing") {
-                    Nav(parentNavController = navController)
+                    Nav()
                 }
 
 
@@ -353,7 +354,12 @@ fun HarmonyHubApp(
                         playlistName = "Playlist 1",
                         onBackButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = { navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) },
-                        onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) }
+                        onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) },
+                        onAddToPlaylistClicked = { navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name) },
+                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                        onDeleteClicked = { /* Handle delete logic */ },
+                        onShareClicked = { /* Handle share logic */ },
+                        onDownloadClicked = { /* Handle download logic */ }
 
                     )
                 }
@@ -376,16 +382,12 @@ fun HarmonyHubApp(
 }
 
 @Composable
-fun Nav(
-    parentNavController: NavHostController
-) {
+fun Nav() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "ArtistsFollowing") {
         composable(route = "ArtistsFollowing") {
             ArtistsFollowingScreen(
-                onBackButtonClicked = {
-                    parentNavController.popBackStack()
-                },
+                onBackButtonClicked = { navController.popBackStack() },
                 navController
             )
         }
@@ -401,27 +403,23 @@ fun Nav(
             ArtistScreen(
                 myArtist = backStackEntry.arguments?.getString("artist.name"),
                 onSongClick = {},
-                onBackButtonClicked = {},
-                onShareClicked = {},
-                onDownloadClicked = {},
-                onAddToFavoriteClicked = {},
-                onAddToPlaylistClicked = {}
+                onBackButtonClicked = { navController.popBackStack() },
+                onAddToPlaylistClicked = { navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name) },
+                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                onShareClicked = { /* Handle share logic */ },
+                onDownloadClicked = { /* Handle download logic */ }
             )
         }
     }
 }
 
 @Composable
-fun Nav2(
-    parentNavController: NavHostController
-) {
+fun Nav2() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Playlist") {
         composable(route = "Playlist") {
             PlaylistsScreen(
-                onBackButtonClicked = {
-                    parentNavController.popBackStack()
-                },
+                onBackButtonClicked = { navController.popBackStack() },
                 navController
             )
         }
@@ -445,7 +443,9 @@ fun Nav2(
                 onShareClicked = {},
                 onDownloadClicked = {},
                 onAddToFavoriteClicked = {},
-                onPlaySongClicked = {}
+                onPlaySongClicked = {},
+                onAddToPlaylistClicked = {},
+                onDeleteClicked = {}
             )
         }
     }

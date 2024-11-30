@@ -58,12 +58,12 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongList(
-    title: String, // Tiêu đề trang
-    more: ImageVector, // Hành động thêm
-    songs: List<Song>, // Danh sách bài hát
-    onBackButtonClicked: () -> Unit, // Xử lý nút Back
+    title: String,
+    more: ImageVector,
+    songs: List<Song>,
+    onBackButtonClicked: () -> Unit,
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
+    favoriteSongsViewModel: FavoriteSongsViewModel? = viewModel(),
     onAddToPlaylistClicked: () -> Unit,
     onAddToFavoriteClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
@@ -205,7 +205,7 @@ fun SongList(
             onDismissRequest = { isBottomSheetVisible = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         ) {
-            BottomSheetContent(
+            BottomSheetContentL(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedSong = selectedSong,
                 screenType = screenType,
@@ -220,7 +220,7 @@ fun SongList(
 }
 
 @Composable
-private fun BottomSheetContent(
+fun BottomSheetContentL(
     onDismiss: () -> Unit,
     selectedSong: Song?,
     screenType: String,
@@ -271,7 +271,7 @@ private fun BottomSheetContent(
         HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (screenType != "Favorite") {
+        if (screenType != "FavoriteScreen" && screenType != "DownloadScreen") {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -295,57 +295,41 @@ private fun BottomSheetContent(
             }
         }
 
+        if (screenType != "DownloadScreen") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onDismiss()
+                        onAddToPlaylistClicked()
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.add_48),
+                    contentDescription = "Add",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Thêm vào danh sách phát",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
                     onDismiss()
-                    onAddToPlaylistClicked() }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.add_48),
-                contentDescription = "Add",
-                tint = Color.Gray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Thêm vào danh sách phát",
-                modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { /*Todo*/ }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.mdi_account_music_outline),
-                contentDescription = "Artist",
-                tint = Color.LightGray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Chuyển tới nghệ sĩ", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    if (screenType == "Favorite") {
+                    if (screenType == "FavoriteScreen") {
                         selectedSong?.let {
                             favoriteSongsViewModel.removeFavoriteSong(it)
                         }
-                        onDismiss()
                     }
                 }
         ) {
@@ -362,7 +346,7 @@ private fun BottomSheetContent(
             )
         }
 
-        if (screenType != "Download") {
+        if (screenType != "DownloadScreen") {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -386,26 +370,29 @@ private fun BottomSheetContent(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onDismiss()
-                    onShareClicked() }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share",
-                tint = Color.Gray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Chia sẻ",
-                modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
+        if (screenType != "DownloadScreen") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onDismiss()
+                        onShareClicked()
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Share",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Chia sẻ",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+            }
         }
     }
 }

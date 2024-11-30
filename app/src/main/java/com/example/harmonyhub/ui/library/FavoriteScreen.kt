@@ -19,7 +19,7 @@ fun FavoriteScreen(
     onAddToPlaylistClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
-    onDownloadClicked: () -> Unit
+    onDownloadClicked: () -> Unit,
     favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 ) {
 
@@ -67,13 +67,12 @@ fun FavoriteScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
-        screenType = "Favorite",
+        screenType = "FavoriteScreen",
         onAddToPlaylistClicked = onAddToPlaylistClicked,
         onAddToFavoriteClicked = {},
         onDeleteClicked = onDeleteClicked,
         onShareClicked = onShareClicked,
-        onDownloadClicked = onDownloadClicked
-        screenType = "Favorite",
+        onDownloadClicked = onDownloadClicked,
         favoriteSongsViewModel = favoriteSongsViewModel
     )
 }
