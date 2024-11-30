@@ -308,13 +308,14 @@ fun HarmonyHubApp(
                         onDeleteClicked = { /* Handle delete logic */ }
                     )
                 }
-                composable(route = HarmonyHubScreen.Playlist.name) {
-                    Nav2()
+                composable(route = HarmonyHubScreen.ArtistsFollowing.name) {
+                    Nav(parentNavController = navController)
                 }
 
-                composable(route = "ArtistsFollowing") {
-                    Nav()
+                composable(route = HarmonyHubScreen.Playlist.name) {
+                    Nav2(parentNavController = navController)
                 }
+
 
 
                 composable(route = HarmonyHubScreen.ForgotPassword.name) {
@@ -382,12 +383,16 @@ fun HarmonyHubApp(
 }
 
 @Composable
-fun Nav() {
+fun Nav(
+    parentNavController: NavHostController
+) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "ArtistsFollowing") {
         composable(route = "ArtistsFollowing") {
             ArtistsFollowingScreen(
-                onBackButtonClicked = { navController.popBackStack() },
+                onBackButtonClicked = {
+                    parentNavController.popBackStack()
+                },
                 navController
             )
         }
@@ -403,23 +408,39 @@ fun Nav() {
             ArtistScreen(
                 myArtist = backStackEntry.arguments?.getString("artist.name"),
                 onSongClick = {},
-                onBackButtonClicked = { navController.popBackStack() },
-                onAddToPlaylistClicked = { navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name) },
-                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                onShareClicked = { /* Handle share logic */ },
-                onDownloadClicked = { /* Handle download logic */ }
+                onBackButtonClicked = {
+                    navController.popBackStack() // Quay lại ArtistsFollowing
+                },
+                onAddToPlaylistClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.AddSongToPlaylist.name)
+                },
+                onAddToFavoriteClicked = {
+                    // Xử lý logic thêm vào yêu thích
+                },
+                onShareClicked = {
+                    // Xử lý logic chia sẻ
+                },
+                onDownloadClicked = {
+                    // Xử lý logic tải về
+                }
             )
         }
     }
 }
 
+
 @Composable
-fun Nav2() {
+fun Nav2(
+    parentNavController: NavHostController
+) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Playlist") {
         composable(route = "Playlist") {
             PlaylistsScreen(
-                onBackButtonClicked = { navController.popBackStack() },
+                onBackButtonClicked = {
+                    // Quay lại màn hình cha (nếu có)
+                    parentNavController.popBackStack()
+                },
                 navController
             )
         }
@@ -438,18 +459,31 @@ fun Nav2() {
                     navController.popBackStack() // Quay lại Playlist
                 },
                 onAddButtonClicked = {
-                    // Thêm xử lý nếu cần
+                    parentNavController.navigate(HarmonyHubScreen.AddSongToPlaylist.name)
                 },
-                onShareClicked = {},
-                onDownloadClicked = {},
-                onAddToFavoriteClicked = {},
-                onPlaySongClicked = {},
-                onAddToPlaylistClicked = {},
-                onDeleteClicked = {}
+                onShareClicked = {
+                    // Xử lý logic chia sẻ playlist
+                },
+                onDownloadClicked = {
+                    // Xử lý logic tải về playlist
+                },
+                onAddToFavoriteClicked = {
+                    // Xử lý logic thêm playlist vào yêu thích
+                },
+                onPlaySongClicked = {
+                    // Xử lý logic phát bài hát
+                },
+                onAddToPlaylistClicked = {
+                    // Xử lý logic thêm bài hát vào playlist khác
+                },
+                onDeleteClicked = {
+                    // Xử lý logic xóa playlist hoặc bài hát
+                }
             )
         }
     }
 }
+
 
 
 //@OptIn(ExperimentalMaterial3Api::class)
