@@ -308,11 +308,11 @@ fun HarmonyHubApp(
                     )
                 }
                 composable(route = HarmonyHubScreen.Playlist.name) {
-                    Nav2()
+                    Nav2(parentNavController = navController)
                 }
 
                 composable(route = "ArtistsFollowing") {
-                    Nav()
+                    Nav(parentNavController = navController)
                 }
 
 
@@ -376,12 +376,16 @@ fun HarmonyHubApp(
 }
 
 @Composable
-fun Nav() {
+fun Nav(
+    parentNavController: NavHostController
+) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "ArtistsFollowing") {
         composable(route = "ArtistsFollowing") {
             ArtistsFollowingScreen(
-                onBackButtonClicked = { navController.popBackStack() },
+                onBackButtonClicked = {
+                    parentNavController.popBackStack()
+                },
                 navController
             )
         }
@@ -397,23 +401,27 @@ fun Nav() {
             ArtistScreen(
                 myArtist = backStackEntry.arguments?.getString("artist.name"),
                 onSongClick = {},
-                onBackButtonClicked = { navController.popBackStack() },
-                onAddToPlaylistClicked = { navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name) },
-                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                onShareClicked = { /* Handle share logic */ },
-                onDownloadClicked = { /* Handle download logic */ }
+                onBackButtonClicked = {},
+                onShareClicked = {},
+                onDownloadClicked = {},
+                onAddToFavoriteClicked = {},
+                onAddToPlaylistClicked = {}
             )
         }
     }
 }
 
 @Composable
-fun Nav2() {
+fun Nav2(
+    parentNavController: NavHostController
+) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Playlist") {
         composable(route = "Playlist") {
             PlaylistsScreen(
-                onBackButtonClicked = { navController.popBackStack() },
+                onBackButtonClicked = {
+                    parentNavController.popBackStack()
+                },
                 navController
             )
         }
@@ -426,14 +434,19 @@ fun Nav2() {
                 }
             )
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("playlist.name")?.let {
-                PlaylistSongListScreen(
-                    playlistName = it,
-                    onBackButtonClicked = { navController.popBackStack() },
-                    onAddButtonClicked = { /* navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) */ },
-                    onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) }
-                )
-            }
+            PlaylistSongListScreen(
+                playlistName = backStackEntry.arguments?.getString("playlist.name"),
+                onBackButtonClicked = {
+                    navController.popBackStack() // Quay lại Playlist
+                },
+                onAddButtonClicked = {
+                    // Thêm xử lý nếu cần
+                },
+                onShareClicked = {},
+                onDownloadClicked = {},
+                onAddToFavoriteClicked = {},
+                onPlaySongClicked = {}
+            )
         }
     }
 }

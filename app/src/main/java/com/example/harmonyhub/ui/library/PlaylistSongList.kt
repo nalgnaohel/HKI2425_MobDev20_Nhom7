@@ -64,7 +64,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistSongListScreen(
-    playlistName: String,
+    playlistName: String?,
     onPlaySongClicked: () -> Unit,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
@@ -118,7 +118,7 @@ fun PlaylistSongListScreen(
                     )
                 }
                 Text(
-                    text = playlistName,
+                    text = playlistName ?:"playlist",
                     style = TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
@@ -137,7 +137,7 @@ fun PlaylistSongListScreen(
                     )
                 }
                 IconButton(onClick = {
-                    titleBottomSheet = playlistName
+                    titleBottomSheet = playlistName ?:"playlist"
                     isBottomTitleSheetVisible = true
                 }) {
                     Icon(
