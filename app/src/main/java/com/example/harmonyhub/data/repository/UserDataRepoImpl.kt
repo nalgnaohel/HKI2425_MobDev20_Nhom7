@@ -108,19 +108,30 @@ class UserDataRepoImpl @Inject constructor(
         val userId = auth.currentUser?.uid
         val albumRef = getAlbumRef(userId, albumName)
 
-        val albumMap = hashMapOf(
-            "albumName" to albumName
-        )
-
-        albumRef.set(albumMap)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written!")
-                getAlbums(callback)
+        getAlbums { state ->
+            when (state) {
+                is DataFetchingState.Success -> {
+                    val albums = state.data as List<String?>
+                    if (albums.contains(albumName)) {
+                        callback(DataFetchingState.Error("Album already exists"))
+                    } else {
+                        val albumMap = hashMapOf(
+                            "albumName" to albumName
+                        )
+                        albumRef.set(albumMap)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "DocumentSnapshot successfully written!")
+                                getAlbums(callback)
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error writing document", e)
+                                callback(DataFetchingState.Error("Failed to add album"))
+                            }
+                    }
+                }
+                else -> { }
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error writing document", e)
-                callback(DataFetchingState.Error("Failed to add album"))
-            }
+        }
     }
 
     override fun addFavoriteSong(song: Song, callback: (FavoriteSongFetchingState) -> Unit) {

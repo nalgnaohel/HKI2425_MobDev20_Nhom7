@@ -202,7 +202,7 @@ fun LibraryScreen(
                             LibraryCard(
                                 icon = R.drawable.queue_music,
                                 title = "Playlists",
-                                count = 12,
+                                count = playlists.size,
                                 type = "playlists",
                                 onCardClicked = onPlaylistButtonClicked,
                             )
