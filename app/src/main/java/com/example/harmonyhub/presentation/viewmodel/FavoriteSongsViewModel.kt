@@ -30,6 +30,12 @@ open class FavoriteSongsViewModel @Inject constructor(
             _dataFetchingState.value = it
         })
     }
+
+    fun getFavoriteSongs() {
+        userRepo.getFavoriteSongs(callback = {
+            _dataFetchingState.value = it
+        })
+    }
 }
 
 sealed class FavoriteSongFetchingState {
