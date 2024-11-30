@@ -12,12 +12,23 @@ import javax.inject.Inject
 open class FavoriteSongsViewModel @Inject constructor(
     private val userRepo: UserDataRepo
 ) : ViewModel() {
-    private val _dataFetchingState = MutableLiveData<DataFetchingState>()
-    val dataFetchingState: MutableLiveData<DataFetchingState> get() = _dataFetchingState
+
+    private val _dataFetchingState = MutableLiveData<FavoriteSongFetchingState?>()
+    val dataFetchingState: MutableLiveData<FavoriteSongFetchingState?> get() = _dataFetchingState
+
+    fun resetDataFetchingState() {
+        _dataFetchingState.value = FavoriteSongFetchingState.Pending
+    }
+
+    init {
+        _dataFetchingState.value = FavoriteSongFetchingState.Pending
+    }
 
     fun addFavoriteSong(song: Song) {
         Log.d("OwO", "Adding favorite song: ${song.name}")
-        userRepo.addFavoriteSong(song)
+        userRepo.addFavoriteSong(song, callback = {
+            _dataFetchingState.value = it
+        })
     }
 }
 

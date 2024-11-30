@@ -10,7 +10,7 @@ interface UserDataRepo {
     fun getAlbums(callback: (DataFetchingState) -> Unit)
     fun setAlbum(albumName: String, callback: (DataFetchingState) -> Unit)
 
-    fun addFavoriteSong(song: Song)
+    fun addFavoriteSong(song: Song, callback: (FavoriteSongFetchingState) -> Unit)
     fun removeFavoriteSong(song: Song, callback: (FavoriteSongFetchingState) -> Unit)
     fun getFavoriteSongs(callback: (FavoriteSongFetchingState) -> Unit)
 }
