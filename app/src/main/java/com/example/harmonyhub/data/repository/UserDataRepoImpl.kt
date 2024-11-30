@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.ui.components.Song
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -42,6 +43,16 @@ class UserDataRepoImpl @Inject constructor(
     fun getFavoriteSongsRef(userId: String?): CollectionReference {
         val favoriteSongsRef = firestore.collection("users").document(userId.toString()).collection("favorite")
         return favoriteSongsRef
+    }
+
+    fun getPlaylistRef(userId: String?, playlistName: String): DocumentReference {
+        val playlistRef = firestore.collection("users").document(userId.toString()).collection("albums").document(playlistName)
+        return playlistRef
+    }
+
+    fun getPlaylistSongRef(userId: String?, playlistName: String, url: String): DocumentReference {
+        val playlistSongRef = getPlaylistRef(userId, playlistName).collection("songs").document(url)
+        return playlistSongRef
     }
 
     override fun getUserInfor(callback: (String?, String?) -> Unit) {
@@ -240,6 +251,33 @@ class UserDataRepoImpl @Inject constructor(
             .addOnFailureListener { exception ->
                 Log.d("favorite", "Error getting documents: ", exception)
                 callback(FavoriteSongFetchingState.Error("Failed to get favorite songs"))
+            }
+    }
+
+    override fun addSongToPlayList(
+        song: Song,
+        playlistName: String,
+        callback: (PlaylistSongFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val encodedUrl = URLEncoder.encode(song.url, StandardCharsets.UTF_8.toString())
+        val playlistSongsRef = getPlaylistSongRef(userId, playlistName, encodedUrl)
+
+        val songMap = hashMapOf(
+            "songName" to song.name,
+            "artist" to song.artist,
+            "imageResId" to song.imageResId,
+            "url" to song.url
+        )
+
+        playlistSongsRef.set(songMap)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written!")
+                callback(PlaylistSongFetchingState.Success("Successfully added song to ${playlistName}"))
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error writing document", e)
+                callback(PlaylistSongFetchingState.Error("Failed to add song to ${playlistName}"))
             }
     }
 }

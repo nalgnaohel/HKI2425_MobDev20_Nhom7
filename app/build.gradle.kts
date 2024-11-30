@@ -100,6 +100,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+
 //    // Hilt Testing dependencies
 //    androidTestImplementation("androidx.hilt:hilt-testing:1.0.0")
 //    androidTestImplementation("com.google.dagger:hilt-android-testing:2.43.2")

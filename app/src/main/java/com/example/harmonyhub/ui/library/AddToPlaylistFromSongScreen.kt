@@ -1,12 +1,11 @@
 package com.example.harmonyhub.ui.library
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -52,19 +50,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
+import androidx.lifecycle.lifecycleScope
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
-import com.example.harmonyhub.ui.components.Playlist
-import com.example.harmonyhub.ui.components.contains
+import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
+import kotlinx.coroutines.launch
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
@@ -74,7 +75,9 @@ private val gradientBackground = Brush.verticalGradient(
 @Composable
 fun AddToPlaylistFromSongScreen(
     onBackButtonClicked: () -> Unit,
-    userDataViewModel: UserDataViewModel = hiltViewModel()
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
+    playlistViewModel: PlaylistViewModel = hiltViewModel(),
+    song: Song = Song("1", "Song 1", "Artist 1", "Album 1", "Genre 1")
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -82,13 +85,21 @@ fun AddToPlaylistFromSongScreen(
     var showDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
 
+    var selectedPlaylists by remember { mutableStateOf(setOf<String>())}
+
     val albumsFetchingState = userDataViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
 
     val allPlaylists = remember { mutableListOf<String>() }
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     LaunchedEffect(Unit) {
         userDataViewModel.getAlbums()
+    }
+
+    LaunchedEffect(selectedPlaylists) {
+        Log.d("SelectedPlaylists", "Playlist size: ${selectedPlaylists.size}")
     }
 
     LaunchedEffect(albumsFetchingState.value) {
@@ -209,7 +220,14 @@ fun AddToPlaylistFromSongScreen(
             items(allPlaylists) { playlist ->
                 PlaylistItem(
                     playlistName = playlist,
-                    songCount = "2 bài hát"
+                    songCount = "2 bài hát",
+                    onPlaylistClicked = {
+                        if (selectedPlaylists.contains(playlist)) {
+                            selectedPlaylists -= playlist
+                        } else {
+                            selectedPlaylists += playlist
+                        }
+                    }
                 )
             }
         }
@@ -219,8 +237,23 @@ fun AddToPlaylistFromSongScreen(
         // Nút hoàn tất
         Button(
             onClick = {
-                onBackButtonClicked()
-                /* Todo */
+                // Launch a coroutine to handle the asynchronous operations
+                selectedPlaylists.forEach { playlist ->
+                    lifecycleOwner.lifecycleScope.launch {
+                        playlistViewModel.addSongToPlayList(song, playlist)
+
+                        when (val state = playlistViewModel.dataFetchingState.value) {
+                            is PlaylistSongFetchingState.Error -> {
+                                val message = state.message
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                playlistViewModel.resetDataFetchingState()
+                            }
+                            else -> {}
+                        }
+                    }
+
+            }
+//                onBackButtonClicked()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
@@ -322,7 +355,10 @@ fun AddToPlaylistFromSongScreen(
 }
 
     @Composable
-    fun PlaylistItem(playlistName: String, songCount: String) {
+    fun PlaylistItem(playlistName: String,
+                     songCount: String,
+                     onPlaylistClicked: () -> Unit = { }
+    ) {
         var isSelected by remember { mutableStateOf(false) }
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -353,7 +389,9 @@ fun AddToPlaylistFromSongScreen(
             Spacer(modifier = Modifier.weight(1f))
             RadioButton(
                 selected = isSelected,
-                onClick = { isSelected = !isSelected },
+                onClick = { isSelected = !isSelected
+                          onPlaylistClicked()
+                          },
                 colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0A91BD))
             )
         }
