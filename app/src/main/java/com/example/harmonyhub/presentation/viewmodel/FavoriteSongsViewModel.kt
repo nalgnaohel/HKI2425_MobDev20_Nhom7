@@ -36,6 +36,12 @@ open class FavoriteSongsViewModel @Inject constructor(
             _dataFetchingState.value = it
         })
     }
+
+    fun removeFavoriteSong(song: Song) {
+        userRepo.removeFavoriteSong(song, callback = {
+            _dataFetchingState.value = it
+        })
+    }
 }
 
 sealed class FavoriteSongFetchingState {

@@ -46,8 +46,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -60,7 +62,8 @@ fun SongList(
     more: ImageVector, // Hành động thêm
     songs: List<Song>, // Danh sách bài hát
     onBackButtonClicked: () -> Unit, // Xử lý nút Back
-    screenType: String
+    screenType: String,
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel()
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -207,7 +210,12 @@ fun SongList(
 }
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?, screenType: String) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    screenType: String,
+    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -313,7 +321,14 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?, scree
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    if (screenType == "Favorite") {
+                        selectedSong?.let {
+                            favoriteSongsViewModel.removeFavoriteSong(it)
+                        }
+                        onDismiss()
+                    }
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.minus),

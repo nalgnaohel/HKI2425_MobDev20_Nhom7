@@ -31,11 +31,21 @@ fun FavoriteScreen(
     LaunchedEffect(dataFetchingState.value) {
         when (dataFetchingState.value) {
             is FavoriteSongFetchingState.Success -> {
-                val songs =
-                    (dataFetchingState.value as FavoriteSongFetchingState.Success).data as List<Song>
-                allSongs.clear()
-                allSongs.addAll(songs)
-                favoriteSongsViewModel.resetDataFetchingState()
+
+                when (val data = (dataFetchingState.value as FavoriteSongFetchingState.Success).data) {
+                    is List<*> -> {
+                        val songs = data as List<Song>
+                        allSongs.clear()
+                        allSongs.addAll(songs)
+                        favoriteSongsViewModel.resetDataFetchingState()
+                    }
+                    is String -> {
+                        val message = data as String
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        favoriteSongsViewModel.resetDataFetchingState()
+                        favoriteSongsViewModel.getFavoriteSongs()
+                    }
+                }
             }
 
             is FavoriteSongFetchingState.Error -> {
@@ -53,6 +63,7 @@ fun FavoriteScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
-        screenType = "Favorite"
+        screenType = "Favorite",
+        favoriteSongsViewModel = favoriteSongsViewModel
     )
 }

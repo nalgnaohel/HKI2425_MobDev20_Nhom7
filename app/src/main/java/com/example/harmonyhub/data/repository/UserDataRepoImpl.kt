@@ -189,7 +189,21 @@ class UserDataRepoImpl @Inject constructor(
         song: Song,
         callback: (FavoriteSongFetchingState) -> Unit
     ) {
-        TODO("Not yet implemented")
+        val userId = auth.currentUser?.uid
+        val encodedUrl = URLEncoder.encode(song.url, StandardCharsets.UTF_8.toString())
+
+        val favoriteSongRef = getFavoriteSongRef(userId, encodedUrl)
+
+        favoriteSongRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                callback(FavoriteSongFetchingState.Success("Successfully removed favorite song"))
+//                getFavoriteSongs(callback)
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+                callback(FavoriteSongFetchingState.Error("Failed to remove favorite song"))
+            }
     }
 
     override fun getFavoriteSongs(callback: (FavoriteSongFetchingState) -> Unit) {
