@@ -30,7 +30,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,9 +47,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
@@ -72,10 +79,34 @@ fun LibraryScreen(
     onArtistsFollowingButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
+    userViewModel: UserDataViewModel = hiltViewModel()
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
+
+    val favoriteSongsFetchingState = favoriteSongsViewModel.dataFetchingState.observeAsState()
+    val playlistsFetchingState = userViewModel.dataFetchingState.observeAsState()
+
+    LaunchedEffect(Unit) {
+        favoriteSongsViewModel.getFavoriteSongs()
+        userViewModel.getAlbums()
+    }
+
+    val favorites = when(val state = favoriteSongsFetchingState.value) {
+        is FavoriteSongFetchingState.Success -> {
+            (state.data as List<Song>)
+        }
+        else -> emptyList()
+    }
+
+    val playlists = when(val state = playlistsFetchingState.value) {
+        is DataFetchingState.Success -> {
+            (state.data as List<String?>)
+        }
+        else -> emptyList()
+    }
 
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
@@ -135,7 +166,7 @@ fun LibraryScreen(
                             LibraryCard(
                                 icon = R.drawable.favorite,
                                 title = "Đã thích",
-                                count = 120,
+                                count = favorites.size,
                                 type = "bài hát",
                                 onCardClicked = onFavoriteButtonClicked,
                             )
@@ -164,7 +195,7 @@ fun LibraryScreen(
                             LibraryCard(
                                 icon = R.drawable.queue_music,
                                 title = "Playlists",
-                                count = 12,
+                                count = playlists.size,
                                 type = "playlists",
                                 onCardClicked = onPlaylistButtonClicked,
                             )
