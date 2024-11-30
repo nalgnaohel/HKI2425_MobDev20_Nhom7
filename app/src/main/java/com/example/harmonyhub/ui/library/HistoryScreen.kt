@@ -22,7 +22,7 @@ fun HistoryScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
-        screenType = "History",
+        screenType = "HistoryScreen",
         onAddToPlaylistClicked = onAddToPlaylistClicked,
         onAddToFavoriteClicked = onAddToFavoriteClicked,
         onDeleteClicked = onDeleteClicked,

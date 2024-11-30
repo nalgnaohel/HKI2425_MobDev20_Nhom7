@@ -120,15 +120,16 @@ fun HarmonyHubApp(
                 )
             ) {
                 Column {
-                    NowPlayingBar(
-                        songName = "Closer",
-                        artistName = "The Chainsmokers, Halsey",
-                        isPlaying = true,
-                        onPlayPauseClick = { /* Handle play/pause logic */ },
-                        onNextClick = { /* Handle next song logic */ },
-                        onPreviousClick = { /* Handle previous song logic */ },
-                        onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
-                    )
+                    if (currentScreen != HarmonyHubScreen.AddToPlaylistFromSong)
+                        NowPlayingBar(
+                            songName = "Closer",
+                            artistName = "The Chainsmokers, Halsey",
+                            isPlaying = true,
+                            onPlayPauseClick = { /* Handle play/pause logic */ },
+                            onNextClick = { /* Handle next song logic */ },
+                            onPreviousClick = { /* Handle previous song logic */ },
+                            onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
+                        )
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -353,7 +354,12 @@ fun HarmonyHubApp(
                         playlistName = "Playlist 1",
                         onBackButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = { navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) },
-                        onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) }
+                        onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) },
+                        onAddToPlaylistClicked = { navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name) },
+                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                        onDeleteClicked = { /* Handle delete logic */ },
+                        onShareClicked = { /* Handle share logic */ },
+                        onDownloadClicked = { /* Handle download logic */ }
 
                     )
                 }
@@ -426,14 +432,21 @@ fun Nav2(navController: NavHostController) {
                 }
             )
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("playlist.name")?.let {
-                PlaylistSongListScreen(
-                    playlistName = it,
-                    onBackButtonClicked = { navController.popBackStack() },
-                    onAddButtonClicked = { /* navController.navigate(HarmonyHubScreen.AddSongToPlaylist.name) */ },
-                    onPlaySongClicked = { navController.navigate(HarmonyHubScreen.Play.name) }
-                )
-            }
+            PlaylistSongListScreen(
+                playlistName = backStackEntry.arguments?.getString("playlist.name"),
+                onBackButtonClicked = {
+                    navController.popBackStack() // Quay lại Playlist
+                },
+                onAddButtonClicked = {
+                    // Thêm xử lý nếu cần
+                },
+                onShareClicked = {},
+                onDownloadClicked = {},
+                onAddToFavoriteClicked = {},
+                onPlaySongClicked = {},
+                onAddToPlaylistClicked = {},
+                onDeleteClicked = {}
+            )
         }
     }
 }

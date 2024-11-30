@@ -1,17 +1,22 @@
 package com.example.harmonyhub.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,7 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
+import com.example.harmonyhub.ui.theme.NotoSans
 
 data class Song(
     val id: String,
@@ -62,8 +71,8 @@ fun SongCard(
                 .data(song.imageResId)
                 .crossfade(true)
                 .build(),
-            error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
-            placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+            error = painterResource(R.drawable.ic_broken_image),
+            placeholder = painterResource(id = R.drawable.loading_img),
             contentDescription = "Photo",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -101,5 +110,172 @@ fun SongCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    screenType: String,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
+    favoriteSongsViewModel: FavoriteSongsViewModel? = null
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        selectedSong?.let { song ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(song.imageResId),
+                    contentDescription = "Song Image",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = song.name,
+                        fontFamily = NotoSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = song.artist,
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+        HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked()
+                }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.add_48),
+                contentDescription = "Add",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Thêm vào danh sách phát",
+                modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (selectedSong != null) {
+                        favoriteSongsViewModel?.addFavoriteSong(selectedSong)
+                    }
+                    onDismiss()
+                }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.favorite),
+                contentDescription = "Favorite",
+                tint = Color.LightGray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Thêm vào yêu thích", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
+        if (screenType != "SearchScreen" && screenType != "ArtistScreen") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onDismiss()
+                        onDeleteClicked()
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.minus),
+                    contentDescription = "Delete",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Xóa khỏi danh sách này", modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onDismiss()
+                    onDownloadClicked() }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.download_for_offline),
+                contentDescription = "Download",
+                tint = Color.LightGray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Tải về", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
+                tint = Color.Gray,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                "Chia sẻ", modifier = Modifier.padding(vertical = 8.dp),
+                fontFamily = NotoSans, fontSize = 16.sp
+            )
+        }
+
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
@@ -51,8 +53,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Playlist
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
@@ -64,12 +68,14 @@ private val gradientBackground = Brush.verticalGradient(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddToPlaylistFromSongScreen(
-    onBackButtonClicked: () -> Unit
+    onBackButtonClicked: () -> Unit,
+    userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     var query by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
+    var newPlaylistName by remember { mutableStateOf("") }
 
     val allPlaylists = remember { mutableListOf<Playlist>() }
 
@@ -206,42 +212,121 @@ fun AddToPlaylistFromSongScreen(
             )
         }
     }
-}
+    // Dialog để nhập tên playlist mới
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(
+                    "Tạo playlist mới",
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                TextField(
+                    value = newPlaylistName,
+                    onValueChange = { newPlaylistName = it },
+                    placeholder = {
+                        Text(
+                            "Tên playlist",
+                            fontFamily = NotoSans,
+                            fontSize = 16.sp
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp)),
+                    singleLine = true,
+                    maxLines = 1,
+                    textStyle = TextStyle(fontFamily = NotoSans, fontSize = 20.sp),
+                    colors = textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        containerColor = Color.Gray.copy(alpha = 0.2f)
+                    ),
+                    trailingIcon = {
+                        // Hiển thị icon xóa nếu TextField có dữ liệu
+                        if (newPlaylistName.isNotEmpty()) {
+                            IconButton(onClick = { newPlaylistName = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear"
+                                )
+                            }
+                        }
+                    },
+                )
+            },
 
-@Composable
-fun PlaylistItem(playlistName: String, songCount: String) {
-    var isSelected by remember { mutableStateOf(false) }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.v),
-            contentDescription = "Playlist Image",
-            modifier = Modifier
-                .size(50.dp)
-                .clip(RoundedCornerShape(8.dp))
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(
-                text = playlistName,
-                color = Color.White,
-                fontSize = 16.sp
-            )
-            Text(
-                text = songCount,
-                color = Color.Gray,
-                fontSize = 14.sp
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        RadioButton(
-            selected = isSelected,
-            onClick = { isSelected = !isSelected },
-            colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0A91BD))
+            confirmButton = {
+                TextButton(
+                    onClick = {
+//                            onPlaylistClicked(newPlaylistName)
+                        userDataViewModel.setAlbum(newPlaylistName)
+                        showDialog = false
+                    },
+                    enabled = newPlaylistName.isNotBlank()
+                ) {
+                    Text(
+                        "OK",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (newPlaylistName.isNotBlank()) Color(0xFF00FAF2) else Color.Gray
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(
+                        "Hủy",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF00FAF2)
+                    )
+                }
+            }
         )
     }
 }
+
+    @Composable
+    fun PlaylistItem(playlistName: String, songCount: String) {
+        var isSelected by remember { mutableStateOf(false) }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.v),
+                contentDescription = "Playlist Image",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(
+                    text = playlistName,
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = songCount,
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            RadioButton(
+                selected = isSelected,
+                onClick = { isSelected = !isSelected },
+                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0A91BD))
+            )
+        }
+    }

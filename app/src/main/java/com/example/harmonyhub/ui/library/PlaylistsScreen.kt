@@ -28,10 +28,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -74,7 +76,7 @@ fun PlaylistsScreen(
     val dataFetchingState = userDataViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
 
-    val allPlaylists = remember {mutableListOf<Playlist>()}
+    val allPlaylists = remember { mutableListOf<Playlist>() }
 
     LaunchedEffect(Unit) {
         userDataViewModel.getAlbums()
@@ -84,7 +86,8 @@ fun PlaylistsScreen(
         when (dataFetchingState.value) {
             is DataFetchingState.Success -> {
                 allPlaylists.clear()
-                val albums = (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
+                val albums =
+                    (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
                 albums.forEach { albumName ->
                     if (albumName != null) {
                         allPlaylists.add(Playlist(albumName, R.drawable.v))
@@ -93,12 +96,14 @@ fun PlaylistsScreen(
                 }
                 userDataViewModel.resetDataFetchingState()
             }
+
             is DataFetchingState.Error -> {
                 val message = (dataFetchingState.value as DataFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 userDataViewModel.resetDataFetchingState()
             }
-            else -> { }
+
+            else -> {}
         }
     }
 
@@ -240,7 +245,7 @@ fun PlaylistsScreen(
                         Surface(
                             modifier = Modifier
                                 .size(width = 155.dp, height = 200.dp)
-                                .clickable {  },
+                                .clickable { },
                             color = Color.Transparent
                         ) {
                             Column(
@@ -291,46 +296,37 @@ fun PlaylistsScreen(
                     Text(
                         "Tạo playlist mới",
                         fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     )
                 },
                 text = {
-                    TextField(
-                        value = newPlaylistName,
-                        onValueChange = { newPlaylistName = it },
-                        placeholder = {
-                            Text(
-                                "Tên playlist",
-                                fontFamily = NotoSans,
-                                fontSize = 16.sp
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp)),
-                        singleLine = true,
-                        maxLines = 1,
-                        textStyle = TextStyle(fontFamily = NotoSans, fontSize = 20.sp),
-                        colors = textFieldColors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            containerColor = Color.Gray.copy(alpha = 0.2f)
-                        ),
-                        trailingIcon = {
-                            // Hiển thị icon xóa nếu TextField có dữ liệu
-                            if (newPlaylistName.isNotEmpty()) {
-                                IconButton(onClick = { newPlaylistName = "" }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear"
-                                    )
+                    Column {
+                        OutlinedTextField(
+                            value = newPlaylistName,
+                            onValueChange = { newPlaylistName = it },
+                            label = { Text("Tên playlist mới")},
+                            singleLine = true,
+                            maxLines = 1,
+                            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = Color(0xFF00FAF2),
+                                focusedLabelColor = Color(0xFF00FAF2),
+                            ),
+                            trailingIcon = {
+                                // Hiển thị icon xóa nếu TextField có dữ liệu
+                                if (newPlaylistName.isNotEmpty()) {
+                                    IconButton(onClick = { newPlaylistName = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Clear"
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                    )
+                            },
+                        )
+                    }
                 },
-
                 confirmButton = {
                     TextButton(
                         onClick = {
