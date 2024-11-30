@@ -58,7 +58,11 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun SearchScreen(
     onSearchQueryChanged: (String) -> Unit,
-    onPlaySongClicked: () -> Unit
+    onPlaySongClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit,
 ) {
     var query by remember { mutableStateOf("") }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -148,14 +152,25 @@ fun SearchScreen(
         ) {
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong
+                selectedSong = selectedSong,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked
             )
         }
     }
 }
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -201,7 +216,10 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToPlaylistClicked()
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_48),
@@ -220,7 +238,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onAddToFavoriteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
@@ -239,7 +259,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {  }
         ) {
             Icon(
                 painter = painterResource(R.drawable.mdi_account_music_outline),
@@ -258,7 +278,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onDownloadClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.download_for_offline),
@@ -276,7 +298,9 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    onDismiss()
+                    onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,

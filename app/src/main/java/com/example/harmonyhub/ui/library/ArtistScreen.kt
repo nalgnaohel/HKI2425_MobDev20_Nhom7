@@ -47,7 +47,11 @@ import com.example.harmonyhub.ui.theme.NotoSans
 fun ArtistScreen(
     myArtist: String?,
     onSongClick: () -> Unit,
-    onBackButtonClicked: () -> Unit
+    onBackButtonClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
@@ -154,9 +158,11 @@ fun ArtistScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (songs.isNotEmpty()) {
-            Column(modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .testTag("Song List")) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .testTag("Song List")
+            ) {
                 Text(
                     text = "Popular releases",
                     color = Color.White,
@@ -197,7 +203,11 @@ fun ArtistScreen(
         ) {
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong
+                selectedSong = selectedSong,
+                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToFavoriteClicked = onAddToFavoriteClicked,
+                onShareClicked = onShareClicked,
+                onDownloadClicked = onDownloadClicked
             )
         }
     }
@@ -205,7 +215,14 @@ fun ArtistScreen(
 
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    onAddToPlaylistClicked: () -> Unit = {},
+    onAddToFavoriteClicked: () -> Unit = {},
+    onShareClicked: () -> Unit = {},
+    onDownloadClicked: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,7 +268,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { onAddToPlaylistClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.add_48),
@@ -269,7 +286,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { onAddToFavoriteClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
@@ -288,7 +305,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { onDownloadClicked() }
         ) {
             Icon(
                 painter = painterResource(R.drawable.download_for_offline),
@@ -306,7 +323,7 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable { onShareClicked() }
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
@@ -330,7 +347,11 @@ fun ArtistScreenPreview() {
     ArtistScreen(
         myArtist = "Jack - J97",
         onSongClick = {},
-        onBackButtonClicked = {}
+        onBackButtonClicked = {},
+        onAddToPlaylistClicked = {},
+        onAddToFavoriteClicked = {},
+        onShareClicked = {},
+        onDownloadClicked = {}
     )
 }
 

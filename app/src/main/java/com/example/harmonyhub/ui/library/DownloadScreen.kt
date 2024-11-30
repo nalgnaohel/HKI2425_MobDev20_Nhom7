@@ -7,8 +7,13 @@ import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 
 @Composable
-fun DownloadScreen(onBackButtonClicked: () -> Unit)
-{
+fun DownloadScreen(
+    onBackButtonClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+) {
     val allSongs: List<Song> = SongRepository.allSongs
 
     SongList(
@@ -16,6 +21,11 @@ fun DownloadScreen(onBackButtonClicked: () -> Unit)
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
-        screenType = "Download"
-    )
+        screenType = "Download",
+        onAddToPlaylistClicked = onAddToPlaylistClicked,
+        onAddToFavoriteClicked = onAddToFavoriteClicked,
+        onDeleteClicked = onDeleteClicked,
+        onShareClicked = onShareClicked,
+        onDownloadClicked = {}
+        )
 }

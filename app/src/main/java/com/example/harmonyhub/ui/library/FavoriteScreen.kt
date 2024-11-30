@@ -9,6 +9,10 @@ import com.example.harmonyhub.ui.components.Song
 @Composable
 fun FavoriteScreen(
     onBackButtonClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit
 ) {
     val allSongs: List<Song> = SongRepository.allSongs
 
@@ -17,6 +21,12 @@ fun FavoriteScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
-        screenType = "Favorite"
+        screenType = "Favorite",
+        onAddToPlaylistClicked = onAddToPlaylistClicked,
+        onAddToFavoriteClicked = {},
+        onDeleteClicked = onDeleteClicked,
+        onShareClicked = onShareClicked,
+        onDownloadClicked = onDownloadClicked
+
     )
 }
