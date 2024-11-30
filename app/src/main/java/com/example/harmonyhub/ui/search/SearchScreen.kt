@@ -45,10 +45,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.components.contains
@@ -155,7 +156,11 @@ fun SearchScreen(
 }
 
 @Composable
-private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
+private fun BottomSheetContent(
+    onDismiss: () -> Unit,
+    selectedSong: Song?,
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,7 +225,12 @@ private fun BottomSheetContent(onDismiss: () -> Unit, selectedSong: Song?) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    if (selectedSong != null) {
+                        favoriteSongsViewModel.addFavoriteSong(selectedSong)
+                    }
+                    onDismiss()
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.favorite),
