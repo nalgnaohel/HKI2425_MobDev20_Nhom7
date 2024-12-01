@@ -20,17 +20,17 @@ class DefaultHomeScreenRepo : HomeScreenRepo {
         var result : ResponseHomeScreenData? = null
 
         try {
-
             val client = OkHttpClient()
 
             val request = Request.Builder()
                 .url("https://spotify-scraper.p.rapidapi.com/v1/home")
                 .get()
-                .addHeader("x-rapidapi-key", "c18da195b0mshcdebcf46df53015p1a1b64jsn33955d1b96fc")
+                .addHeader("x-rapidapi-key", "89644839e0mshcae86286ffb46fcp1e2f10jsn5dacb407fc3b")
                 .addHeader("x-rapidapi-host", "spotify-scraper.p.rapidapi.com")
                 .build()
 
             val response = client.newCall(request).execute()
+
             // Kiểm tra xem phản hồi có thành công không
             if (response.isSuccessful) {
                 val jsonResponse = response.body?.string()
@@ -57,6 +57,23 @@ class DefaultHomeScreenRepo : HomeScreenRepo {
                             listChart?.addAll(PopularChart.map {
                                 ChartOut(it.name, it.images?.get(0)?.get(0)?.url, it.id)
                             })
+//                            for (i in PopularArtist!!) {
+//                                val subArtist = ArtistOut(i.id, i.name, i.visuals?.avatar?.get(1)?.url)
+//                                listPopularArtist?.add(subArtist)
+//                            }
+//
+//                            for (i in PopularAlbums!!) {//duyet phan tu album
+//                                var listArtistInAlbum : MutableList<String> = mutableListOf()
+//                                for( j in i.artists) {// truy van nghe si cua album
+//                                    listArtistInAlbum.add(j.name)
+//                                }
+//                                val subAlbum = AlbumOut(i.id, i.name, i.cover[1].url, listArtistInAlbum)
+//                                listPopularAlbums?.add(subAlbum)
+//                            }
+//                            for (i in PopularChart!!) {
+//                                val subChart = ChartOut(i.name, i.images?.get(0)?.get(0)?.url, i.id)
+//                                listChart?.add(subChart)
+//                            }
 
                             result = ResponseHomeScreenData(listPopularArtist, listPopularAlbums, listChart)
                             return result

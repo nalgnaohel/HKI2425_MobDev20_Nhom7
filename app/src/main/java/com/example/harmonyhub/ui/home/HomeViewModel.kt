@@ -29,12 +29,15 @@ class HomeViewModel(
     fun fetchHomePageData() {
         viewModelScope.launch (Dispatchers.IO){
             _state.value = HomeUIState.Loading
+            Log.d("HomeUIState", "Loading")
             val result = homeScreenRepo.updatePopularItem()
+
 
             _state.value = result?.let {
                 HomeUIState.Success(it)
-            } ?: HomeUIState.Error
 
+            } ?: HomeUIState.Error
+            Log.d("HomeUIState", "other")
         }
     }
     companion object {
