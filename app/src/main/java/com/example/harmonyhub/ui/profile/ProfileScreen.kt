@@ -34,15 +34,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
+
 @Composable
 fun ProfileScreen(
     onBackButtonClicked: () -> Unit,
+    onFriendsButtonClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
@@ -192,8 +195,9 @@ fun ProfileScreen(
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = "Người theo dõi",
+                text = "Bạn bè",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.Bold,
@@ -202,8 +206,10 @@ fun ProfileScreen(
                 )
             )
             Spacer(modifier = Modifier.height(8.dp))
+
+            val numberOfFriends = 10
             Text(
-                text = "3",
+                text = "$numberOfFriends bạn bè",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontSize = 18.sp,
@@ -212,28 +218,24 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Đang theo dõi",
-                style = TextStyle(
+            // Nút bấm để chuyển hướng đến trang danh sách bạn bè
+            TextButton(
+                onClick = { onFriendsButtonClicked() },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "Xem tất cả bạn bè",
                     fontFamily = NotoSans,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.White
+                    color = Color(0xFF00FAF2)
                 )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "2",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 18.sp,
-                    color = Color.Gray
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            }
 
         }
-
     }
 }
+
+
+
 

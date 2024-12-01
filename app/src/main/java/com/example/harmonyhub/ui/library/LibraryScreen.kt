@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -235,18 +236,17 @@ fun LibraryScreen(
                                 fontSize = 24.sp
                             )
                         )
-                        Text(
-                            text = "Xem tất cả",
-                            style = TextStyle(
+                        TextButton(
+                            onClick = { onViewAllRecentCLicked() },
+                        ) {
+                            Text(
+                                text = "Xem tất cả",
                                 fontFamily = NotoSans,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF00FAF2)
-                            ),
-                            modifier = Modifier.clickable {
-                                onViewAllRecentCLicked()
-                            }
-                        )
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))

@@ -52,12 +52,14 @@ import com.example.harmonyhub.ui.account.LoginScreen
 import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
+import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
 import com.example.harmonyhub.ui.library.AddToPlaylistFromSongScreen
 import com.example.harmonyhub.ui.library.ArtistScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
+import com.example.harmonyhub.ui.profile.FriendsScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
 import com.example.harmonyhub.ui.settings.SettingsScreen
@@ -85,7 +87,8 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     AddToPlaylistFromSong(
         title = R.string.add_to_playlist_from_song,
         icon = Icons.Default.AccountBox
-    )
+    ),
+    Friends(title = R.string.friends, icon = Icons.Default.AccountBox)
 }
 
 private val gradientBackground = Brush.verticalGradient(
@@ -116,7 +119,8 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.NewPassword,
                     HarmonyHubScreen.Profile,
                     HarmonyHubScreen.Settings,
-                    HarmonyHubScreen.Play
+                    HarmonyHubScreen.Play,
+                    HarmonyHubScreen.Friends
                 )
             ) {
                 Column {
@@ -270,7 +274,10 @@ fun HarmonyHubApp(
                 }
                 composable(route = HarmonyHubScreen.Profile.name) {
                     ProfileScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onFriendsButtonClicked = {
+                            navController.navigate(HarmonyHubScreen.Friends.name)
+                        }
                     )
                 }
                 composable(route = HarmonyHubScreen.History.name) {
@@ -374,6 +381,19 @@ fun HarmonyHubApp(
                     AddToPlaylistFromSongScreen(
                         onBackButtonClicked = { navController.popBackStack() }
                     )
+                }
+
+                composable(route = HarmonyHubScreen.Friends.name) {
+                    FriendsScreen(
+                        friends = listOf(
+                            Friend("Anh", "anh@gmail.com", R.drawable.hip),
+                            Friend("Minh", "minh@gmail.com", R.drawable.hip)
+                        ),
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onAddButtonClicked = {  },
+                        onUnfriendClicked = {  }
+                    )
+
                 }
 
 
@@ -483,7 +503,6 @@ fun Nav2(
         }
     }
 }
-
 
 
 //@OptIn(ExperimentalMaterial3Api::class)
