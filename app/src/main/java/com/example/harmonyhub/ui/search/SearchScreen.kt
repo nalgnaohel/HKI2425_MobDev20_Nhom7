@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.search
 
+import android.widget.MediaController
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
@@ -64,6 +66,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
+    navController: NavHostController,
     onSearchQueryChanged: (String) -> Unit,
     onPlaySongClicked: () -> Unit,
     onAddToPlaylistClicked: () -> Unit,
@@ -182,7 +185,9 @@ fun SearchScreen(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedSong = selectedSong,
                 screenType = "SearchScreen",
-                onAddToPlaylistClicked = onAddToPlaylistClicked,
+                onAddToPlaylistClicked = {selectedSong?.let {
+                    navController.navigate("AddToPlaylistFromSong?name=${it.url}")
+                }},
                 onAddToFavoriteClicked = onAddToFavoriteClicked,
                 onDeleteClicked = {},
                 onShareClicked = onShareClicked,

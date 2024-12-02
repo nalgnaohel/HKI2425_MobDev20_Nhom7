@@ -177,18 +177,41 @@ fun HarmonyHubApp(
                     Nav3(navController, authenticationMainViewModel)
                 }
                 composable(route = HarmonyHubScreen.Search.name) {
-                    SearchScreen(
-                        onSearchQueryChanged = { /* Handle search query change */ },
-                        onPlaySongClicked = {
-                            navController.navigate(HarmonyHubScreen.Play.name)
-                        },
-                        onAddToPlaylistClicked = {
-                            navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
-                        },
-                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                        onShareClicked = { /* Handle share logic */ },
-                        onDownloadClicked = { /* Handle download logic */ }
-                    )
+                    val searchNavController = rememberNavController()
+                    NavHost(
+                        navController = searchNavController,
+                        startDestination = "Search"
+                    ) {
+                        composable(route = "Search") {
+                            SearchScreen(
+                                onSearchQueryChanged = { /* Handle search query change */ },
+                                onPlaySongClicked = {
+                                    navController.navigate(HarmonyHubScreen.Play.name)
+                                },
+                                onAddToPlaylistClicked = {
+                                    navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+                                },
+                                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                                onShareClicked = { /* Handle share logic */ },
+                                onDownloadClicked = { /* Handle download logic */ },
+                                navController = searchNavController
+                            )
+                        }
+                        composable(
+                            route = "AddToPlaylistFromSong?name={selectedSong.url}",
+                            arguments = listOf(
+                                navArgument(name = "selectedSong.url") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { backStackEntry ->
+                            AddToPlaylistFromSongScreen(
+                                url = backStackEntry.arguments?.getString("selectedSong.url"),
+                                onBackButtonClicked = { searchNavController.popBackStack() }
+                            )
+                        }
+                    }
                 }
                 composable(route = HarmonyHubScreen.Play.name) {
                     PlayScreen(
@@ -340,11 +363,11 @@ fun HarmonyHubApp(
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
-                composable(route = HarmonyHubScreen.AddToPlaylistFromSong.name) {
-                    AddToPlaylistFromSongScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
-                }
+//                composable(route = HarmonyHubScreen.AddToPlaylistFromSong.name) {
+//                    AddToPlaylistFromSongScreen(
+//                        onBackButtonClicked = { navController.popBackStack() }
+//                    )
+//                }
 
                 composable(route = HarmonyHubScreen.Friends.name) {
                     FriendsScreen(
@@ -530,6 +553,44 @@ fun Nav3(
                 onDownloadClicked = {
                     // Xử lý logic tải về
                 }
+            )
+        }
+    }
+}
+@Composable
+fun Nav4(
+    parentNavController: NavHostController,
+) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "Search") {
+        composable(route = "Home") {
+            SearchScreen(
+                        onSearchQueryChanged = { /* Handle search query change */ },
+                        onPlaySongClicked = {
+                            parentNavController.navigate(HarmonyHubScreen.Play.name)
+                        },
+                        onAddToPlaylistClicked = {
+                            parentNavController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+                        },
+                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                        onShareClicked = { /* Handle share logic */ },
+                        onDownloadClicked = { /* Handle download logic */ },
+
+                navController = navController
+            )
+        }
+        composable(
+            route = "AddToPlaylistFromSong?name={selectedSong.url}",
+            arguments = listOf(
+                navArgument(name = "selectedSong.url") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            AddToPlaylistFromSongScreen(
+                url = backStackEntry.arguments?.getString("selectedSong.url"),
+                onBackButtonClicked = { navController.popBackStack() }
             )
         }
     }

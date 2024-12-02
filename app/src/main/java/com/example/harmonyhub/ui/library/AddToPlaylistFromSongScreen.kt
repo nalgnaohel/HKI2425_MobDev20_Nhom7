@@ -66,6 +66,7 @@ import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
 import kotlinx.coroutines.launch
+import retrofit2.http.Url
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
@@ -74,6 +75,7 @@ private val gradientBackground = Brush.verticalGradient(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddToPlaylistFromSongScreen(
+    url: String?,
     onBackButtonClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel(),
     playlistViewModel: PlaylistViewModel = hiltViewModel(),
@@ -117,7 +119,6 @@ fun AddToPlaylistFromSongScreen(
             else -> {}
         }
     }
-
     val searchResults = allPlaylists.filter { it.contains(query, ignoreCase = true) }
     Column(
         modifier = Modifier
