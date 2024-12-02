@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,7 +44,13 @@ fun Friend.contains(query: String, ignoreCase: Boolean = true): Boolean {
 }
 
 @Composable
-fun FriendCard(friend: Friend, onMoreClick: () -> Unit) {
+fun FriendCard(
+    friend: Friend,
+    screenType: String,
+    onMoreClick: () -> Unit,
+    onAcceptClick: () -> Unit,
+    onRejectClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,9 +69,7 @@ fun FriendCard(friend: Friend, onMoreClick: () -> Unit) {
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
-                .background(Color.Gray)
         )
-
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(
@@ -84,13 +90,30 @@ fun FriendCard(friend: Friend, onMoreClick: () -> Unit) {
             )
         }
 
-        // Menu hành động (tùy chọn)
-        IconButton(onClick = { onMoreClick() }) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "More Options",
-                tint = Color.Gray
-            )
+        if (screenType == "Friends") {
+            // Menu hành động (tùy chọn)
+            IconButton(onClick = { onMoreClick() }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More Options",
+                    tint = Color.Gray
+                )
+            }
+        } else {
+            IconButton(onClick = { onAcceptClick() }) {
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "Accept",
+                    tint = Color(0xFF00FAF2)
+                )
+            }
+            IconButton(onClick = { onRejectClick() }) {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = "Reject",
+                    tint = Color.LightGray
+                )
+            }
         }
     }
 }

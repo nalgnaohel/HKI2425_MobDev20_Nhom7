@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.profile
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -11,14 +12,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -48,25 +54,31 @@ import com.example.harmonyhub.ui.components.FriendCard
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
     friends: List<Friend>,
+    friendRequests: List<Friend>,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    onUnfriendClicked: () -> Unit
+    onUnfriendClicked: () -> Unit,
+    onWatchPlaylistClicked: () -> Unit
 ) {
-    var query by remember { mutableStateOf("") }
 
+    var query by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     var newFriendEmail by remember { mutableStateOf("") }
-
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isRequestsBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedFriend by remember { mutableStateOf<Friend?>(null) }
-
     val focusManager = LocalFocusManager.current
-
     val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
+
+    var showFriendRequestsDialog by remember { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
 
     Column(
         modifier = Modifier
@@ -109,8 +121,34 @@ fun FriendsScreen(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+                BadgedBox(
+                    badge = {
+                        if (friendRequests.isNotEmpty()) {
+                            Badge(
+                                containerColor = Color(0xFF00FAF2)
+                            ) {
+                                Text(
+                                    "${friendRequests.size}",
+                                    fontFamily = NotoSans,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    IconButton(onClick = { showFriendRequestsDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Friend Requests",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
         }
+        SnackbarHost(hostState = snackbarHostState)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -175,10 +213,13 @@ fun FriendsScreen(
             items(friends) { friend ->
                 FriendCard(
                     friend = friend,
+                    screenType = "Friends",
                     onMoreClick = {
                         isBottomSheetVisible = true
                         selectedFriend = friend
-                    }
+                    },
+                    onAcceptClick = {},
+                    onRejectClick = {}
                 )
             }
         }
@@ -200,7 +241,7 @@ fun FriendsScreen(
                     OutlinedTextField(
                         value = newFriendEmail,
                         onValueChange = { newFriendEmail = it },
-                        label = { Text("Email bạn bè")},
+                        label = { Text("Email bạn bè") },
                         singleLine = true,
                         maxLines = 1,
                         textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
@@ -261,17 +302,75 @@ fun FriendsScreen(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedFriend = selectedFriend,
-                onWatchPlaylistClicked = onUnfriendClicked
+                onWatchPlaylistClicked = onUnfriendClicked,
+                onUnFriendClicked = onUnfriendClicked
             )
         }
     }
+    if (isBottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { isBottomSheetVisible = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            BottomSheetContent(
+                onDismiss = { isBottomSheetVisible = false },
+                selectedFriend = selectedFriend,
+                onWatchPlaylistClicked = onUnfriendClicked,
+                onUnFriendClicked = onUnfriendClicked
+            )
+        }
+    }
+    if (showFriendRequestsDialog) {
+        AlertDialog(
+            onDismissRequest = { showFriendRequestsDialog = false },
+            title = {
+                Text(
+                    text = "Yêu cầu kết bạn",
+                    fontFamily = NotoSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(friendRequests) { friendRequest ->
+                        FriendCard(
+                            friend = friendRequest,
+                            screenType = "Friend Requests",
+                            onMoreClick = {
+                                isRequestsBottomSheetVisible = true
+                                selectedFriend = friendRequest
+                            },
+                            onAcceptClick = { /* Todo */ },
+                            onRejectClick = { /* Todo */ }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showFriendRequestsDialog = false }) {
+                    Text(
+                        text = "Đóng",
+                        fontFamily = NotoSans,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF00FAF2)
+                    )
+                }
+            }
+        )
+    }
+
 }
 
 @Composable
 private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedFriend: Friend?,
-    onWatchPlaylistClicked: () -> Unit
+    onWatchPlaylistClicked: () -> Unit,
+    onUnFriendClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -335,8 +434,33 @@ private fun BottomSheetContent(
                 )
 
             }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onDismiss()
+                        onUnFriendClicked()
+                    }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.remove),
+                    contentDescription = "Unfriend",
+                    tint = Color.LightGray,
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    "Hủy kết bạn",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    fontFamily = NotoSans, fontSize = 16.sp
+                )
+
+            }
         }
     }
 }
+
 
 
