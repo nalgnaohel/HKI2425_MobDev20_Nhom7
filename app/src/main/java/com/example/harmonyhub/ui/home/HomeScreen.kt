@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.data.network.AlbumOut
@@ -92,6 +93,7 @@ fun ErrorScreen(
 }
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     onSearchButtonClicked: () -> Unit,
     onPlayButtonClicked: () -> Unit,
     onLibraryButtonClicked: () -> Unit,
@@ -119,6 +121,7 @@ fun HomeScreen(
             // Truy cập vào thuộc tính popularItem khi trạng thái là Success
             val popularItems = homeUiState.popularItem
             MainHomeScreen(
+                navController,
                 onSearchButtonClicked,
                 onPlayButtonClicked,
                 onLibraryButtonClicked,
@@ -129,13 +132,14 @@ fun HomeScreen(
                 username.value.toString(),
                 popularItems,
 
-            )
+                )
         }
     }
 
 }
 @Composable
 fun MainHomeScreen(
+    navController: NavHostController,
     onSearchButtonClicked: () -> Unit,
     onPlayButtonClicked: () -> Unit,
     onLibraryButtonClicked: () -> Unit,
@@ -237,7 +241,7 @@ fun MainHomeScreen(
                         )
                     )
 
-                    LazyRowArtist(resPopularItem.listPopularArtist)
+                    LazyRowArtist(resPopularItem.listPopularArtist,navController)
 
                     Spacer(modifier = Modifier.height(16.dp))
                     // Album Section
@@ -295,7 +299,8 @@ fun MainHomeScreen(
     }
 }
 @Composable
-fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
+fun LazyRowArtist(temple: MutableList<ArtistOut>?,
+                  navController : NavHostController) {
     LazyRow(
         modifier = Modifier.padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -303,12 +308,11 @@ fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
         val listArtist: MutableList<ArtistOut>? = temple
         if (listArtist != null) {
             items(listArtist) { artist ->
-                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
                 ArtistsCard(
                     artist.name,  // Tên nghệ sĩ
                     artist.image,  // URL ảnh
                     artist.id, // ID nghệ sĩ
-                    onArtistCardClick = {}
+                    onArtistCardClick = {navController.navigate("Artist?name=${artist.name}")}
                 )
             }
         }
