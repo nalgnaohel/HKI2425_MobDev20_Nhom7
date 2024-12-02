@@ -120,7 +120,8 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Profile,
                     HarmonyHubScreen.Settings,
                     HarmonyHubScreen.Play,
-                    HarmonyHubScreen.Friends
+                    HarmonyHubScreen.Friends,
+                    HarmonyHubScreen.AddToPlaylistFromSong
                 )
             ) {
                 Column {
@@ -352,8 +353,8 @@ fun HarmonyHubApp(
                             Friend("Minh", "minh@gmail.com", R.drawable.hip)
                         ),
                         onBackButtonClicked = { navController.popBackStack() },
-                        onAddButtonClicked = {  },
-                        onUnfriendClicked = {  }
+                        onAddButtonClicked = { },
+                        onUnfriendClicked = { }
                     )
 
                 }

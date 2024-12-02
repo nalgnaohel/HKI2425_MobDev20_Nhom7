@@ -36,11 +36,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.components.FriendCard
 import com.example.harmonyhub.ui.components.contains
@@ -259,7 +261,7 @@ fun FriendsScreen(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedFriend = selectedFriend,
-                onUnfriendClicked = onUnfriendClicked
+                onWatchPlaylistClicked = onUnfriendClicked
             )
         }
     }
@@ -269,7 +271,7 @@ fun FriendsScreen(
 private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedFriend: Friend?,
-    onUnfriendClicked: () -> Unit
+    onWatchPlaylistClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -316,18 +318,18 @@ private fun BottomSheetContent(
                     .fillMaxWidth()
                     .clickable {
                         onDismiss()
-                        onUnfriendClicked()
+                        onWatchPlaylistClicked()
                     }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = "Unfriend",
-                    tint = Color.Gray,
+                    painter = painterResource(R.drawable.queue_music),
+                    contentDescription = "Watch Playlist",
+                    tint = Color.LightGray,
                     modifier = Modifier.size(25.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    "Hủy kết bạn",
+                    "Xem playlist",
                     modifier = Modifier.padding(vertical = 8.dp),
                     fontFamily = NotoSans, fontSize = 16.sp
                 )
