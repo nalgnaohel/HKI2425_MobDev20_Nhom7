@@ -23,42 +23,26 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
 
-@Composable
-fun RoundedImageCard(
-    imageResId: Int,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.Gray)
-    ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = "Song Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-    }
-}
+
 
 @Composable
 fun PlayScreen(
+    index : Int?,
     onBackButtonClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
-    var playlist by remember { mutableStateOf(SongRepository.allSongs) }
-    var currentSongIndex by remember { mutableIntStateOf(0) }
-    //var currentSong by remember { mutableStateOf(playlist[currentSongIndex]) }
+    var playlist by remember { mutableStateOf(SongRepository.currentPLaylist ) }
+    var currentSongIndex by remember { mutableIntStateOf(index ?: 0) }
     var isPlaying by remember { mutableStateOf(false) }
 
     if (playlist.size == 0) {
         DisposableEffect(Unit) {
             onDispose {
-                exoPlayer.release() // Giải phóng tài nguyên
+                exoPlayer.release()
             }
         }
         onBackButtonClicked

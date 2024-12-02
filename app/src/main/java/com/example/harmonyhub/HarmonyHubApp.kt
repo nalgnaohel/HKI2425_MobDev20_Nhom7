@@ -39,6 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
@@ -213,51 +214,113 @@ fun HarmonyHubApp(
                         }
                     }
                 }
-                composable(route = HarmonyHubScreen.Play.name) {
-                    PlayScreen(
-                        onBackButtonClicked = { navController.popBackStack() }
-                    )
-                }
-
                 composable(route = HarmonyHubScreen.Library.name) {
-                    LibraryScreen(
-                        onProfileButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Profile.name)
-                        },
-                        onViewAllRecentCLicked = {
-                            navController.navigate(HarmonyHubScreen.History.name)
-                        },
-                        onFavoriteButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Favorite.name)
-                        },
-                        onDownloadButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Download.name)
-                        },
-                        onPlaylistButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Playlist.name)
-                        },
-                        onArtistsFollowingButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
-                        },
-                        onLogoutButtonClicked = {
-                            authenticationMainViewModel.signOut()
-                            navController.navigate(HarmonyHubScreen.Login.name)
-                        },
-                        onSettingsButtonClicked = {
-                            navController.navigate(HarmonyHubScreen.Settings.name)
-                        },
-                        onPlaySongClicked = {
-                            navController.navigate(HarmonyHubScreen.Play.name)
-                        },
-                        onAddToPlaylistClicked = {
-                            navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
-                        },
-                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                        onShareClicked = { /* Handle share logic */ },
-                        onDownloadClicked = { /* Handle download logic */ },
-                        onDeleteClicked = { /* Handle delete logic */ }
-                    )
+                    val libNavController = rememberNavController()
+                    NavHost(
+                        navController = libNavController,
+                        startDestination = "Library"
+                    ) {
+                        composable(route = "Library") {
+                            LibraryScreen(
+                                onProfileButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Profile.name)
+                                },
+                                onViewAllRecentCLicked = {
+                                    navController.navigate(HarmonyHubScreen.History.name)
+                                },
+                                onFavoriteButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Favorite.name)
+                                },
+                                onDownloadButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Download.name)
+                                },
+                                onPlaylistButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Playlist.name)
+                                },
+                                onArtistsFollowingButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+                                },
+                                onLogoutButtonClicked = {
+                                    authenticationMainViewModel.signOut()
+                                    navController.navigate(HarmonyHubScreen.Login.name)
+                                },
+                                onSettingsButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Settings.name)
+                                },
+                                onPlaySongClicked = {
+                                    navController.navigate(HarmonyHubScreen.Play.name)
+                                },
+                                onAddToPlaylistClicked = {
+                                    navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+                                },
+                                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                                onShareClicked = { /* Handle share logic */ },
+                                onDownloadClicked = { /* Handle download logic */ },
+                                onDeleteClicked = { /* Handle delete logic */ },
+                                navController = libNavController
+                            )
+                        }
+                        composable(
+                            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}&tmpPlaylist={SongRepository.currentPLaylist}",
+                            arguments = listOf(
+                                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+                                    type = NavType.IntType
+                                    defaultValue= 0
+                                }
+                            )
+                        ) { backStackEntry ->
+                            PlayScreen(
+                                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
+                                onBackButtonClicked = { navController.popBackStack() }
+                            )
+                        }
+                    }
                 }
+//                composable(route = HarmonyHubScreen.Play.name) {
+//                    PlayScreen(
+//                        onBackButtonClicked = { navController.popBackStack() }
+//                    )
+//                }
+
+//                composable(route = HarmonyHubScreen.Library.name) {
+//                    LibraryScreen(
+//                        onProfileButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.Profile.name)
+//                        },
+//                        onViewAllRecentCLicked = {
+//                            navController.navigate(HarmonyHubScreen.History.name)
+//                        },
+//                        onFavoriteButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.Favorite.name)
+//                        },
+//                        onDownloadButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.Download.name)
+//                        },
+//                        onPlaylistButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.Playlist.name)
+//                        },
+//                        onArtistsFollowingButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+//                        },
+//                        onLogoutButtonClicked = {
+//                            authenticationMainViewModel.signOut()
+//                            navController.navigate(HarmonyHubScreen.Login.name)
+//                        },
+//                        onSettingsButtonClicked = {
+//                            navController.navigate(HarmonyHubScreen.Settings.name)
+//                        },
+//                        onPlaySongClicked = {
+//                            navController.navigate(HarmonyHubScreen.Play.name)
+//                        },
+//                        onAddToPlaylistClicked = {
+//                            navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+//                        },
+//                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+//                        onShareClicked = { /* Handle share logic */ },
+//                        onDownloadClicked = { /* Handle download logic */ },
+//                        onDeleteClicked = { /* Handle delete logic */ }
+//                    )
+//                }
                 composable(route = HarmonyHubScreen.Profile.name) {
                     ProfileScreen(
                         onBackButtonClicked = { navController.popBackStack() },
@@ -560,36 +623,61 @@ fun Nav3(
 @Composable
 fun Nav4(
     parentNavController: NavHostController,
+    authenticationMainViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "Search") {
-        composable(route = "Home") {
-            SearchScreen(
-                        onSearchQueryChanged = { /* Handle search query change */ },
-                        onPlaySongClicked = {
-                            parentNavController.navigate(HarmonyHubScreen.Play.name)
-                        },
-                        onAddToPlaylistClicked = {
-                            parentNavController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
-                        },
-                        onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                        onShareClicked = { /* Handle share logic */ },
-                        onDownloadClicked = { /* Handle download logic */ },
-
+    NavHost(navController = navController, startDestination = "Library") {
+        composable(route = "Library") {
+            LibraryScreen(
+                onProfileButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Profile.name)
+                },
+                onViewAllRecentCLicked = {
+                    parentNavController.navigate(HarmonyHubScreen.History.name)
+                },
+                onFavoriteButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Favorite.name)
+                },
+                onDownloadButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Download.name)
+                },
+                onPlaylistButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Playlist.name)
+                },
+                onArtistsFollowingButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+                },
+                onLogoutButtonClicked = {
+                    authenticationMainViewModel.signOut()
+                    parentNavController.navigate(HarmonyHubScreen.Login.name)
+                },
+                onSettingsButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Settings.name)
+                },
+                onPlaySongClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Play.name)
+                },
+                onAddToPlaylistClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+                },
+                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+                onShareClicked = { /* Handle share logic */ },
+                onDownloadClicked = { /* Handle download logic */ },
+                onDeleteClicked = { /* Handle delete logic */ },
                 navController = navController
             )
         }
         composable(
-            route = "AddToPlaylistFromSong?name={selectedSong.url}",
+            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}&tmpPlaylist={SongRepository.currentPLaylist}",
             arguments = listOf(
-                navArgument(name = "selectedSong.url") {
-                    type = NavType.StringType
-                    nullable = true
+                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+                    type = NavType.IntType
+                    defaultValue= 0
                 }
             )
         ) { backStackEntry ->
-            AddToPlaylistFromSongScreen(
-                url = backStackEntry.arguments?.getString("selectedSong.url"),
+            PlayScreen(
+                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
                 onBackButtonClicked = { navController.popBackStack() }
             )
         }
@@ -641,3 +729,65 @@ fun BottomNavigationBar(
         }
     }
 }
+//composable(route = HarmonyHubScreen.Library.name) {
+//    val libNavController = rememberNavController()
+//    NavHost(
+//        navController = libNavController,
+//        startDestination = "Library"
+//    ) {
+//        composable(route = "Library") {
+//            LibraryScreen(
+//                onProfileButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Profile.name)
+//                },
+//                onViewAllRecentCLicked = {
+//                    libNavController.navigate(HarmonyHubScreen.History.name)
+//                },
+//                onFavoriteButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Favorite.name)
+//                },
+//                onDownloadButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Download.name)
+//                },
+//                onPlaylistButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Playlist.name)
+//                },
+//                onArtistsFollowingButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
+//                },
+//                onLogoutButtonClicked = {
+//                    authenticationMainViewModel.signOut()
+//                    libNavController.navigate(HarmonyHubScreen.Login.name)
+//                },
+//                onSettingsButtonClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Settings.name)
+//                },
+//                onPlaySongClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.Play.name)
+//                },
+//                onAddToPlaylistClicked = {
+//                    libNavController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
+//                },
+//                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
+//                onShareClicked = { /* Handle share logic */ },
+//                onDownloadClicked = { /* Handle download logic */ },
+//                onDeleteClicked = { /* Handle delete logic */ },
+//                navController = navController
+//            )
+//        }
+//        composable(
+//            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}&tmpPlaylist={SongRepository.currentPLaylist}",
+//            arguments = listOf(
+//                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+//                    type = NavType.IntType
+//                    defaultValue= 0
+//                }
+//            )
+//        ) { backStackEntry ->
+//            PlayScreen(
+//                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
+//                onBackButtonClicked = { navController.popBackStack() }
+//            )
+//        }
+//    }
+//}

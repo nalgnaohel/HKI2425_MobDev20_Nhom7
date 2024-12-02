@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
@@ -68,6 +69,7 @@ private val gradientBackground = Brush.verticalGradient(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
+    navController : NavHostController,
     onPlaySongClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onViewAllRecentCLicked: () -> Unit,
@@ -257,7 +259,7 @@ fun LibraryScreen(
                     SongCard(
                         song = song,
                         more = Icons.Default.MoreVert,
-                        onSongClick = { onPlaySongClicked() },
+                        onSongClick = { navController.navigate("Play?index=${SongRepository.currentPLaylist.indexOf(song)}") },
                         onMoreClick = {
                             selectedSong = song
                             isBottomSheetVisible = true
