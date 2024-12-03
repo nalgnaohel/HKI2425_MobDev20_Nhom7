@@ -68,7 +68,6 @@ import com.example.harmonyhub.ui.theme.NotoSans
 fun SearchScreen(
     navController: NavHostController,
     onSearchQueryChanged: (String) -> Unit,
-    onPlaySongClicked: () -> Unit,
     onAddToPlaylistClicked: () -> Unit,
     onAddToFavoriteClicked: () -> Unit,
     onShareClicked: () -> Unit,
@@ -167,7 +166,7 @@ fun SearchScreen(
                 SongCard(
                     song = song,
                     more = Icons.Default.MoreVert,
-                    onSongClick = onPlaySongClicked,
+                    onSongClick = { navController.navigate("Play?index=${SongRepository.currentPLaylist.indexOf(song)}")},
                     onMoreClick = {
                         selectedSong = song
                         isBottomSheetVisible = true
