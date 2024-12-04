@@ -56,6 +56,7 @@ import com.example.harmonyhub.ui.account.VerificationScreen
 import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
 import com.example.harmonyhub.ui.library.AddToPlaylistFromSongScreen
+import com.example.harmonyhub.ui.library.AlbumScreen
 import com.example.harmonyhub.ui.library.ArtistScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
@@ -89,7 +90,8 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
         title = R.string.add_to_playlist_from_song,
         icon = Icons.Default.AccountBox
     ),
-    Friends(title = R.string.friends, icon = Icons.Default.AccountBox)
+    Friends(title = R.string.friends, icon = Icons.Default.AccountBox),
+    Album(title = R.string.album, icon = Icons.Default.AccountBox)
 }
 
 private val gradientBackground = Brush.verticalGradient(
@@ -461,6 +463,18 @@ fun HarmonyHubApp(
                     )
 
                 }
+                composable(route = HarmonyHubScreen.Album.name) {
+                    AlbumScreen(
+                        onShareClicked = {},
+                        onDownloadClicked = {},
+                        onSongClick = {
+                        },
+                        onBackButtonClicked = {},
+                        onAddToPlaylistClicked = {},
+                        onAddToFavoriteClicked = {}
+                    )
+
+                }
 
 
             }
@@ -508,6 +522,9 @@ fun Nav(
                 },
                 onDownloadClicked = {
                     // Xử lý logic tải về
+                },
+                onAlbumClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Album.name)
                 }
             )
         }
@@ -627,6 +644,9 @@ fun Nav3(
                 },
                 onDownloadClicked = {
                     // Xử lý logic tải về
+                },
+                onAlbumClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Album.name)
                 }
             )
         }
