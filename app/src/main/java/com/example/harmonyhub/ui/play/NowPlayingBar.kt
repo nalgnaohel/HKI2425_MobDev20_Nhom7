@@ -15,18 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.harmonyhub.R
+import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
 fun NowPlayingBar(
-    songName: String,
-    artistName: String,
+    song: Song?,
     isPlaying: Boolean,
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -53,31 +57,43 @@ fun NowPlayingBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.v),
-                contentDescription = "Album Cover",
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
+
+            if (song != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(song.imageResId)
+                        .crossfade(true)
+                        .build(),
+                    error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                    placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                    contentDescription = "Photo",
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = songName,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = NotoSans
-                )
-                Text(
-                    text = artistName,
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    fontFamily = NotoSans
-                )
+                if (song != null) {
+                    Text(
+                        text = song.name,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = NotoSans
+                    )
+                }
+                if (song != null) {
+                    Text(
+                        text = song.artist,
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        fontFamily = NotoSans
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))

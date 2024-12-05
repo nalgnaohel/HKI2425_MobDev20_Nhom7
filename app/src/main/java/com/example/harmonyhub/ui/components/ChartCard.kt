@@ -28,11 +28,11 @@ import coil.request.ImageRequest
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-fun ChartCard(chartImg: String?, chartName: String, chartId: String) {
+fun ChartCard(chartImg: String?, chartName: String, chartId: String, onChartClicked : () -> Unit) {
     Surface(
         modifier = Modifier
             .size(width = 150.dp, height = 150.dp)
-            .clickable { },
+            .clickable {onChartClicked() },
         color = Color.Transparent
     ) {
 

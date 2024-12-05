@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.harmonyhub.CurrentSong
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.data.network.AlbumOut
@@ -205,28 +206,22 @@ fun MainHomeScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 item {
-                    //Header with avatar, username, and profile button
-
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    //Top Genres Section
+                    //Header with avatar, username, and profile button
+                    // Charts Section
                     Text(
-                        text = "Thể loại",
+                        text = "Bảng xếp hạng",
                         style = TextStyle(
                             fontFamily = NotoSans,
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp
                         )
                     )
-                    LazyRow(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(listOf("V-Pop", "K-Pop", "R&B", "Hip Hop")) { genre ->
-                            GenreCard(genre, modifier = Modifier.testTag("GenreCard_$genre"))
-                        }
-                    }
+
+                    LazyRowChart(resPopularItem.listChart, navController)
+
+
+
 
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -254,7 +249,7 @@ fun MainHomeScreen(
                         )
                     )
 
-                    LazyRowAlbum(resPopularItem.listPopularAlbums)
+                    LazyRowAlbum(resPopularItem.listPopularAlbums,navController)
 
                     Spacer(modifier = Modifier.height(16.dp))
                     // Suggestions Section
@@ -274,23 +269,14 @@ fun MainHomeScreen(
                         items(
                             SongRepository.allSongs
                         ) { song ->
-                            SuggestionCard(song.name, song.artist, song.id, song.imageResId )
+                            SuggestionCard(song.name, song.artist, song.id, song.imageResId, onSongClicked = {
+                                CurrentSong.set(song)
+                                navController.navigate("Play?index=${SongRepository.currentPLaylist.indexOf(
+                                    CurrentSong.currentSong)}")} )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
 
-                    // Charts Section
-                    Text(
-                        text = "Bảng xếp hạng",
-                        style = TextStyle(
-                            fontFamily = NotoSans,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        )
-                    )
-
-                    LazyRowChart(resPopularItem.listChart)
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -312,7 +298,7 @@ fun LazyRowArtist(temple: MutableList<ArtistOut>?,
                     artist.name,  // Tên nghệ sĩ
                     artist.image,  // URL ảnh
                     artist.id, // ID nghệ sĩ
-                    onArtistCardClick = {navController.navigate("Artist?name=${artist.name}")}
+                    onArtistCardClick = {navController.navigate("Artist?name=${artist.id}")}
                 )
             }
         }
@@ -320,7 +306,8 @@ fun LazyRowArtist(temple: MutableList<ArtistOut>?,
 }
 
 @Composable
-fun LazyRowAlbum(temple: MutableList<AlbumOut>?) {
+fun LazyRowAlbum(temple: MutableList<AlbumOut>?,
+                 navController: NavHostController) {
     LazyRow(
         modifier = Modifier.padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -333,7 +320,8 @@ fun LazyRowAlbum(temple: MutableList<AlbumOut>?) {
                     album.name,  // Tên nghệ sĩ
                     album.image,  // URL ảnh
                     album.id,  // ID nghệ sĩ
-                    album.listArtist
+                    album.listArtist,
+                    onAlbumCardClick = {navController.navigate("Album?name=${album.id}")}
                 )
             }
         }
@@ -341,7 +329,8 @@ fun LazyRowAlbum(temple: MutableList<AlbumOut>?) {
 }
 
 @Composable
-fun LazyRowChart(temple: MutableList<ChartOut>?) {
+fun LazyRowChart(temple: MutableList<ChartOut>?,
+                 navController: NavHostController) {
     LazyRow(
         modifier = Modifier.padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -354,6 +343,7 @@ fun LazyRowChart(temple: MutableList<ChartOut>?) {
                     chart.image,
                     chart.name,
                     chart.id,
+                    onChartClicked = {navController.navigate("Charts?name=${chart.id}")}
                 )
             }
         }

@@ -29,11 +29,11 @@ import coil.request.ImageRequest
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-fun AlbumCard(songName: String, albumImg: String, id : String, listArtist: List<String>) {
+fun AlbumCard(songName: String, albumImg: String, id : String, listArtist: List<String>, onAlbumCardClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .size(width = 125.dp, height = 180.dp)
-            .clickable {  }
+            .clickable {onAlbumCardClick()  }
             .testTag("AlbumCard"),
         color = Color.Transparent
     ) {
