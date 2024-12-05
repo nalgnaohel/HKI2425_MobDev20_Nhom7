@@ -27,10 +27,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Debug and Test 
+      - name: Debug and Test
         uses: ./.github/workflows/pull_request_push.yml
 
-      - name: build release 
+      - name: build release
         run: ./gradlew assembleRelease --stackTrace
       
       - name: list files

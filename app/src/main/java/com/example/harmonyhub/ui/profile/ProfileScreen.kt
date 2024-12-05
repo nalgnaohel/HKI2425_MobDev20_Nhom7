@@ -2,7 +2,6 @@ package com.example.harmonyhub.ui.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.material3.TextButton
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,13 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -48,10 +42,10 @@ import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBackButtonClicked: () -> Unit,
+    onFriendsButtonClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
@@ -201,8 +195,9 @@ fun ProfileScreen(
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = "Người theo dõi",
+                text = "Bạn bè",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontWeight = FontWeight.Bold,
@@ -211,8 +206,10 @@ fun ProfileScreen(
                 )
             )
             Spacer(modifier = Modifier.height(8.dp))
+
+            val numberOfFriends = 10
             Text(
-                text = "3",
+                text = "$numberOfFriends bạn bè",
                 style = TextStyle(
                     fontFamily = NotoSans,
                     fontSize = 18.sp,
@@ -221,35 +218,24 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Đang theo dõi",
-                style = TextStyle(
+            // Nút bấm để chuyển hướng đến trang danh sách bạn bè
+            TextButton(
+                onClick = { onFriendsButtonClicked() },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "Xem tất cả bạn bè",
                     fontFamily = NotoSans,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.White
+                    color = Color(0xFF00FAF2)
                 )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "2",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 18.sp,
-                    color = Color.Gray
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            }
 
         }
-
     }
 }
 
-@Preview
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen(
-        onBackButtonClicked = {},
-    )
-}
+
+
+

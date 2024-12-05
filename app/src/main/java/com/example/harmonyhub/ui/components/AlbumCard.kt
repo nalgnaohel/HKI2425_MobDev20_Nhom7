@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +33,8 @@ fun AlbumCard(songName: String, albumImg: String, id : String, listArtist: List<
     Surface(
         modifier = Modifier
             .size(width = 125.dp, height = 180.dp)
-            .clickable {  },
+            .clickable {  }
+            .testTag("AlbumCard"),
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))

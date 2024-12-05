@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "685182964616",
+    "project_id": "harmonyhub-829f9",
+    "storage_bucket": "harmonyhub-829f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685182964616:android:da9e0fb6520489c15be03d",
+        "android_client_info": {
+          "package_name": "com.example.harmonyhub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh6ef8kMZEZvizj59gkDPv1UHmLUSDxA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

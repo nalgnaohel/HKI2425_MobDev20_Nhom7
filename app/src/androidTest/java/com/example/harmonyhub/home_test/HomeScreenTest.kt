@@ -1,85 +1,108 @@
 package com.example.harmonyhub.home_test
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
+import androidx.activity.compose.setContent
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import com.example.harmonyhub.ui.home.HomeScreen
-import junit.framework.TestCase.assertTrue
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.harmonyhub.data.network.AlbumOut
+import com.example.harmonyhub.data.network.ArtistOut
+import com.example.harmonyhub.data.network.ChartOut
+import com.example.harmonyhub.data.network.ResponseHomeScreenData
+import com.example.harmonyhub.ui.home.ErrorScreen
+import com.example.harmonyhub.ui.home.LoadingScreen
+import com.example.harmonyhub.ui.home.MainHomeScreen
+import com.example.harmonyhub.ui.theme.HarmonyHubTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class HomeScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
-    fun homeScreen() {
+    fun loadingScreen_isDisplayed() {
         composeTestRule.setContent {
-            HomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {}
-            )
+            HarmonyHubTheme {
+                LoadingScreen()
+            }
         }
-
-        composeTestRule.onNodeWithContentDescription("Avatar").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("Username").assertIsDisplayed()
-//        composeTestRule.onNodeWithTag("Username").assertTextEquals("Thomas")
-
-        composeTestRule.onNodeWithTag("DrawerButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DrawerButton").performClick()
-
-        composeTestRule.onNodeWithContentDescription("Settings Icon").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Settings Icon").performClick()
-
-    }
-
-
-    @Test
-    fun homeScreen_genreCards() {
-        composeTestRule.setContent {
-            HomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = {},
-                onLogoutButtonClicked = {},
-                onSettingsButtonClicked = {}
-            )
-        }
-
-        composeTestRule.onNodeWithText("Thể loại").assertIsDisplayed()
-
-        // Check if genre cards are displayed
+        composeTestRule
+            .onNodeWithTag("Circular Progress Indicator")
+            .assertExists()
     }
 
     @Test
-    fun homeScreen_drawerOpensWhenProfileClicked() {
+    fun errorScreen_isDisplayed_and_refreshButtonWorks() {
+        var refreshClicked = false
 
         composeTestRule.setContent {
-            HomeScreen(
-                onSearchButtonClicked = {},
-                onPlayButtonClicked = {},
-                onLibraryButtonClicked = {},
-                onProfileButtonClicked = { },
-                onLogoutButtonClicked = { },
-                onSettingsButtonClicked = { }
-            )
+            HarmonyHubTheme {
+                ErrorScreen(onRefreshContent = { refreshClicked = true })
+            }
         }
 
-        composeTestRule.onNodeWithTag("DrawerButton").assertExists()
+        // Kiểm tra rằng hình ảnh lỗi kết nối được hiển thị
+        composeTestRule
+            .onNodeWithTag("Error")
+            .assertExists("Connection error image not displayed")
 
-        composeTestRule.onNodeWithTag("DrawerButton").performClick()
+        // Nhấn nút refresh và kiểm tra lambda đã được gọi chưa
+        composeTestRule
+            .onNodeWithContentDescription("Refresh")
+            .performClick()
 
+        assert(refreshClicked)
     }
 
+    @Test
+    fun homeScreen_displaysUserName_andGenres() {
+        composeTestRule.setContent {
+            HarmonyHubTheme {
+                MainHomeScreen(
+                    onSearchButtonClicked = {},
+                    onPlayButtonClicked = {},
+                    onLibraryButtonClicked = {},
+                    onProfileButtonClicked = {},
+                    onLogoutButtonClicked = {},
+                    onSettingsButtonClicked = {},
+                    nameUser = "Test User",
+                    resPopularItem = fakeResponseData() // Sử dụng dữ liệu giả lập
+                )
+            }
+        }
+
+        // Kiểm tra tên người dùng có hiển thị không
+        composeTestRule
+            .onNodeWithText("Test User")
+            .assertIsDisplayed()
+
+        // Kiểm tra xem tiêu đề "Thể loại" có hiển thị không
+        composeTestRule
+            .onNodeWithText("Thể loại")
+            .assertIsDisplayed()
+
+        // Kiểm tra "V-Pop" xuất hiện trong danh sách thể loại
+        composeTestRule
+            .onNodeWithText("V-Pop")
+            .assertIsDisplayed()
+    }
 }
 
+// Hàm tạo dữ liệu giả lập
+private fun fakeResponseData(): ResponseHomeScreenData {
+    return ResponseHomeScreenData(
+        listPopularArtist = mutableListOf(
+            ArtistOut(id = "1", name = "Sơn Tùng M-TP", image = "artist1.png"),
+            ArtistOut(id = "2", name = "IU", image = "artist2.png")
+        ),
+        listPopularAlbums = mutableListOf(
+            AlbumOut(id = "1", name = "Sky Tour", image = "album1.png", listArtist = emptyList())
+        ),
+        listChart = mutableListOf(
+            ChartOut(id = "1", name = "Top Hits", image = "chart1.png")
+        )
+    )
+}

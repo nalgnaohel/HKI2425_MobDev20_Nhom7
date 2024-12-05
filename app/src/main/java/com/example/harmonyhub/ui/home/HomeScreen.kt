@@ -29,8 +29,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,13 +40,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
-import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.data.network.AlbumOut
 import com.example.harmonyhub.data.network.ArtistOut
 import com.example.harmonyhub.data.network.ChartOut
 import com.example.harmonyhub.data.network.ResponseHomeScreenData
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.AlbumCard
 import com.example.harmonyhub.ui.components.AppScaffoldWithDrawer
 import com.example.harmonyhub.ui.components.ArtistsCard
@@ -58,7 +59,7 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun LoadingScreen() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().testTag("Circular Progress Indicator"),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(color = Color.Blue)
@@ -70,7 +71,7 @@ fun ErrorScreen(
     onRefreshContent: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().testTag("Error"),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -92,15 +93,16 @@ fun ErrorScreen(
 }
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     onSearchButtonClicked: () -> Unit,
     onPlayButtonClicked: () -> Unit,
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
-    userDataViewModel: UserDataViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
 
     //add view model
@@ -119,6 +121,7 @@ fun HomeScreen(
             // Truy cập vào thuộc tính popularItem khi trạng thái là Success
             val popularItems = homeUiState.popularItem
             MainHomeScreen(
+                navController,
                 onSearchButtonClicked,
                 onPlayButtonClicked,
                 onLibraryButtonClicked,
@@ -129,13 +132,14 @@ fun HomeScreen(
                 username.value.toString(),
                 popularItems,
 
-            )
+                )
         }
     }
 
 }
 @Composable
 fun MainHomeScreen(
+    navController: NavHostController,
     onSearchButtonClicked: () -> Unit,
     onPlayButtonClicked: () -> Unit,
     onLibraryButtonClicked: () -> Unit,
@@ -164,12 +168,10 @@ fun MainHomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = { onOpenDrawer() },
-                        modifier = Modifier.testTag("DrawerButton")) {
+                    IconButton(onClick = { onOpenDrawer() }) {
                         Image(
                             painter = painterResource(id = R.drawable.hip),
-                            contentDescription = "Avatar",
+                            contentDescription = "Profile",
                             modifier = Modifier
                                 .size(50.dp)
                                 .clip(CircleShape)
@@ -239,7 +241,7 @@ fun MainHomeScreen(
                         )
                     )
 
-                    LazyRowArtist(resPopularItem.listPopularArtist)
+                    LazyRowArtist(resPopularItem.listPopularArtist,navController)
 
                     Spacer(modifier = Modifier.height(16.dp))
                     // Album Section
@@ -255,7 +257,6 @@ fun MainHomeScreen(
                     LazyRowAlbum(resPopularItem.listPopularAlbums)
 
                     Spacer(modifier = Modifier.height(16.dp))
-
                     // Suggestions Section
                     Text(
                         text = "Đề xuất cho bạn",
@@ -298,7 +299,8 @@ fun MainHomeScreen(
     }
 }
 @Composable
-fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
+fun LazyRowArtist(temple: MutableList<ArtistOut>?,
+                  navController : NavHostController) {
     LazyRow(
         modifier = Modifier.padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -306,11 +308,11 @@ fun LazyRowArtist(temple: MutableList<ArtistOut>?) {
         val listArtist: MutableList<ArtistOut>? = temple
         if (listArtist != null) {
             items(listArtist) { artist ->
-                // Lấy dữ liệu từ mỗi item và truyền vào ArtistsCard
                 ArtistsCard(
                     artist.name,  // Tên nghệ sĩ
                     artist.image,  // URL ảnh
-                    artist.id  // ID nghệ sĩ
+                    artist.id, // ID nghệ sĩ
+                    onArtistCardClick = {navController.navigate("Artist?name=${artist.name}")}
                 )
             }
         }

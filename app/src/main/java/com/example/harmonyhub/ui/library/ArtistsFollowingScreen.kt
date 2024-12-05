@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,7 +49,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Artist
 import com.example.harmonyhub.ui.components.ArtistsCard
 import com.example.harmonyhub.ui.components.contains
@@ -58,17 +61,15 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun ArtistsFollowingScreen(
     onBackButtonClicked: () -> Unit,
+    navController: NavHostController
 ) {
     var query by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-    val allArtists = listOf(
-        Artist("The Chainsmokers", R.drawable.v),
-        Artist("Sia", R.drawable.v),
-        Artist("Adele", R.drawable.v)
-    )
-    // Lọc danh sách bài hát theo từ khóa
-    val searchResults = allArtists.filter { it.contains(query, ignoreCase = true) }
+    // Lấy danh sách nghệ sĩ từ SongRepository
+    val allArtists = SongRepository.getAllArtists()
+    val searchResults = allArtists.filter { it.name.contains(query, ignoreCase = true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,8 +84,7 @@ fun ArtistsFollowingScreen(
 
         // Thanh tiêu đề
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { onBackButtonClicked() }) {
@@ -103,14 +103,6 @@ fun ArtistsFollowingScreen(
                     color = Color.White
                 )
             )
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /* Handle settings button click */ }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -134,114 +126,30 @@ fun ArtistsFollowingScreen(
             singleLine = true,
             maxLines = 1,
             textStyle = TextStyle(fontFamily = NotoSans, fontSize = 20.sp),
-            colors = textFieldColors(
+            colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 containerColor = Color.Gray.copy(alpha = 0.2f)
-            ),
-            trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = { query = "" }) {
-                        Icon(imageVector = Icons.Default.Clear, contentDescription = "Clear")
-                    }
-                }
-            },
+            )
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${searchResults.size} nghệ sĩ",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 20.sp,
-                    color = Color.Gray
-                )
-            )
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                text = "Xóa tất cả",
-                style = TextStyle(
-                    fontFamily = NotoSans,
-                    fontSize = 16.sp,
-                    color = Color(0xFF00FAF2),
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.clickable {
-
-                }
-            )
-        }
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(top = 8.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(searchResults.chunked(2)) { artistPair ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    artistPair.forEach { artist ->
-                        ArtistsCard(
-                            artistName = artist.name,
-                            artistImg = "https://i.scdn.co/image/ab67616d00001e02fd8d7a8d96871e791cb1f626",
-                            idArtist = "111111",
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(8.dp)
-                        )
-                    }
-                    // Nếu hàng có lẻ số nghệ sĩ, bạn có thể thêm một khoảng trống để cân đối
-                    if (artistPair.size < 2) {
-                        Surface(
-                            modifier = Modifier
-                                .size(width = 130.dp, height = 170.dp)
-                                .clickable {  },
-                            color = Color.Transparent
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.padding(4.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier.size(width = 130.dp, height = 130.dp),
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.add),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .clip(CircleShape),
-                                        tint = Color.White
-
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Thêm nghệ sĩ",
-                                    style = TextStyle(
-                                        fontFamily = NotoSans,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 16.sp
-                                    ),
-                                    maxLines = 1,
-                                    overflow = Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-
-                            }
-                        }
-                    }
-                }
+            items(searchResults) { artist ->
+                ArtistsCard(
+                    artistName = artist.name,
+                    artistImg = artist.img,
+                    idArtist = artist.name, // Dùng tên làm id
+                    onArtistCardClick = {
+                        navController.navigate("Artist?name=${artist.name}")
+                    },
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
-
 }

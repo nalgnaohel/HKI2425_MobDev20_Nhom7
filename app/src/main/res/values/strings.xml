@@ -12,13 +12,16 @@
     <string name="favorite">Favorite</string>
     <string name="playlist">Playlist</string>
     <string name="download">Download</string>
-    <string name="artistsFollowing">Artists Following</string>
-    <string name="forgotPassword">Forgot Password</string>
+    <string name="artists_following">Artists Following</string>
+    <string name="forgot_password">Forgot Password</string>
     <string name="verification">Verification</string>
-    <string name="newPassword">New Password</string>
-    <string name="playlistSongList">Playlist Song List</string>
-    <string name="addSongToPlaylist">Add Song To Playlist</string>
+    <string name="new_password">New Password</string>
+    <string name="playlist_song_list">Playlist Song List</string>
+    <string name="add_song_to_playlist">Add Song To Playlist</string>
     <string name="connection_error">Connection error</string>
     <string name="refresh">Refresh</string>
-
+    <string name="artist">Artist</string>
+    <string name="add_to_playlist_from_song">Add To Playlist From Song</string>"
+    <string name="friends">Friends</string>
+    <string name="album">Album\n</string>"
 </resources>

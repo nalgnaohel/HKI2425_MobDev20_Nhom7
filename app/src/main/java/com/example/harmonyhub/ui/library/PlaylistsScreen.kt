@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -29,10 +28,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,10 +53,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
@@ -68,20 +69,25 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
-    onPlaylistClicked: (String) -> Unit,
+    navController: NavHostController,
     userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
 
     val dataFetchingState = userDataViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
 
-    val allPlaylists = remember {mutableListOf<Playlist>()}
+    val allPlaylists = remember { mutableListOf<Playlist>() }
+
+    LaunchedEffect(Unit) {
+        userDataViewModel.getAlbums()
+    }
 
     LaunchedEffect(dataFetchingState.value) {
         when (dataFetchingState.value) {
             is DataFetchingState.Success -> {
                 allPlaylists.clear()
-                val albums = (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
+                val albums =
+                    (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
                 albums.forEach { albumName ->
                     if (albumName != null) {
                         allPlaylists.add(Playlist(albumName, R.drawable.v))
@@ -90,12 +96,14 @@ fun PlaylistsScreen(
                 }
                 userDataViewModel.resetDataFetchingState()
             }
+
             is DataFetchingState.Error -> {
                 val message = (dataFetchingState.value as DataFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 userDataViewModel.resetDataFetchingState()
             }
-            else -> { }
+
+            else -> {}
         }
     }
 
@@ -229,7 +237,7 @@ fun PlaylistsScreen(
                     playlistPair.forEach { playlist ->
                         PlaylistCard(
                             playlist = playlist,
-                            onClick = { onPlaylistClicked(playlist.name) },
+                            onPlaylistClicked = { navController.navigate("PlaylistSongList?name=${playlist.name}") },
                         )
                     }
                     // Nếu hàng có lẻ số nghệ sĩ, bạn có thể thêm một khoảng trống để cân đối
@@ -237,7 +245,7 @@ fun PlaylistsScreen(
                         Surface(
                             modifier = Modifier
                                 .size(width = 155.dp, height = 200.dp)
-                                .clickable {  },
+                                .clickable { },
                             color = Color.Transparent
                         ) {
                             Column(
@@ -288,46 +296,37 @@ fun PlaylistsScreen(
                     Text(
                         "Tạo playlist mới",
                         fontFamily = NotoSans,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     )
                 },
                 text = {
-                    TextField(
-                        value = newPlaylistName,
-                        onValueChange = { newPlaylistName = it },
-                        placeholder = {
-                            Text(
-                                "Tên playlist",
-                                fontFamily = NotoSans,
-                                fontSize = 16.sp
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp)),
-                        singleLine = true,
-                        maxLines = 1,
-                        textStyle = TextStyle(fontFamily = NotoSans, fontSize = 20.sp),
-                        colors = textFieldColors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            containerColor = Color.Gray.copy(alpha = 0.2f)
-                        ),
-                        trailingIcon = {
-                            // Hiển thị icon xóa nếu TextField có dữ liệu
-                            if (newPlaylistName.isNotEmpty()) {
-                                IconButton(onClick = { newPlaylistName = "" }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear"
-                                    )
+                    Column {
+                        OutlinedTextField(
+                            value = newPlaylistName,
+                            onValueChange = { newPlaylistName = it },
+                            label = { Text("Tên playlist mới")},
+                            singleLine = true,
+                            maxLines = 1,
+                            textStyle = TextStyle(fontFamily = NotoSans, fontSize = 16.sp),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = Color(0xFF00FAF2),
+                                focusedLabelColor = Color(0xFF00FAF2),
+                            ),
+                            trailingIcon = {
+                                // Hiển thị icon xóa nếu TextField có dữ liệu
+                                if (newPlaylistName.isNotEmpty()) {
+                                    IconButton(onClick = { newPlaylistName = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Clear"
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                    )
+                            },
+                        )
+                    }
                 },
-
                 confirmButton = {
                     TextButton(
                         onClick = {
