@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -57,6 +60,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
+import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
 import com.example.harmonyhub.ui.components.BottomSheetContent
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
@@ -75,8 +80,36 @@ fun PlaylistSongListScreen(
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
+    playlistViewModel: PlaylistViewModel = hiltViewModel(),
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
     ) {
-    val allSongs: List<Song> = SongRepository.allSongs
+
+    val dataFetchingState = playlistViewModel.dataFetchingState.observeAsState()
+    val allSongs = remember {mutableListOf<Song>()}
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        playlistViewModel.getPlaylistSongs(playlistName ?: "")
+    }
+
+    LaunchedEffect(dataFetchingState.value) {
+        when (val state = dataFetchingState.value) {
+            is PlaylistSongFetchingState.Success -> {
+                allSongs.clear()
+                allSongs.addAll((state as PlaylistSongFetchingState.Success).data as List<Song>)
+                playlistViewModel.resetDataFetchingState()
+            }
+
+            is PlaylistSongFetchingState.Error -> {
+                val message = (dataFetchingState.value as PlaylistSongFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                playlistViewModel.resetDataFetchingState()
+            }
+
+            else -> {}
+        }
+    }
 
     var query by remember { mutableStateOf("") }
 
@@ -84,8 +117,6 @@ fun PlaylistSongListScreen(
     var isBottomTitleSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
     var titleBottomSheet by remember { mutableStateOf("") }
-
-    val favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 
     val focusManager = LocalFocusManager.current
 
