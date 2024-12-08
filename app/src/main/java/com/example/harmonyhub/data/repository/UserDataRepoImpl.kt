@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import kotlin.text.set
 
 class UserDataRepoImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -272,6 +273,26 @@ class UserDataRepoImpl @Inject constructor(
             }
     }
 
+    fun getSongCount(albumName: String, callback: (Int) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val albumRef = getPlaylistRef(userId, albumName)
+
+        albumRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val count = document.getLong("songCount")?.toInt()
+                    callback(count ?: 0)
+                } else {
+                    Log.d("OwO", "No such document")
+                    callback(0)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback(0)
+            }
+    }
+
     override fun addSongToPlayList(
         song: Song,
         playlistName: String,
@@ -288,15 +309,38 @@ class UserDataRepoImpl @Inject constructor(
             "url" to song.url
         )
 
-        playlistSongsRef.set(songMap)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written!")
-                callback(PlaylistSongFetchingState.Success("Successfully added song to ${playlistName}"))
+        getPlaylistSongs(playlistName) { state ->
+            when (state) {
+                is PlaylistSongFetchingState.Success -> {
+                    val songs = state.data as List<Song>
+                    var songExists = false
+                    songs.forEach {
+                        if (it.url == song.url) {
+                            callback(PlaylistSongFetchingState.Error("Song already in playlist"))
+                            songExists = true
+                        }
+                    }
+                    if (!songExists) {
+                        playlistSongsRef.set(songMap)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "DocumentSnapshot successfully written!")
+                                callback(PlaylistSongFetchingState.Success("Successfully added song to ${playlistName}"))
+                                getSongCount(playlistName) { count ->
+                                    updateSongCount(playlistName, count + 1)
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error writing document", e)
+                                callback(PlaylistSongFetchingState.Error("Failed to add song to ${playlistName}"))
+                            }
+                    }
+                }
+
+                else -> {
+                    callback(PlaylistSongFetchingState.Error("Failed to fetch playlist songs"))
+                }
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error writing document", e)
-                callback(PlaylistSongFetchingState.Error("Failed to add song to ${playlistName}"))
-            }
+        }
     }
 
     override fun getPlaylistSongs(
