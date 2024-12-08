@@ -19,6 +19,5 @@ interface UserDataRepo {
     fun addSongToPlayList(song: Song, playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
     fun getPlaylistSongs(playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
     fun removeSongFromPlayList(song: Song, playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
-//    fun getSongFromPlayList()
-//    fun deletePlayList()
+    fun deletePlayList(playlistName: String)
 }

@@ -36,6 +36,10 @@ class PlaylistViewModel @Inject constructor(
         })
     }
 
+    fun deletePlayList(playlistName: String) {
+        userRepo.deletePlayList(playlistName)
+    }
+
     fun resetDataFetchingState() {
         _dataFetchingState.value = PlaylistSongFetchingState.Pending
     }

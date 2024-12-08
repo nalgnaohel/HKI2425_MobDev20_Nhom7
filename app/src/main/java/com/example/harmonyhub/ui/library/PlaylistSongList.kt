@@ -313,7 +313,9 @@ fun PlaylistSongListScreen(
         ) {
             BottomSheetTitleContent(
                 onDismiss = { isBottomTitleSheetVisible = false },
-                title = titleBottomSheet
+                title = titleBottomSheet,
+                playlistName = playlistName ?: "",
+                onBackButtonClicked = onBackButtonClicked
             )
         }
     }
@@ -321,7 +323,12 @@ fun PlaylistSongListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
+private fun BottomSheetTitleContent(onDismiss: () -> Unit,
+                                    title: String,
+                                    playlistName: String,
+                                    onBackButtonClicked: () -> Unit,
+                                    playlistViewModel: PlaylistViewModel = hiltViewModel(),
+) {
     var showRenameDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf(title) }
 
@@ -340,30 +347,33 @@ private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
         HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { showRenameDialog = true }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
-                tint = Color.Gray,
-                modifier = Modifier.size(23.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Đổi tên playlist", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .clickable { showRenameDialog = true }
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.Edit,
+//                contentDescription = "Edit",
+//                tint = Color.Gray,
+//                modifier = Modifier.size(23.dp)
+//            )
+//            Spacer(modifier = Modifier.width(16.dp))
+//            Text(
+//                "Đổi tên playlist", modifier = Modifier.padding(vertical = 8.dp),
+//                fontFamily = NotoSans, fontSize = 16.sp
+//            )
+//        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    playlistViewModel.deletePlayList(playlistName)
+                    onBackButtonClicked()
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.remove),

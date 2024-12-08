@@ -404,6 +404,19 @@ class UserDataRepoImpl @Inject constructor(
             }
 
     }
+
+    override fun deletePlayList(playlistName: String) {
+        val userId = auth.currentUser?.uid
+        val playlistRef = getPlaylistRef(userId, playlistName)
+
+        playlistRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+            }
+    }
 }
 
 data class FirebasePlaylist(

@@ -60,18 +60,22 @@ import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.repository.FirebasePlaylist
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Playlist
 import com.example.harmonyhub.ui.components.PlaylistCard
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
     onBackButtonClicked: () -> Unit,
     navController: NavHostController,
-    userDataViewModel: UserDataViewModel = hiltViewModel()
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
+    playlistViewModel: PlaylistViewModel = hiltViewModel()
 ) {
 
     val dataFetchingState = userDataViewModel.dataFetchingState.observeAsState()
@@ -80,6 +84,10 @@ fun PlaylistsScreen(
     val allPlaylists = remember { mutableListOf<Playlist>() }
 
     LaunchedEffect(Unit) {
+        userDataViewModel.getAlbums()
+    }
+
+    LaunchedEffect(allPlaylists.size) {
         userDataViewModel.getAlbums()
     }
 
@@ -222,7 +230,14 @@ fun PlaylistsScreen(
                     fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.clickable {
-
+                    runBlocking {
+                        launch {
+                            allPlaylists.forEach {
+                                playlistViewModel.deletePlayList(it.name)
+                            }
+                            userDataViewModel.getAlbums()
+                        }
+                    }
                 }
             )
         }
