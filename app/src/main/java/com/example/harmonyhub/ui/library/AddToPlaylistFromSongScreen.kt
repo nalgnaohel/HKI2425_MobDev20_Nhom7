@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.example.harmonyhub.R
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
@@ -66,11 +67,21 @@ import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
 import kotlinx.coroutines.launch
-import retrofit2.http.Url
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
 )
+
+private fun getSongByUrl(url: String?): Song? {
+
+    SongRepository.allSongs.forEach {
+        if (it.url == url) {
+            return it
+        }
+    }
+
+    return null
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +90,8 @@ fun AddToPlaylistFromSongScreen(
     onBackButtonClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel(),
     playlistViewModel: PlaylistViewModel = hiltViewModel(),
-    song: Song = Song("1", "Song 1", "Artist 1", "Album 1", "Genre 1")
 ) {
+    val song = getSongByUrl(url)
     val focusManager = LocalFocusManager.current
 
     var query by remember { mutableStateOf("") }
@@ -241,15 +252,20 @@ fun AddToPlaylistFromSongScreen(
                 // Launch a coroutine to handle the asynchronous operations
                 selectedPlaylists.forEach { playlist ->
                     lifecycleOwner.lifecycleScope.launch {
-                        playlistViewModel.addSongToPlayList(song, playlist)
+                        if (song != null) {
+                            playlistViewModel.addSongToPlayList(song, playlist)
 
-                        when (val state = playlistViewModel.dataFetchingState.value) {
-                            is PlaylistSongFetchingState.Error -> {
-                                val message = state.message
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                playlistViewModel.resetDataFetchingState()
+                            when (val state = playlistViewModel.dataFetchingState.value) {
+                                is PlaylistSongFetchingState.Error -> {
+                                    val message = state.message
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    playlistViewModel.resetDataFetchingState()
+                                }
+                                is PlaylistSongFetchingState.Success -> {
+                                    Toast.makeText(context, "Successfully added to playlist", Toast.LENGTH_SHORT).show()
+                                }
+                                else -> {}
                             }
-                            else -> {}
                         }
                     }
 
