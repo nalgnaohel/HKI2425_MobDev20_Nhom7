@@ -125,7 +125,7 @@ fun BottomSheetContent(
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
-    favoriteSongsViewModel: FavoriteSongsViewModel? = null
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 ) {
 
     Column(

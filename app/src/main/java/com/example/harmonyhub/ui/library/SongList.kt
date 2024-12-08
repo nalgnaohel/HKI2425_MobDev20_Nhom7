@@ -69,7 +69,7 @@ fun SongList(
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
-    favoriteSongsViewModel: FavoriteSongsViewModel? = null,
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
     onDeleteAllClicked: () -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
@@ -226,7 +226,7 @@ fun BottomSheetContentL(
     onDismiss: () -> Unit,
     selectedSong: Song?,
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
     onAddToPlaylistClicked: () -> Unit = {},
     onAddToFavoriteClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {},

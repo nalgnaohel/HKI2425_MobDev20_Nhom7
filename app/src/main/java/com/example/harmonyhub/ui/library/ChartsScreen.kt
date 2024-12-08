@@ -212,9 +212,7 @@ fun ChartsScreen(
                 onAddToFavoriteClicked = onAddToFavoriteClicked,
                 onShareClicked = onShareClicked,
                 onDownloadClicked = onDownloadClicked,
-                onDeleteClicked = {},
-                favoriteSongsViewModel = null
-            )
+                onDeleteClicked = {},)
         }
     }
 }

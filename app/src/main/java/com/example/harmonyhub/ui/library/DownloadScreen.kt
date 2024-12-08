@@ -31,6 +31,5 @@ fun DownloadScreen(
         onDeleteClicked = onDeleteClicked,
         onShareClicked = {},
         onDownloadClicked = {},
-        favoriteSongsViewModel = null
         )
 }
