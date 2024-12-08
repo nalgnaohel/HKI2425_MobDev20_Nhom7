@@ -2,6 +2,7 @@ package com.example.harmonyhub.data.repository
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.harmonyhub.domain.repository.FirebaseUser
 import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
@@ -415,6 +416,29 @@ class UserDataRepoImpl @Inject constructor(
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error deleting document", e)
+            }
+    }
+
+    override fun getUsers(callback: (List<FirebaseUser>) -> Unit) {
+        val usersRef = firestore.collection("users")
+
+        usersRef.get()
+            .addOnSuccessListener { result ->
+                val users = mutableListOf<FirebaseUser>()
+                for (document in result) {
+                    Log.d("user", "${document.id} => ${document.data}")
+                    val user = FirebaseUser(
+                        email = document.getString("email").toString(),
+                        uid = document.getString("uid").toString(),
+                        userName = document.getString("userName").toString()
+                    )
+                    users.add(user)
+                }
+                callback(users)
+            }
+            .addOnFailureListener { exception ->
+                Log.d("user", "Error getting documents: ", exception)
+                callback(emptyList())
             }
     }
 }

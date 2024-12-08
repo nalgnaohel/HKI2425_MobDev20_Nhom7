@@ -2,6 +2,7 @@ package com.example.harmonyhub.domain.repository
 
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FriendListFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.ui.components.Song
 
@@ -20,4 +21,12 @@ interface UserDataRepo {
     fun getPlaylistSongs(playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
     fun removeSongFromPlayList(song: Song, playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
     fun deletePlayList(playlistName: String)
+
+    fun getUsers(callback: (List<FirebaseUser>) -> Unit)
 }
+
+data class FirebaseUser(
+    val email: String = "",
+    val uid: String = "",
+    val userName: String = ""
+)
