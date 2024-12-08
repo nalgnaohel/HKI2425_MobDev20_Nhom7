@@ -456,17 +456,34 @@ class UserDataRepoImpl @Inject constructor(
     }
 
     override fun searchForEmail(email: String, callback: (FriendListFetchingState) -> Unit) {
-        getUsers {
-            val users = it
-            val user = users.find { user -> user.email == email }
-            if (user != null) {
-                sendFriendRequest(uid = user.uid) { state ->
-                    callback(state)
+        getFriends { state ->
+            when (state) {
+                is FriendListFetchingState.SuccessOnGetFriends -> {
+                    val friends = state.data as List<FirebaseUser>
+                    val friend = friends.find { user -> user.email == email }
+                    if (friend != null) {
+                        callback(FriendListFetchingState.Error("User is already your friend"))
+                    } else {
+                        getUsers {
+                            val users = it
+                            val user = users.find { user -> user.email == email }
+                            if (user != null) {
+                                sendFriendRequest(uid = user.uid) { state ->
+                                    callback(state)
+                                }
+                            } else {
+                                callback(FriendListFetchingState.Error("User not found"))
+                            }
+                        }
+                    }
                 }
-            } else {
-                callback(FriendListFetchingState.Error("User not found"))
+                else -> {
+
+                }
             }
         }
+
+
     }
 
     override fun sendFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit) {
