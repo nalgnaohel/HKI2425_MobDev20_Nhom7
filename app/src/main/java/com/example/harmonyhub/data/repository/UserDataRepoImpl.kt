@@ -519,6 +519,61 @@ class UserDataRepoImpl @Inject constructor(
                 callback(FriendListFetchingState.Error("Failed to get friend requests"))
             }
     }
+
+    override fun acceptFriendRequest(
+        uid: String,
+        callback: (FriendListFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+        val friendRef = getUserDataRef(uid)
+
+        userRef.update("friends", FieldValue.arrayUnion(uid))
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+                userRef.update("waiting_queue", FieldValue.arrayRemove(uid))
+                    .addOnSuccessListener {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!")
+                        callback(FriendListFetchingState.Success("Successfully accepted friend request"))
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error updating document", e)
+                        callback(FriendListFetchingState.Error("Failed to accept friend request"))
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+                callback(FriendListFetchingState.Error("Failed to accept friend request"))
+            }
+
+        friendRef.update("friends", FieldValue.arrayUnion(userId))
+            .addOnSuccessListener {
+                callback(FriendListFetchingState.Success("Successfully accepted friend request"))
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+                callback(FriendListFetchingState.Error("Failed to accept friend request"))
+            }
+
+    }
+
+    override fun declineFriendRequest(
+        uid: String,
+        callback: (FriendListFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+
+        userRef.update("waiting_queue", FieldValue.arrayRemove(uid))
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+                callback(FriendListFetchingState.Success("Successfully declined friend request"))
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+                callback(FriendListFetchingState.Error("Failed to decline friend request"))
+            }
+    }
 }
 
 data class FirebasePlaylist(

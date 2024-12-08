@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,6 +63,8 @@ import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.components.FriendCard
 import com.example.harmonyhub.ui.components.contains
 import com.example.harmonyhub.ui.theme.NotoSans
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +89,7 @@ fun FriendsScreen(
     val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
 
     val email = userDataViewModel.email.observeAsState()
-    val friendRequests = remember { mutableListOf<FirebaseUser>() }
+    val friendRequests = remember { mutableStateListOf<FirebaseUser>() }
 
     var showFriendRequestsDialog by remember { mutableStateOf(false) }
 
@@ -116,6 +119,7 @@ fun FriendsScreen(
                     is List<*> -> {
                         friendRequests.clear()
                         friendRequests.addAll(data as List<FirebaseUser>)
+                        friendListViewModel.resetDataFetchingState()
                     }
                 }
             }
@@ -396,8 +400,25 @@ fun FriendsScreen(
                                 isRequestsBottomSheetVisible = true
                                 selectedFriend = friend
                             },
-                            onAcceptClick = { /* Todo */ },
-                            onRejectClick = { /* Todo */ }
+                            onAcceptClick = {
+                                runBlocking {
+                                    launch {
+                                        friendListViewModel.acceptFriendRequest(friendRequest.uid)
+                                        friendRequests.remove(friendRequest)
+                                    }
+                                }
+                            },
+                            onRejectClick = {
+                                friendListViewModel.declineFriendRequest(friendRequest.uid)
+                                runBlocking {
+                                    launch {
+                                        friendListViewModel.declineFriendRequest(friendRequest.uid)
+//                                        if (friendListFetchingState.value is FriendListFetchingState.Success) {
+                                        friendRequests.remove(friendRequest)
+//                                        }
+                                    }
+                                }
+                            }
                         )
                     }
                 }

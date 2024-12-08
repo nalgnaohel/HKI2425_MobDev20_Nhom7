@@ -27,6 +27,8 @@ interface UserDataRepo {
 
     fun sendFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
     fun getFriendRequests(callback: (FriendListFetchingState) -> Unit)
+    fun acceptFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
+    fun declineFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
 }
 
 data class FirebaseUser(
