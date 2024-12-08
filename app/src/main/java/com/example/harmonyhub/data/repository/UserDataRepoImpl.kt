@@ -14,6 +14,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -59,8 +61,14 @@ class UserDataRepoImpl @Inject constructor(
         return playlistSongRef
     }
 
-    override fun getUserInfor(callback: (String?, String?) -> Unit) {
-        val userId = auth.currentUser?.uid
+    override fun getUserInfor(uid: String? , callback: (String?, String?) -> Unit) {
+
+        var userId = auth.currentUser?.uid
+
+        uid?.let {
+            userId = uid
+        }
+
         val userRef = getUserDataRef(userId)
 
         userRef.get()
@@ -484,6 +492,31 @@ class UserDataRepoImpl @Inject constructor(
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
                 callback(FriendListFetchingState.Error("User not found"))
+            }
+    }
+
+    override fun getFriendRequests(callback: (FriendListFetchingState) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val friendRequests = mutableListOf<FirebaseUser>()
+                    (document["waiting_queue"] as List<String>).forEach {
+                        getUserInfor(it) { userName, email ->
+                            friendRequests.add(FirebaseUser(email = email.toString(), uid = it, userName = userName.toString()))
+                            callback(FriendListFetchingState.Success(friendRequests))
+                        }
+                    }
+                } else {
+                    Log.d("OwO", "No such document")
+                    callback(FriendListFetchingState.Error("Failed to get friend requests"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback(FriendListFetchingState.Error("Failed to get friend requests"))
             }
     }
 }

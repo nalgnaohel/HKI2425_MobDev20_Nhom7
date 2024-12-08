@@ -68,7 +68,6 @@ import com.example.harmonyhub.ui.theme.NotoSans
 @Composable
 fun FriendsScreen(
     friends: List<Friend>,
-    friendRequests: List<Friend>,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
     onUnfriendClicked: () -> Unit,
@@ -87,6 +86,7 @@ fun FriendsScreen(
     val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
 
     val email = userDataViewModel.email.observeAsState()
+    val friendRequests = remember { mutableListOf<FirebaseUser>() }
 
     var showFriendRequestsDialog by remember { mutableStateOf(false) }
 
@@ -94,6 +94,10 @@ fun FriendsScreen(
 
     val friendListFetchingState = friendListViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        friendListViewModel.getFriendRequests()
+    }
 
     LaunchedEffect(friendListFetchingState.value) {
         when (friendListFetchingState.value) {
@@ -108,6 +112,10 @@ fun FriendsScreen(
                         val message = data as String
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         friendListViewModel.resetDataFetchingState()
+                    }
+                    is List<*> -> {
+                        friendRequests.clear()
+                        friendRequests.addAll(data as List<FirebaseUser>)
                     }
                 }
             }
@@ -376,12 +384,17 @@ fun FriendsScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     items(friendRequests) { friendRequest ->
+                        val friend = Friend(
+                            name = friendRequest.userName,
+                            email = friendRequest.email,
+                            imageResId = R.drawable.hip
+                        )
                         FriendCard(
-                            friend = friendRequest,
+                            friend = friend,
                             screenType = "Friend Requests",
                             onMoreClick = {
                                 isRequestsBottomSheetVisible = true
-                                selectedFriend = friendRequest
+                                selectedFriend = friend
                             },
                             onAcceptClick = { /* Todo */ },
                             onRejectClick = { /* Todo */ }

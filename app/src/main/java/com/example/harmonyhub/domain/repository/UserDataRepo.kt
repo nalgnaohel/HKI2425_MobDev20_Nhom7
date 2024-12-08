@@ -7,7 +7,7 @@ import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.ui.components.Song
 
 interface UserDataRepo {
-    fun getUserInfor(callback: (String?, String?) -> Unit)
+    fun getUserInfor(uid: String? = null, callback: (String?, String?) -> Unit)
     fun setUserInfor(userName: String, email: String, userId: String?)
 
     fun getAlbums(callback: (DataFetchingState) -> Unit)
@@ -26,6 +26,7 @@ interface UserDataRepo {
     fun searchForEmail(email: String, callback: (FriendListFetchingState) -> Unit)
 
     fun sendFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
+    fun getFriendRequests(callback: (FriendListFetchingState) -> Unit)
 }
 
 data class FirebaseUser(

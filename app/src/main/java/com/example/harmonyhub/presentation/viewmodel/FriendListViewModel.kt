@@ -34,6 +34,12 @@ class FriendListViewModel @Inject constructor(
             _dataFetchingState.value = state
         }
     }
+
+    fun getFriendRequests() {
+        userRepo.getFriendRequests { state ->
+            _dataFetchingState.value = state
+        }
+    }
 }
 
 sealed class FriendListFetchingState {

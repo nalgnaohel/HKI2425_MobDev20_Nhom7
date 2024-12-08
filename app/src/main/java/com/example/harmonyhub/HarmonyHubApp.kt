@@ -468,10 +468,6 @@ fun HarmonyHubApp(
                         onAddButtonClicked = { },
                         onUnfriendClicked = { },
                         onWatchPlaylistClicked = { },
-                        friendRequests = listOf(
-                            Friend("Anh", "anh@gmail.com", R.drawable.hip),
-                            Friend("Minh", "minh@gmail.com", R.drawable.hip)
-                        )
                     )
 
                 }
