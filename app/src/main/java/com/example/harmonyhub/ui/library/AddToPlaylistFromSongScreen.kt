@@ -249,27 +249,31 @@ fun AddToPlaylistFromSongScreen(
         // Nút hoàn tất
         Button(
             onClick = {
-                // Launch a coroutine to handle the asynchronous operations
-                selectedPlaylists.forEach { playlist ->
-                    lifecycleOwner.lifecycleScope.launch {
-                        if (song != null) {
-                            playlistViewModel.addSongToPlayList(song, playlist)
+                if (selectedPlaylists.size > 1) {
+                    Toast.makeText(context, "Chỉ được chọn 1 danh sách phát", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Launch a coroutine to handle the asynchronous operations
+                    selectedPlaylists.forEach { playlist ->
+                        lifecycleOwner.lifecycleScope.launch {
+                            if (song != null) {
+                                playlistViewModel.addSongToPlayList(song, playlist)
 
-                            when (val state = playlistViewModel.dataFetchingState.value) {
-                                is PlaylistSongFetchingState.Error -> {
-                                    val message = state.message
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                    playlistViewModel.resetDataFetchingState()
+                                when (val state = playlistViewModel.dataFetchingState.value) {
+                                    is PlaylistSongFetchingState.Error -> {
+                                        val message = state.message
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        playlistViewModel.resetDataFetchingState()
+                                    }
+                                    is PlaylistSongFetchingState.Success -> {
+                                        Toast.makeText(context, "Successfully added to playlist", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else -> {}
                                 }
-                                is PlaylistSongFetchingState.Success -> {
-                                    Toast.makeText(context, "Successfully added to playlist", Toast.LENGTH_SHORT).show()
-                                }
-                                else -> {}
                             }
                         }
-                    }
 
-            }
+                    }
+                }
 //                onBackButtonClicked()
             },
             colors = ButtonDefaults.buttonColors(
