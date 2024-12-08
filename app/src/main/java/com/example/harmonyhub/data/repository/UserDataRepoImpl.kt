@@ -103,10 +103,12 @@ class UserDataRepoImpl @Inject constructor(
 
         albumsRef.get()
             .addOnSuccessListener { result ->
-                val albums = mutableListOf<String?>()
+                val albums = mutableListOf<FirebasePlaylist?>()
                 for (document in result) {
                     Log.d("album", "${document.id} => ${document.data}")
-                    albums.add(document.getString("albumName"))
+                    albums.add(FirebasePlaylist(document.getString("albumName").toString(),
+                        document.getLong("songCount")?.toInt() ?: 0
+                    ))
                 }
                 callback(DataFetchingState.Success(albums))
             }
@@ -372,3 +374,8 @@ class UserDataRepoImpl @Inject constructor(
             }
     }
 }
+
+data class FirebasePlaylist(
+    val name: String,
+    val songCount: Int
+)

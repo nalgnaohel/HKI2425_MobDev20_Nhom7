@@ -60,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
+import com.example.harmonyhub.data.repository.FirebasePlaylist
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
@@ -101,9 +102,11 @@ fun AddToPlaylistFromSongScreen(
     var selectedPlaylists by remember { mutableStateOf(setOf<String>())}
 
     val albumsFetchingState = userDataViewModel.dataFetchingState.observeAsState()
+    val addingSongState = playlistViewModel.dataFetchingState.observeAsState()
     val context = LocalContext.current
 
     val allPlaylists = remember { mutableListOf<String>() }
+    val playlistSongs = remember { mutableListOf<Int>() }
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -119,7 +122,11 @@ fun AddToPlaylistFromSongScreen(
         when (albumsFetchingState.value) {
             is DataFetchingState.Success -> {
                 allPlaylists.clear()
-                allPlaylists.addAll((albumsFetchingState.value as DataFetchingState.Success).data as List<String>)
+                playlistSongs.clear()
+                ((albumsFetchingState.value as DataFetchingState.Success).data as List<FirebasePlaylist>).forEach {
+                    allPlaylists.add(it.name)
+                    playlistSongs.add(it.songCount)
+                }
                 userDataViewModel.resetDataFetchingState()
             }
             is DataFetchingState.Error -> {
@@ -232,7 +239,7 @@ fun AddToPlaylistFromSongScreen(
             items(allPlaylists) { playlist ->
                 PlaylistItem(
                     playlistName = playlist,
-                    songCount = "2 bài hát",
+                    songCount = "${playlistSongs[allPlaylists.indexOf(playlist)]} bài hát",
                     onPlaylistClicked = {
                         if (selectedPlaylists.contains(playlist)) {
                             selectedPlaylists -= playlist
@@ -262,9 +269,9 @@ fun AddToPlaylistFromSongScreen(
                                     is PlaylistSongFetchingState.Error -> {
                                         val message = state.message
                                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                        playlistViewModel.resetDataFetchingState()
                                     }
                                     is PlaylistSongFetchingState.Success -> {
+                                        userDataViewModel.getAlbums()
                                         Toast.makeText(context, "Successfully added to playlist", Toast.LENGTH_SHORT).show()
                                     }
                                     else -> {}

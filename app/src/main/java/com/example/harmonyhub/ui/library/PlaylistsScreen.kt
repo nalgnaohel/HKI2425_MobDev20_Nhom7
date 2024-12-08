@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.harmonyhub.R
+import com.example.harmonyhub.data.repository.FirebasePlaylist
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Playlist
@@ -87,11 +88,11 @@ fun PlaylistsScreen(
             is DataFetchingState.Success -> {
                 allPlaylists.clear()
                 val albums =
-                    (dataFetchingState.value as DataFetchingState.Success).data as List<String?>
-                albums.forEach { albumName ->
-                    if (albumName != null) {
-                        allPlaylists.add(Playlist(albumName, R.drawable.v))
-                        Log.d("Album", "Album name: $albumName")
+                    (dataFetchingState.value as DataFetchingState.Success).data as List<FirebasePlaylist?>
+                albums.forEach { album ->
+                    if (album != null) {
+                        allPlaylists.add(Playlist(album.name, R.drawable.v))
+                        Log.d("Album", "Album name: $album.name")
                     }
                 }
                 userDataViewModel.resetDataFetchingState()
