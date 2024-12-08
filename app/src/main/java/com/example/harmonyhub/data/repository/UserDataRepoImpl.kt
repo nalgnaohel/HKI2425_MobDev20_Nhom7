@@ -616,6 +616,34 @@ class UserDataRepoImpl @Inject constructor(
                 callback(FriendListFetchingState.Error("Failed to get friends"))
             }
     }
+
+    override fun removeFriend(
+        uid: String,
+        callback: (FriendListFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+        val friendRef = getUserDataRef(uid)
+
+        userRef.update("friends", FieldValue.arrayRemove(uid))
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+                callback(FriendListFetchingState.Success("Successfully removed friend"))
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+                callback(FriendListFetchingState.Error("Failed to remove friend"))
+            }
+
+        friendRef.update("friends", FieldValue.arrayRemove(userId))
+            .addOnSuccessListener {
+                callback(FriendListFetchingState.Success("Successfully removed friend"))
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+                callback(FriendListFetchingState.Error("Failed to remove friend"))
+            }
+    }
 }
 
 data class FirebasePlaylist(

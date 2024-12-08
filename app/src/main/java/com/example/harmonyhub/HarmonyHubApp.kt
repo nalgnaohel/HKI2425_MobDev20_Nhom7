@@ -462,7 +462,6 @@ fun HarmonyHubApp(
                     FriendsScreen(
                         onBackButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = { },
-                        onUnfriendClicked = { },
                         onWatchPlaylistClicked = { },
                     )
 

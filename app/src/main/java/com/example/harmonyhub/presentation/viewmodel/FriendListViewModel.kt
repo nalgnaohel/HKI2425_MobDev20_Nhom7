@@ -58,6 +58,12 @@ class FriendListViewModel @Inject constructor(
             _dataFetchingState.value = state
         }
     }
+
+    fun removeFriend(uid: String) {
+        userRepo.removeFriend(uid) { state ->
+            _dataFetchingState.value = state
+        }
+    }
 }
 
 sealed class FriendListFetchingState {

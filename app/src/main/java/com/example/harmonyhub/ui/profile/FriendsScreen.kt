@@ -72,7 +72,6 @@ import kotlinx.coroutines.runBlocking
 fun FriendsScreen(
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    onUnfriendClicked: () -> Unit,
     onWatchPlaylistClicked: () -> Unit,
     friendRequestViewModel: FriendListViewModel = hiltViewModel(),
     friendListViewModel: FriendListViewModel = hiltViewModel(),
@@ -164,7 +163,8 @@ fun FriendsScreen(
         Friend(
             name = user.userName,
             email = user.email,
-            imageResId = R.drawable.hip
+            imageResId = R.drawable.hip,
+            uid = user.uid
         )
     }
     val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
@@ -395,24 +395,17 @@ fun FriendsScreen(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedFriend = selectedFriend,
-                onWatchPlaylistClicked = onUnfriendClicked,
-                onUnFriendClicked = onUnfriendClicked
+                onWatchPlaylistClicked = onWatchPlaylistClicked,
+                onUnFriendClicked = {
+                    runBlocking {
+                            friendListViewModel.removeFriend(selectedFriend!!.uid)
+                            friendList.removeIf { it.uid == selectedFriend!!.uid }
+                    }
+                }
             )
         }
     }
-    if (isBottomSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { isBottomSheetVisible = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            BottomSheetContent(
-                onDismiss = { isBottomSheetVisible = false },
-                selectedFriend = selectedFriend,
-                onWatchPlaylistClicked = onUnfriendClicked,
-                onUnFriendClicked = onUnfriendClicked
-            )
-        }
-    }
+
     if (showFriendRequestsDialog) {
         AlertDialog(
             onDismissRequest = { showFriendRequestsDialog = false },

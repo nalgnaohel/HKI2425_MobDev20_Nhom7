@@ -36,7 +36,8 @@ import com.example.harmonyhub.ui.theme.NotoSans
 data class Friend(
     val name: String,
     val email: String,
-    val imageResId: Int
+    val imageResId: Int,
+    val uid: String = ""
 )
 
 fun Friend.contains(query: String, ignoreCase: Boolean = true): Boolean {
