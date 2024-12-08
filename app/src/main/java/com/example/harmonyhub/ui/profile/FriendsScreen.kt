@@ -1,6 +1,7 @@
 package com.example.harmonyhub.ui.profile
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -32,7 +33,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,14 +44,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
+import com.example.harmonyhub.domain.repository.FirebaseUser
+import com.example.harmonyhub.presentation.viewmodel.FriendListFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FriendListViewModel
+import com.example.harmonyhub.presentation.viewmodel.UserDataViewModel
 import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.components.FriendCard
 import com.example.harmonyhub.ui.components.contains
@@ -63,7 +72,9 @@ fun FriendsScreen(
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
     onUnfriendClicked: () -> Unit,
-    onWatchPlaylistClicked: () -> Unit
+    onWatchPlaylistClicked: () -> Unit,
+    friendListViewModel: FriendListViewModel = hiltViewModel(),
+    userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
 
     var query by remember { mutableStateOf("") }
@@ -75,10 +86,35 @@ fun FriendsScreen(
     val focusManager = LocalFocusManager.current
     val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
 
+    val email = userDataViewModel.email.observeAsState()
+
     var showFriendRequestsDialog by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val friendListFetchingState = friendListViewModel.dataFetchingState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(friendListFetchingState.value) {
+        when (friendListFetchingState.value) {
+            is FriendListFetchingState.Error -> {
+                val message = (friendListFetchingState.value as FriendListFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                friendListViewModel.resetDataFetchingState()
+            }
+            is FriendListFetchingState.Success -> {
+                when (val data = (friendListFetchingState.value as FriendListFetchingState.Success).data) {
+                    is String -> {
+                        val message = data as String
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        friendListViewModel.resetDataFetchingState()
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -267,7 +303,11 @@ fun FriendsScreen(
                 TextButton(
                     onClick = {
                         showDialog = false
-                        /* Todo */
+                        if (newFriendEmail == email.value) {
+                            Toast.makeText(context, "Bạn không thể gửi lời mời kết bạn đến chính mình", Toast.LENGTH_SHORT).show()
+                        } else {
+                            friendListViewModel.searchForEmail(newFriendEmail)
+                        }
                     },
                     enabled = newFriendEmail.isNotBlank()
                 ) {

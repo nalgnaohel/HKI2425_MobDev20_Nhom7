@@ -24,6 +24,8 @@ interface UserDataRepo {
 
     fun getUsers(callback: (List<FirebaseUser>) -> Unit)
     fun searchForEmail(email: String, callback: (FriendListFetchingState) -> Unit)
+
+    fun sendFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
 }
 
 data class FirebaseUser(

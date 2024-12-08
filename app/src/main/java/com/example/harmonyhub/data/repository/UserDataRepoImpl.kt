@@ -12,6 +12,7 @@ import com.example.harmonyhub.ui.components.Song
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import java.net.URLEncoder
@@ -451,11 +452,39 @@ class UserDataRepoImpl @Inject constructor(
             val users = it
             val user = users.find { user -> user.email == email }
             if (user != null) {
-                callback(FriendListFetchingState.Success("Successfully send friend request to ${user.userName}"))
+                sendFriendRequest(uid = user.uid) { state ->
+                    callback(state)
+                }
             } else {
                 callback(FriendListFetchingState.Error("User not found"))
             }
         }
+    }
+
+    override fun sendFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit) {
+
+        val friendRef = firestore.collection("users").document(uid)
+
+        friendRef.get()
+            .addOnSuccessListener { documents ->
+                if ((documents["waiting_queue"] as List<String>).contains(auth.currentUser?.uid)) {
+                    callback(FriendListFetchingState.Error("Friend request already sent"))
+                } else {
+                    friendRef.update("waiting_queue", FieldValue.arrayUnion(auth.currentUser?.uid))
+                        .addOnSuccessListener {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!")
+                            callback(FriendListFetchingState.Success("Successfully sent friend request"))
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "Error updating document", e)
+                            callback(FriendListFetchingState.Error("Failed to send friend request"))
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback(FriendListFetchingState.Error("User not found"))
+            }
     }
 }
 
