@@ -23,6 +23,7 @@ interface UserDataRepo {
     fun deletePlayList(playlistName: String)
 
     fun getUsers(callback: (List<FirebaseUser>) -> Unit)
+    fun searchForEmail(email: String, callback: (FriendListFetchingState) -> Unit)
 }
 
 data class FirebaseUser(

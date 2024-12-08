@@ -6,6 +6,7 @@ import com.example.harmonyhub.domain.repository.FirebaseUser
 import com.example.harmonyhub.domain.repository.UserDataRepo
 import com.example.harmonyhub.presentation.viewmodel.DataFetchingState
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.FriendListFetchingState
 import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
 import com.example.harmonyhub.ui.components.Song
 import com.google.firebase.auth.FirebaseAuth
@@ -440,6 +441,18 @@ class UserDataRepoImpl @Inject constructor(
                 Log.d("user", "Error getting documents: ", exception)
                 callback(emptyList())
             }
+    }
+
+    override fun searchForEmail(email: String, callback: (FriendListFetchingState) -> Unit) {
+        getUsers {
+            val users = it
+            val user = users.find { user -> user.email == email }
+            if (user != null) {
+                callback(FriendListFetchingState.Success(user))
+            } else {
+                callback(FriendListFetchingState.Error("User not found"))
+            }
+        }
     }
 }
 
