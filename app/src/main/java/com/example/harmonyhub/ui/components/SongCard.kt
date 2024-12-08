@@ -32,11 +32,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
+import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
 import com.example.harmonyhub.ui.theme.NotoSans
 
 data class Song(

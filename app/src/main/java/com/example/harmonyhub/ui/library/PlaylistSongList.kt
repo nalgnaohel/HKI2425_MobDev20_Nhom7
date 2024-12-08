@@ -96,9 +96,20 @@ fun PlaylistSongListScreen(
     LaunchedEffect(dataFetchingState.value) {
         when (val state = dataFetchingState.value) {
             is PlaylistSongFetchingState.Success -> {
-                allSongs.clear()
-                allSongs.addAll((state as PlaylistSongFetchingState.Success).data as List<Song>)
-                playlistViewModel.resetDataFetchingState()
+                when (val data = (dataFetchingState.value as PlaylistSongFetchingState.Success).data) {
+                    is List<*> -> {
+                        val songs = data as List<Song>
+                        allSongs.clear()
+                        allSongs.addAll(songs)
+                        playlistViewModel.resetDataFetchingState()
+                    }
+                    is String -> {
+                        val message = data as String
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        playlistViewModel.resetDataFetchingState()
+                        playlistViewModel.getPlaylistSongs(playlistName ?: "")
+                    }
+                }
             }
 
             is PlaylistSongFetchingState.Error -> {
@@ -284,7 +295,11 @@ fun PlaylistSongListScreen(
                 screenType = "PlaylistSongListScreen",
                 onAddToPlaylistClicked = onAddToPlaylistClicked,
                 onAddToFavoriteClicked = onAddToFavoriteClicked,
-                onDeleteClicked = onDeleteClicked,
+                onDeleteClicked = {
+                    selectedSong?.let {
+                        playlistViewModel.removeSongFromPlayList(it, playlistName ?: "")
+                    }
+                },
                 onShareClicked = onShareClicked,
                 onDownloadClicked = onDownloadClicked,
                 favoriteSongsViewModel = favoriteSongsViewModel

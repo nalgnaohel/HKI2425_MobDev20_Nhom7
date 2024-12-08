@@ -373,6 +373,37 @@ class UserDataRepoImpl @Inject constructor(
                 callback(PlaylistSongFetchingState.Error("Failed to get playlist songs"))
             }
     }
+
+    override fun removeSongFromPlayList(
+        song: Song,
+        playlistName: String,
+        callback: (PlaylistSongFetchingState) -> Unit
+    ) {
+        Log.d("RemovePlaylist", "removing song from playlist ${song.name}")
+        val userId = auth.currentUser?.uid
+        val encodedUrl = URLEncoder.encode(song.url, StandardCharsets.UTF_8.toString())
+        val playlistSongRef = getPlaylistSongRef(userId, playlistName, encodedUrl)
+
+        Log.d("RemovePlaylist", "removing song from playlist ${playlistSongRef.id}")
+
+        var flag = true
+
+        playlistSongRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                flag = false
+                callback(PlaylistSongFetchingState.Success("Successfully removed song from ${playlistName}"))
+                getSongCount(playlistName) { count ->
+                updateSongCount(playlistName, count - 1)
+                Log.d("RemovePlaylist", "song count updated to ${count - 1}")
+            }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+                callback(PlaylistSongFetchingState.Error("Failed to remove song from ${playlistName}"))
+            }
+
+    }
 }
 
 data class FirebasePlaylist(
