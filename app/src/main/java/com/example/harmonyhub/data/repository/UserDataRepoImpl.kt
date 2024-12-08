@@ -127,7 +127,8 @@ class UserDataRepoImpl @Inject constructor(
                         callback(DataFetchingState.Error("Album already exists"))
                     } else {
                         val albumMap = hashMapOf(
-                            "albumName" to albumName
+                            "albumName" to albumName,
+                            "songCount" to 0
                         )
                         albumRef.set(albumMap)
                             .addOnSuccessListener {
@@ -251,6 +252,23 @@ class UserDataRepoImpl @Inject constructor(
             .addOnFailureListener { exception ->
                 Log.d("favorite", "Error getting documents: ", exception)
                 callback(FavoriteSongFetchingState.Error("Failed to get favorite songs"))
+            }
+    }
+
+    fun updateSongCount(albumName: String, count: Int) {
+        val userId = auth.currentUser?.uid
+        val albumRef = getPlaylistRef(userId, albumName)
+
+        val albumMap = hashMapOf<String, Any> (
+            "songCount" to count
+        )
+
+        albumRef.update(albumMap)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
             }
     }
 
