@@ -85,7 +85,10 @@ class UserDataRepoImpl @Inject constructor(
     override fun setUserInfor(userName: String, email: String, userId: String?) {
         val userMap = hashMapOf(
             "userName" to userName,
-            "email" to email
+            "email" to email,
+            "uid" to userId.toString(),
+            "friends" to emptyList<String>(),
+            "waiting_queue" to emptyList<String>()
         )
 
         val userRef = getUserDataRef(userId)
@@ -448,7 +451,7 @@ class UserDataRepoImpl @Inject constructor(
             val users = it
             val user = users.find { user -> user.email == email }
             if (user != null) {
-                callback(FriendListFetchingState.Success(user))
+                callback(FriendListFetchingState.Success("Successfully send friend request to ${user.userName}"))
             } else {
                 callback(FriendListFetchingState.Error("User not found"))
             }
