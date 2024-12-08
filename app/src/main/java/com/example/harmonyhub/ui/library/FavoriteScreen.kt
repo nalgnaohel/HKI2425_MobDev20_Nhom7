@@ -12,6 +12,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
 import com.example.harmonyhub.ui.components.Song
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun FavoriteScreen(
@@ -73,6 +75,15 @@ fun FavoriteScreen(
         onDeleteClicked = onDeleteClicked,
         onShareClicked = onShareClicked,
         onDownloadClicked = onDownloadClicked,
-        favoriteSongsViewModel = favoriteSongsViewModel
+        onDeleteAllClicked = {
+            runBlocking {
+                launch {
+                    allSongs.forEach {
+                        favoriteSongsViewModel.removeFavoriteSong(it)
+                    }
+                    favoriteSongsViewModel.getFavoriteSongs()
+                }
+            }
+        }
     )
 }
