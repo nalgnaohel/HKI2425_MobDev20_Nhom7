@@ -52,10 +52,17 @@ class FriendListViewModel @Inject constructor(
             _dataFetchingState.value = state
         }
     }
+
+    fun getFriends() {
+        userRepo.getFriends { state ->
+            _dataFetchingState.value = state
+        }
+    }
 }
 
 sealed class FriendListFetchingState {
     object Pending : FriendListFetchingState()
     data class Success(val data: Any) : FriendListFetchingState()
+    data class SuccessOnGetFriends(val data: Any) : FriendListFetchingState()
     data class Error(val message: String) : FriendListFetchingState()
 }

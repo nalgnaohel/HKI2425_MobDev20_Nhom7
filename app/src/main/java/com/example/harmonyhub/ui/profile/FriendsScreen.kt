@@ -70,11 +70,11 @@ import kotlinx.coroutines.runBlocking
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
-    friends: List<Friend>,
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
     onUnfriendClicked: () -> Unit,
     onWatchPlaylistClicked: () -> Unit,
+    friendRequestViewModel: FriendListViewModel = hiltViewModel(),
     friendListViewModel: FriendListViewModel = hiltViewModel(),
     userDataViewModel: UserDataViewModel = hiltViewModel(),
 ) {
@@ -86,40 +86,47 @@ fun FriendsScreen(
     var isRequestsBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedFriend by remember { mutableStateOf<Friend?>(null) }
     val focusManager = LocalFocusManager.current
-    val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
+
 
     val email = userDataViewModel.email.observeAsState()
+
     val friendRequests = remember { mutableStateListOf<FirebaseUser>() }
+    val friendList = remember { mutableStateListOf<FirebaseUser>() }
 
     var showFriendRequestsDialog by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val friendRequestFetchingState = friendRequestViewModel.dataFetchingState.observeAsState()
     val friendListFetchingState = friendListViewModel.dataFetchingState.observeAsState()
+
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        friendListViewModel.getFriendRequests()
+        friendRequestViewModel.getFriendRequests()
+        friendListViewModel.getFriends()
     }
 
-    LaunchedEffect(friendListFetchingState.value) {
-        when (friendListFetchingState.value) {
+    LaunchedEffect(friendRequestFetchingState.value) {
+        when (friendRequestFetchingState.value) {
             is FriendListFetchingState.Error -> {
-                val message = (friendListFetchingState.value as FriendListFetchingState.Error).message
+                val message = (friendRequestFetchingState.value as FriendListFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                friendListViewModel.resetDataFetchingState()
+                friendRequestViewModel.resetDataFetchingState()
             }
             is FriendListFetchingState.Success -> {
-                when (val data = (friendListFetchingState.value as FriendListFetchingState.Success).data) {
+                when (val data = (friendRequestFetchingState.value as FriendListFetchingState.Success).data) {
                     is String -> {
                         val message = data as String
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                        friendListViewModel.resetDataFetchingState()
+                        friendRequestViewModel.resetDataFetchingState()
+                        friendListViewModel.getFriends()
                     }
                     is List<*> -> {
                         friendRequests.clear()
                         friendRequests.addAll(data as List<FirebaseUser>)
-                        friendListViewModel.resetDataFetchingState()
+                        friendRequestViewModel.resetDataFetchingState()
+                        friendListViewModel.getFriends()
                     }
                 }
             }
@@ -127,6 +134,40 @@ fun FriendsScreen(
             else -> {}
         }
     }
+
+    LaunchedEffect(friendListFetchingState.value) {
+        when(friendListFetchingState.value) {
+            is FriendListFetchingState.Error -> {
+                val message = (friendListFetchingState.value as FriendListFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                friendListViewModel.resetDataFetchingState()
+            }
+            is FriendListFetchingState.SuccessOnGetFriends -> {
+                when (val data = (friendListFetchingState.value as FriendListFetchingState.SuccessOnGetFriends).data) {
+                    is String -> {
+                        val message = data as String
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        friendListViewModel.resetDataFetchingState()
+                    }
+                    is List<*> -> {
+                        friendList.clear()
+                        friendList.addAll(data as List<FirebaseUser>)
+                        friendListViewModel.resetDataFetchingState()
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    val friends = friendList.map { user ->
+        Friend(
+            name = user.userName,
+            email = user.email,
+            imageResId = R.drawable.hip
+        )
+    }
+    val searchResults = friends.filter { it.contains(query, ignoreCase = true) }
 
     Column(
         modifier = Modifier
@@ -318,7 +359,7 @@ fun FriendsScreen(
                         if (newFriendEmail == email.value) {
                             Toast.makeText(context, "Bạn không thể gửi lời mời kết bạn đến chính mình", Toast.LENGTH_SHORT).show()
                         } else {
-                            friendListViewModel.searchForEmail(newFriendEmail)
+                            friendRequestViewModel.searchForEmail(newFriendEmail)
                         }
                     },
                     enabled = newFriendEmail.isNotBlank()
@@ -403,16 +444,16 @@ fun FriendsScreen(
                             onAcceptClick = {
                                 runBlocking {
                                     launch {
-                                        friendListViewModel.acceptFriendRequest(friendRequest.uid)
+                                        friendRequestViewModel.acceptFriendRequest(friendRequest.uid)
                                         friendRequests.remove(friendRequest)
                                     }
                                 }
                             },
                             onRejectClick = {
-                                friendListViewModel.declineFriendRequest(friendRequest.uid)
+                                friendRequestViewModel.declineFriendRequest(friendRequest.uid)
                                 runBlocking {
                                     launch {
-                                        friendListViewModel.declineFriendRequest(friendRequest.uid)
+                                        friendRequestViewModel.declineFriendRequest(friendRequest.uid)
 //                                        if (friendListFetchingState.value is FriendListFetchingState.Success) {
                                         friendRequests.remove(friendRequest)
 //                                        }

@@ -574,6 +574,31 @@ class UserDataRepoImpl @Inject constructor(
                 callback(FriendListFetchingState.Error("Failed to decline friend request"))
             }
     }
+
+    override fun getFriends(callback: (FriendListFetchingState) -> Unit) {
+        val userId = auth.currentUser?.uid
+        val userRef = getUserDataRef(userId)
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val friends = mutableListOf<FirebaseUser>()
+                    (document["friends"] as List<String>).forEach {
+                        getUserInfor(it) { userName, email ->
+                            friends.add(FirebaseUser(email = email.toString(), uid = it, userName = userName.toString()))
+                            callback(FriendListFetchingState.SuccessOnGetFriends(friends))
+                        }
+                    }
+                } else {
+                    Log.d("OwO", "No such document")
+                    callback(FriendListFetchingState.Error("Failed to get friends"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback(FriendListFetchingState.Error("Failed to get friends"))
+            }
+    }
 }
 
 data class FirebasePlaylist(
