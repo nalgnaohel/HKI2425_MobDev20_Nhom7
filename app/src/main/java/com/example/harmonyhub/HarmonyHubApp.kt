@@ -54,10 +54,12 @@ import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
 import com.example.harmonyhub.ui.components.Friend
+import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
 import com.example.harmonyhub.ui.library.AddToPlaylistFromSongScreen
 import com.example.harmonyhub.ui.library.AlbumScreen
 import com.example.harmonyhub.ui.library.ArtistScreen
+import com.example.harmonyhub.ui.library.ChartsScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
@@ -93,7 +95,16 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     Friends(title = R.string.friends, icon = Icons.Default.AccountBox),
     Album(title = R.string.album, icon = Icons.Default.AccountBox)
 }
+object CurrentSong{
+    var currentSong : Song? = null
+    fun get(): Song? {
+        return currentSong
+    }
+    fun set(tmp : Song?) {
+        currentSong = tmp
+    }
 
+}
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
         Color(0xFF252525),
@@ -128,16 +139,17 @@ fun HarmonyHubApp(
                 )
             ) {
                 Column {
-                    if (currentScreen != HarmonyHubScreen.AddToPlaylistFromSong)
+                    // Kiểm tra nếu CurrentSong.currentSong không null
+                    CurrentSong.currentSong?.let { currentSong ->
                         NowPlayingBar(
-                            songName = "Closer",
-                            artistName = "The Chainsmokers, Halsey",
+                            song = currentSong,
                             isPlaying = true,
                             onPlayPauseClick = { /* Handle play/pause logic */ },
                             onNextClick = { /* Handle next song logic */ },
                             onPreviousClick = { /* Handle previous song logic */ },
-                            onBarClick = { navController.navigate(HarmonyHubScreen.Play.name) }
+                            onBarClick = { /* Handle bar click logic */ }
                         )
+                    }
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -213,17 +225,17 @@ fun HarmonyHubApp(
                             )
                         }
                         composable(
-                            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}",
+                            route = "Play?index={SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)}",
                             arguments = listOf(
-                                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+                                navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                                     type = NavType.IntType
                                     defaultValue= 0
                                 }
                             )
                         ) { backStackEntry ->
                             PlayScreen(
-                                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
-                                onBackButtonClicked = { navController.popBackStack() }
+                                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
+                                onBackButtonClicked = { searchNavController.popBackStack() }
                             )
                         }
                     }
@@ -275,16 +287,16 @@ fun HarmonyHubApp(
                             )
                         }
                         composable(
-                            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}",
+                            route = "Play?index={SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)}",
                             arguments = listOf(
-                                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+                                navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                                     type = NavType.IntType
                                     defaultValue= 0
                                 }
                             )
                         ) { backStackEntry ->
                             PlayScreen(
-                                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
+                                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
                                 onBackButtonClicked = { navController.popBackStack() }
                             )
                         }
@@ -463,18 +475,19 @@ fun HarmonyHubApp(
                     )
 
                 }
-                composable(route = HarmonyHubScreen.Album.name) {
-                    AlbumScreen(
-                        onShareClicked = {},
-                        onDownloadClicked = {},
-                        onSongClick = {
-                        },
-                        onBackButtonClicked = {},
-                        onAddToPlaylistClicked = {},
-                        onAddToFavoriteClicked = {}
-                    )
-
-                }
+//                composable(route = HarmonyHubScreen.Album.name) {
+//                    AlbumScreen(
+//                        idAlbum ="",
+//                        onShareClicked = {},
+//                        onDownloadClicked = {},
+//                        onSongClick = {
+//                        },
+//                        onBackButtonClicked = {},
+//                        onAddToPlaylistClicked = {},
+//                        onAddToFavoriteClicked = {}
+//                    )
+//
+//                }
 
 
             }
@@ -619,16 +632,16 @@ fun Nav3(
             )
         }
         composable(
-            route = "Artist?name={artist.name}",
+            route = "Artist?name={artist.id}",
             arguments = listOf(
-                navArgument(name = "artist.name") {
+                navArgument(name = "artist.id") {
                     type = NavType.StringType
                     nullable = true
                 }
             )
         ) { backStackEntry ->
             ArtistScreen(
-                myArtist = backStackEntry.arguments?.getString("artist.name"),
+                myArtist = backStackEntry.arguments?.getString("artist.id"),
                 onSongClick = {},
                 onBackButtonClicked = {
                     navController.popBackStack() // Quay lại ArtistsFollowing
@@ -650,71 +663,64 @@ fun Nav3(
                 }
             )
         }
-    }
-}
-@Composable
-fun Nav4(
-    parentNavController: NavHostController,
-    authenticationMainViewModel: AuthenticationViewModel = hiltViewModel()
-) {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "Library") {
-        composable(route = "Library") {
-            LibraryScreen(
-                onProfileButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Profile.name)
+        composable(
+            route = "Album?name={album.id}",
+            arguments = listOf(
+                navArgument(name = "album.id") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            AlbumScreen(
+                idAlbum = backStackEntry.arguments?.getString("album.id"),
+                onShareClicked = {},
+                onDownloadClicked = {},
+                onSongClick = {
                 },
-                onViewAllRecentCLicked = {
-                    parentNavController.navigate(HarmonyHubScreen.History.name)
-                },
-                onFavoriteButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Favorite.name)
-                },
-                onDownloadButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Download.name)
-                },
-                onPlaylistButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Playlist.name)
-                },
-                onArtistsFollowingButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.ArtistsFollowing.name)
-                },
-                onLogoutButtonClicked = {
-                    authenticationMainViewModel.signOut()
-                    parentNavController.navigate(HarmonyHubScreen.Login.name)
-                },
-                onSettingsButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Settings.name)
-                },
-                onPlaySongClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Play.name)
-                },
-                onAddToPlaylistClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
-                },
-                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
-                onShareClicked = { /* Handle share logic */ },
-                onDownloadClicked = { /* Handle download logic */ },
-                onDeleteClicked = { /* Handle delete logic */ },
-                navController = navController
+                onBackButtonClicked = {navController.popBackStack()},
+                onAddToPlaylistClicked = {},
+                onAddToFavoriteClicked = {}
             )
         }
         composable(
-            route = "Play?index={SongRepository.currentPLaylist.indexOf(song)}&tmpPlaylist={SongRepository.currentPLaylist}",
+            route = "Charts?name={chart.id}",
             arguments = listOf(
-                navArgument(name = "SongRepository.currentPLaylist.indexOf(song)") {
+                navArgument(name = "chart.id") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            ChartsScreen(
+                idCharts = backStackEntry.arguments?.getString("chart.id"),
+                onShareClicked = {},
+                onDownloadClicked = {},
+                onSongClick = {
+                },
+                onBackButtonClicked = {navController.popBackStack()},
+                onAddToPlaylistClicked = {},
+                onAddToFavoriteClicked = {}
+            )
+        }
+
+        composable(
+            route = "Play?index={SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)}",
+            arguments = listOf(
+                navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                     type = NavType.IntType
                     defaultValue= 0
                 }
             )
         ) { backStackEntry ->
             PlayScreen(
-                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(song)"),
+                index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
                 onBackButtonClicked = { navController.popBackStack() }
             )
         }
     }
 }
+
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //fun HarmonyHubAppbar(

@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.harmonyhub.CurrentSong
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongFetchingState
@@ -166,7 +167,9 @@ fun SearchScreen(
                 SongCard(
                     song = song,
                     more = Icons.Default.MoreVert,
-                    onSongClick = { navController.navigate("Play?index=${SongRepository.currentPLaylist.indexOf(song)}")},
+                    onSongClick = { CurrentSong.set(song)
+                        navController.navigate("Play?index=${SongRepository.currentPLaylist.indexOf(
+                        CurrentSong.currentSong)}")},
                     onMoreClick = {
                         selectedSong = song
                         isBottomSheetVisible = true
