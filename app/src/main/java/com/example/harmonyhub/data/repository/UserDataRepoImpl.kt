@@ -280,4 +280,33 @@ class UserDataRepoImpl @Inject constructor(
                 callback(PlaylistSongFetchingState.Error("Failed to add song to ${playlistName}"))
             }
     }
+
+    override fun getPlaylistSongs(
+        playlistName: String,
+        callback: (PlaylistSongFetchingState) -> Unit
+    ) {
+        val userId = auth.currentUser?.uid
+        val playlistRef = getPlaylistRef(userId, playlistName)
+
+        playlistRef.collection("songs").get()
+            .addOnSuccessListener { result ->
+                val playlistSongs = mutableListOf<Song>()
+                for (document in result) {
+                    Log.d("playlist", "${document.id} => ${document.data}")
+                    val song = Song(
+                        id = document.id,
+                        name = document.getString("songName").toString(),
+                        artist = document.getString("artist").toString(),
+                        imageResId = document.getString("imageResId").toString(),
+                        url = document.getString("url").toString()
+                    )
+                    playlistSongs.add(song)
+                }
+                callback(PlaylistSongFetchingState.Success(playlistSongs))
+            }
+            .addOnFailureListener { exception ->
+                Log.d("playlist", "Error getting documents: ", exception)
+                callback(PlaylistSongFetchingState.Error("Failed to get playlist songs"))
+            }
+    }
 }

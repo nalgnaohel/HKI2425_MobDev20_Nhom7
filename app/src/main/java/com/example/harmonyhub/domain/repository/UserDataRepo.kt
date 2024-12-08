@@ -17,6 +17,7 @@ interface UserDataRepo {
     fun getFavoriteSongs(callback: (FavoriteSongFetchingState) -> Unit)
 
     fun addSongToPlayList(song: Song, playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
+    fun getPlaylistSongs(playlistName: String, callback: (PlaylistSongFetchingState) -> Unit)
 //    fun removeSongFromPlayList()
 //    fun getSongFromPlayList()
 //    fun deletePlayList()
