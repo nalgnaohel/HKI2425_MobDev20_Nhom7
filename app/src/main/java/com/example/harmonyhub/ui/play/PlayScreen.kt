@@ -25,7 +25,7 @@ import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
-
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -38,6 +38,8 @@ fun PlayScreen(
     var playlist by remember { mutableStateOf(SongRepository.currentPLaylist ) }
     var currentSongIndex by remember { mutableIntStateOf(index ?: 0) }
     var isPlaying by remember { mutableStateOf(false) }
+    var currentPlayTime by remember { mutableStateOf(0L) }
+    var duration by remember { mutableStateOf(0L) }
 
     if (playlist.size == 0) {
         DisposableEffect(Unit) {
@@ -85,6 +87,15 @@ fun PlayScreen(
     // Initialize the first song
     LaunchedEffect(Unit) {
         loadSong(currentSongIndex)
+    }
+
+    //Update current time
+    LaunchedEffect(exoPlayer) {
+        while (true) {
+            currentPlayTime = exoPlayer.currentPosition
+            duration = 195000
+            delay(1000)
+        }
     }
 
     if (playlist[currentSongIndex] != null) {
@@ -138,9 +149,9 @@ fun PlayScreen(
                 contentDescription = "Photo",
 
                 modifier = Modifier
-                                .fillMaxWidth()
-                                .height(350.dp)
-                                .clip(RoundedCornerShape(12.dp)),
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .clip(RoundedCornerShape(12.dp)),
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -189,8 +200,10 @@ fun PlayScreen(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Slider(
-                    value = 0.3f,
-                    onValueChange = {},
+                    value = if (duration == 0L) 0f else currentPlayTime.toFloat() / duration.toFloat(),
+                    onValueChange = {
+                        exoPlayer.seekTo((it * duration).toLong())
+                    },
                     colors = SliderDefaults.colors(
                         thumbColor = Color.White,
                         activeTrackColor = Color.White,
@@ -202,8 +215,8 @@ fun PlayScreen(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "0:25", fontSize = 12.sp, color = Color.White)
-                    Text(text = "3:15", fontSize = 12.sp, color = Color.White)
+                    Text(text = formatTime(currentPlayTime), fontSize = 12.sp, color = Color.White)
+                    Text(text = formatTime(duration), fontSize = 12.sp, color = Color.White)
                 }
             }
 
@@ -279,4 +292,10 @@ fun PlayScreen(
     }
 }
 
-
+//Time format utils
+fun formatTime(timeInMs: Long) : String {
+    val seconds = timeInMs / 1000
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "${if (minutes < 10) "0$minutes" else minutes }:${if (remainingSeconds < 10) "0$remainingSeconds" else remainingSeconds}"
+}
