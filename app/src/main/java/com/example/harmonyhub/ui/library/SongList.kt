@@ -270,130 +270,134 @@ fun BottomSheetContentL(
                 }
             }
         }
-        HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
-        Spacer(modifier = Modifier.height(8.dp))
+        if (screenType != "FavoriteFriendScreen") {
+            HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
+            Spacer(modifier = Modifier.height(8.dp))
 
-        if (screenType != "FavoriteScreen" && screenType != "DownloadScreen") {
+            if (screenType != "FavoriteScreen" && screenType != "DownloadScreen") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onDismiss()
+                            onAddToFavoriteClicked()
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.favorite),
+                        contentDescription = "Favorite",
+                        tint = Color.LightGray,
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Thêm vào yêu thích",
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        fontFamily = NotoSans, fontSize = 16.sp
+                    )
+                }
+            }
+
+            if (screenType != "DownloadScreen") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onDismiss()
+                            onAddToPlaylistClicked()
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.add_48),
+                        contentDescription = "Add",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Thêm vào danh sách phát",
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        fontFamily = NotoSans, fontSize = 16.sp
+                    )
+                }
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
                         onDismiss()
-                        onAddToFavoriteClicked() }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.favorite),
-                    contentDescription = "Favorite",
-                    tint = Color.LightGray,
-                    modifier = Modifier.size(25.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    "Thêm vào yêu thích",
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    fontFamily = NotoSans, fontSize = 16.sp
-                )
-            }
-        }
-
-        if (screenType != "DownloadScreen") {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onDismiss()
-                        onAddToPlaylistClicked()
-                    }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.add_48),
-                    contentDescription = "Add",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(25.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    "Thêm vào danh sách phát",
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    fontFamily = NotoSans, fontSize = 16.sp
-                )
-            }
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onDismiss()
-                    if (screenType == "FavoriteScreen") {
-                        selectedSong?.let {
-                            favoriteSongsViewModel.removeFavoriteSong(it)
+                        if (screenType == "FavoriteScreen") {
+                            selectedSong?.let {
+                                favoriteSongsViewModel.removeFavoriteSong(it)
+                            }
                         }
                     }
-                }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.minus),
-                contentDescription = "Delete",
-                tint = Color.Gray,
-                modifier = Modifier.size(25.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Xóa khỏi danh sách này", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
-
-        if (screenType != "DownloadScreen") {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onDismiss()
-                        onDownloadClicked() }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.download_for_offline),
-                    contentDescription = "Download",
-                    tint = Color.LightGray,
-                    modifier = Modifier.size(25.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    "Tải về",
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    fontFamily = NotoSans, fontSize = 16.sp
-                )
-            }
-        }
-
-        if (screenType != "DownloadScreen") {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onDismiss()
-                        onShareClicked()
-                    }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "Share",
+                    painter = painterResource(R.drawable.minus),
+                    contentDescription = "Delete",
                     tint = Color.Gray,
                     modifier = Modifier.size(25.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    "Chia sẻ",
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    "Xóa khỏi danh sách này", modifier = Modifier.padding(vertical = 8.dp),
                     fontFamily = NotoSans, fontSize = 16.sp
                 )
+            }
+
+            if (screenType != "DownloadScreen") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onDismiss()
+                            onDownloadClicked()
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.download_for_offline),
+                        contentDescription = "Download",
+                        tint = Color.LightGray,
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Tải về",
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        fontFamily = NotoSans, fontSize = 16.sp
+                    )
+                }
+            }
+
+            if (screenType != "DownloadScreen") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onDismiss()
+                            onShareClicked()
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Chia sẻ",
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        fontFamily = NotoSans, fontSize = 16.sp
+                    )
+                }
             }
         }
     }
