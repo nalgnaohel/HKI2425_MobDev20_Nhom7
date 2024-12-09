@@ -24,6 +24,22 @@ class PlaylistViewModel @Inject constructor(
         })
     }
 
+    fun getPlaylistSongs(playlistName: String) {
+        userRepo.getPlaylistSongs(playlistName, callback = {
+            _dataFetchingState.value = it
+        })
+    }
+
+    fun removeSongFromPlayList(song: Song, playlistName: String) {
+        userRepo.removeSongFromPlayList(song, playlistName, callback = {
+            _dataFetchingState.value = it
+        })
+    }
+
+    fun deletePlayList(playlistName: String) {
+        userRepo.deletePlayList(playlistName)
+    }
+
     fun resetDataFetchingState() {
         _dataFetchingState.value = PlaylistSongFetchingState.Pending
     }

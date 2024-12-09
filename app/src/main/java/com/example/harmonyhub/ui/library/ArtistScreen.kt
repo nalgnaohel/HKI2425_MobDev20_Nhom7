@@ -284,7 +284,6 @@ fun ArtistScreen(
                 onShareClicked = onShareClicked,
                 onDownloadClicked = onDownloadClicked,
                 onDeleteClicked = {},
-                favoriteSongsViewModel = null
             )
         }
     }

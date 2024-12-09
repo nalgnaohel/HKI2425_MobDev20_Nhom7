@@ -1,5 +1,6 @@
 package com.example.harmonyhub.ui.library
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -57,6 +60,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.harmonyhub.R
 import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.FavoriteSongsViewModel
+import com.example.harmonyhub.presentation.viewmodel.PlaylistSongFetchingState
+import com.example.harmonyhub.presentation.viewmodel.PlaylistViewModel
 import com.example.harmonyhub.ui.components.BottomSheetContent
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
@@ -75,8 +80,47 @@ fun PlaylistSongListScreen(
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
+    playlistViewModel: PlaylistViewModel = hiltViewModel(),
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
     ) {
-    val allSongs: List<Song> = SongRepository.allSongs
+
+    val dataFetchingState = playlistViewModel.dataFetchingState.observeAsState()
+    val allSongs = remember {mutableListOf<Song>()}
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        playlistViewModel.getPlaylistSongs(playlistName ?: "")
+    }
+
+    LaunchedEffect(dataFetchingState.value) {
+        when (val state = dataFetchingState.value) {
+            is PlaylistSongFetchingState.Success -> {
+                when (val data = (dataFetchingState.value as PlaylistSongFetchingState.Success).data) {
+                    is List<*> -> {
+                        val songs = data as List<Song>
+                        allSongs.clear()
+                        allSongs.addAll(songs)
+                        playlistViewModel.resetDataFetchingState()
+                    }
+                    is String -> {
+                        val message = data as String
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        playlistViewModel.resetDataFetchingState()
+                        playlistViewModel.getPlaylistSongs(playlistName ?: "")
+                    }
+                }
+            }
+
+            is PlaylistSongFetchingState.Error -> {
+                val message = (dataFetchingState.value as PlaylistSongFetchingState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                playlistViewModel.resetDataFetchingState()
+            }
+
+            else -> {}
+        }
+    }
 
     var query by remember { mutableStateOf("") }
 
@@ -84,8 +128,6 @@ fun PlaylistSongListScreen(
     var isBottomTitleSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
     var titleBottomSheet by remember { mutableStateOf("") }
-
-    val favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
 
     val focusManager = LocalFocusManager.current
 
@@ -253,7 +295,11 @@ fun PlaylistSongListScreen(
                 screenType = "PlaylistSongListScreen",
                 onAddToPlaylistClicked = onAddToPlaylistClicked,
                 onAddToFavoriteClicked = onAddToFavoriteClicked,
-                onDeleteClicked = onDeleteClicked,
+                onDeleteClicked = {
+                    selectedSong?.let {
+                        playlistViewModel.removeSongFromPlayList(it, playlistName ?: "")
+                    }
+                },
                 onShareClicked = onShareClicked,
                 onDownloadClicked = onDownloadClicked,
                 favoriteSongsViewModel = favoriteSongsViewModel
@@ -267,7 +313,9 @@ fun PlaylistSongListScreen(
         ) {
             BottomSheetTitleContent(
                 onDismiss = { isBottomTitleSheetVisible = false },
-                title = titleBottomSheet
+                title = titleBottomSheet,
+                playlistName = playlistName ?: "",
+                onBackButtonClicked = onBackButtonClicked
             )
         }
     }
@@ -275,7 +323,12 @@ fun PlaylistSongListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
+private fun BottomSheetTitleContent(onDismiss: () -> Unit,
+                                    title: String,
+                                    playlistName: String,
+                                    onBackButtonClicked: () -> Unit,
+                                    playlistViewModel: PlaylistViewModel = hiltViewModel(),
+) {
     var showRenameDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf(title) }
 
@@ -294,30 +347,33 @@ private fun BottomSheetTitleContent(onDismiss: () -> Unit, title: String) {
         HorizontalDivider(color = Color.DarkGray, thickness = 0.3.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { showRenameDialog = true }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
-                tint = Color.Gray,
-                modifier = Modifier.size(23.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                "Đổi tên playlist", modifier = Modifier.padding(vertical = 8.dp),
-                fontFamily = NotoSans, fontSize = 16.sp
-            )
-        }
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .clickable { showRenameDialog = true }
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.Edit,
+//                contentDescription = "Edit",
+//                tint = Color.Gray,
+//                modifier = Modifier.size(23.dp)
+//            )
+//            Spacer(modifier = Modifier.width(16.dp))
+//            Text(
+//                "Đổi tên playlist", modifier = Modifier.padding(vertical = 8.dp),
+//                fontFamily = NotoSans, fontSize = 16.sp
+//            )
+//        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /*Todo*/ }
+                .clickable {
+                    playlistViewModel.deletePlayList(playlistName)
+                    onBackButtonClicked()
+                }
         ) {
             Icon(
                 painter = painterResource(R.drawable.remove),

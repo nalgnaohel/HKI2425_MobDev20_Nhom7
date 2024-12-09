@@ -46,6 +46,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.harmonyhub.R
@@ -63,12 +64,13 @@ fun SongList(
     songs: List<Song>,
     onBackButtonClicked: () -> Unit,
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel? = viewModel(),
     onAddToPlaylistClicked: () -> Unit,
     onAddToFavoriteClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
+    onDeleteAllClicked: () -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -179,7 +181,7 @@ fun SongList(
                     fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.clickable {
-
+                    onDeleteAllClicked()
                 }
             )
         }
@@ -224,7 +226,7 @@ fun BottomSheetContentL(
     onDismiss: () -> Unit,
     selectedSong: Song?,
     screenType: String,
-    favoriteSongsViewModel: FavoriteSongsViewModel = viewModel(),
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
     onAddToPlaylistClicked: () -> Unit = {},
     onAddToFavoriteClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {},

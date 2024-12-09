@@ -28,6 +28,5 @@ fun HistoryScreen(
         onDeleteClicked = onDeleteClicked,
         onShareClicked = onShareClicked,
         onDownloadClicked = onDownloadClicked,
-        favoriteSongsViewModel = null
     )
 }

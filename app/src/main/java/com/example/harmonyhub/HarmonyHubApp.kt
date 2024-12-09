@@ -460,18 +460,9 @@ fun HarmonyHubApp(
 
                 composable(route = HarmonyHubScreen.Friends.name) {
                     FriendsScreen(
-                        friends = listOf(
-                            Friend("Anh", "anh@gmail.com", R.drawable.hip),
-                            Friend("Minh", "minh@gmail.com", R.drawable.hip)
-                        ),
                         onBackButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = { },
-                        onUnfriendClicked = { },
                         onWatchPlaylistClicked = { },
-                        friendRequests = listOf(
-                            Friend("Anh", "anh@gmail.com", R.drawable.hip),
-                            Friend("Minh", "minh@gmail.com", R.drawable.hip)
-                        )
                     )
 
                 }
