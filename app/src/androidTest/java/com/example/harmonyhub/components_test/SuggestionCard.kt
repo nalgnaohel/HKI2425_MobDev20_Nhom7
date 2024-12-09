@@ -26,7 +26,8 @@ class SuggestionCardTest {
                 songName = songName,
                 artistName = artistName,
                 songId = songId,
-                songImg = songImg
+                songImg = songImg,
+                onSongClicked = {}
             )
         }
 
@@ -54,7 +55,8 @@ class SuggestionCardTest {
                 songName = songName,
                 artistName = artistName,
                 songId = songId,
-                songImg = songImg
+                songImg = songImg,
+                onSongClicked = {}
             )
         }
 

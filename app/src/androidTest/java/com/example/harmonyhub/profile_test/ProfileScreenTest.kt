@@ -35,6 +35,7 @@ class ProfileScreenTest {
         composeTestRule.setContent {
             ProfileScreen(
                 onBackButtonClicked = {},
+                onFriendsButtonClicked = {},
                 userDataViewModel = hiltViewModel()
             )
         }
@@ -60,6 +61,7 @@ class ProfileScreenTest {
         composeTestRule.setContent {
             ProfileScreen(
                 onBackButtonClicked = { /* mock back action */ },
+                onFriendsButtonClicked = {},
                 userDataViewModel = hiltViewModel()
             )
         }
@@ -74,6 +76,7 @@ class ProfileScreenTest {
         composeTestRule.setContent {
             ProfileScreen(
                 onBackButtonClicked = {},
+                onFriendsButtonClicked = {},
                 userDataViewModel = hiltViewModel()
             )
         }

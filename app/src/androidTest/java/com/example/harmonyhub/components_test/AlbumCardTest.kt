@@ -28,7 +28,8 @@ class AlbumCardTest {
                 songName = songName,
                 albumImg = albumImg,
                 id = id,
-                listArtist = listArtist
+                listArtist = listArtist,
+                onAlbumCardClick = {}
             )
         }
 
@@ -60,7 +61,8 @@ class AlbumCardTest {
                 songName = songName,
                 albumImg = albumImg,
                 id = id,
-                listArtist = listArtist
+                listArtist = listArtist,
+                onAlbumCardClick = {}
             )
         }
 

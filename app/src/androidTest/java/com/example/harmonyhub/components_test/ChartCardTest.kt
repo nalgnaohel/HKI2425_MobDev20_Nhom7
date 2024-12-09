@@ -24,7 +24,8 @@ class ChartCardTest {
             ChartCard(
                 chartImg = chartImg,
                 chartName = chartName,
-                chartId = chartId
+                chartId = chartId,
+                onChartClicked = {}
             )
         }
 
