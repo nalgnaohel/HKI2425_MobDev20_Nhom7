@@ -202,6 +202,7 @@ fun ArtistScreen(
         } else {
             Text(
                 text = "No songs available",
+                fontFamily = NotoSans,
                 color = Color.Gray,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(16.dp)

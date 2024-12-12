@@ -72,7 +72,7 @@ import kotlinx.coroutines.runBlocking
 fun FriendsScreen(
     onBackButtonClicked: () -> Unit,
     onAddButtonClicked: () -> Unit,
-    onWatchPlaylistClicked: () -> Unit,
+    onWatchFavoriteClicked: () -> Unit,
     friendRequestViewModel: FriendListViewModel = hiltViewModel(),
     friendListViewModel: FriendListViewModel = hiltViewModel(),
     userDataViewModel: UserDataViewModel = hiltViewModel(),
@@ -395,7 +395,7 @@ fun FriendsScreen(
             BottomSheetContent(
                 onDismiss = { isBottomSheetVisible = false },
                 selectedFriend = selectedFriend,
-                onWatchPlaylistClicked = onWatchPlaylistClicked,
+                onWatchFavoriteClicked = onWatchFavoriteClicked,
                 onUnFriendClicked = {
                     runBlocking {
                             friendListViewModel.removeFriend(selectedFriend!!.uid)
@@ -477,7 +477,7 @@ fun FriendsScreen(
 private fun BottomSheetContent(
     onDismiss: () -> Unit,
     selectedFriend: Friend?,
-    onWatchPlaylistClicked: () -> Unit,
+    onWatchFavoriteClicked: () -> Unit,
     onUnFriendClicked: () -> Unit
 ) {
     Column(
@@ -525,18 +525,18 @@ private fun BottomSheetContent(
                     .fillMaxWidth()
                     .clickable {
                         onDismiss()
-                        onWatchPlaylistClicked()
+                        onWatchFavoriteClicked()
                     }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.queue_music),
-                    contentDescription = "Watch Playlist",
+                    painter = painterResource(R.drawable.icons8_heart_90),
+                    contentDescription = "Watch Favorite",
                     tint = Color.LightGray,
-                    modifier = Modifier.size(25.dp)
+                    modifier = Modifier.size(23.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    "Xem playlist",
+                    "Xem bài hát yêu thích",
                     modifier = Modifier.padding(vertical = 8.dp),
                     fontFamily = NotoSans, fontSize = 16.sp
                 )

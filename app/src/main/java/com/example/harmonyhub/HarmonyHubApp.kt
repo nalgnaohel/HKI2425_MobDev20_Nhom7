@@ -39,7 +39,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.presentation.viewmodel.AuthenticationViewModel
 import com.example.harmonyhub.ui.home.HomeScreen
 import com.example.harmonyhub.ui.library.ArtistsFollowingScreen
@@ -53,7 +52,6 @@ import com.example.harmonyhub.ui.account.LoginScreen
 import com.example.harmonyhub.ui.account.NewPasswordScreen
 import com.example.harmonyhub.ui.account.RegisterScreen
 import com.example.harmonyhub.ui.account.VerificationScreen
-import com.example.harmonyhub.ui.components.Friend
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.library.AddSongToPlaylistScreen
 import com.example.harmonyhub.ui.library.AddToPlaylistFromSongScreen
@@ -63,6 +61,7 @@ import com.example.harmonyhub.ui.library.ChartsScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
+import com.example.harmonyhub.ui.profile.FavoriteFriendScreen
 import com.example.harmonyhub.ui.profile.FriendsScreen
 import com.example.harmonyhub.ui.profile.ProfileScreen
 import com.example.harmonyhub.ui.search.SearchScreen
@@ -93,18 +92,22 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
         icon = Icons.Default.AccountBox
     ),
     Friends(title = R.string.friends, icon = Icons.Default.AccountBox),
-    Album(title = R.string.album, icon = Icons.Default.AccountBox)
+    Album(title = R.string.album, icon = Icons.Default.AccountBox),
+    FavoriteFriend(title = R.string.favorite, icon = Icons.Default.AccountBox)
 }
-object CurrentSong{
-    var currentSong : Song? = null
+
+object CurrentSong {
+    var currentSong: Song? = null
     fun get(): Song? {
         return currentSong
     }
-    fun set(tmp : Song?) {
+
+    fun set(tmp: Song?) {
         currentSong = tmp
     }
 
 }
+
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
         Color(0xFF252525),
@@ -135,7 +138,8 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Settings,
                     HarmonyHubScreen.Play,
                     HarmonyHubScreen.Friends,
-                    HarmonyHubScreen.AddToPlaylistFromSong
+                    HarmonyHubScreen.AddToPlaylistFromSong,
+                    HarmonyHubScreen.FavoriteFriend
                 )
             ) {
                 Column {
@@ -229,13 +233,14 @@ fun HarmonyHubApp(
                             arguments = listOf(
                                 navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                                     type = NavType.IntType
-                                    defaultValue= 0
+                                    defaultValue = 0
                                 }
                             )
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { searchNavController.popBackStack() }
+                                onBackButtonClicked = { searchNavController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -279,7 +284,6 @@ fun HarmonyHubApp(
                                 onAddToPlaylistClicked = {
                                     navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
                                 },
-                                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
                                 onShareClicked = { /* Handle share logic */ },
                                 onDownloadClicked = { /* Handle download logic */ },
                                 onDeleteClicked = { /* Handle delete logic */ },
@@ -291,13 +295,14 @@ fun HarmonyHubApp(
                             arguments = listOf(
                                 navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                                     type = NavType.IntType
-                                    defaultValue= 0
+                                    defaultValue = 0
                                 }
                             )
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { navController.popBackStack() }
+                                onBackButtonClicked = { navController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -462,7 +467,7 @@ fun HarmonyHubApp(
                     FriendsScreen(
                         onBackButtonClicked = { navController.popBackStack() },
                         onAddButtonClicked = { },
-                        onWatchPlaylistClicked = { },
+                        onWatchFavoriteClicked = { navController.navigate(HarmonyHubScreen.FavoriteFriend.name) },
                     )
 
                 }
@@ -479,7 +484,12 @@ fun HarmonyHubApp(
 //                    )
 //
 //                }
-
+                composable(route = HarmonyHubScreen.FavoriteFriend.name) {
+                    FavoriteFriendScreen(
+                        title = "Bài hát yêu thích của bạn bè",
+                        onBackButtonClicked = { navController.popBackStack() }
+                    )
+                }
 
             }
         }
@@ -669,7 +679,7 @@ fun Nav3(
                 onDownloadClicked = {},
                 onSongClick = {
                 },
-                onBackButtonClicked = {navController.popBackStack()},
+                onBackButtonClicked = { navController.popBackStack() },
                 onAddToPlaylistClicked = {},
                 onAddToFavoriteClicked = {}
             )
@@ -689,7 +699,7 @@ fun Nav3(
                 onDownloadClicked = {},
                 onSongClick = {
                 },
-                onBackButtonClicked = {navController.popBackStack()},
+                onBackButtonClicked = { navController.popBackStack() },
                 onAddToPlaylistClicked = {},
                 onAddToFavoriteClicked = {}
             )
@@ -700,13 +710,14 @@ fun Nav3(
             arguments = listOf(
                 navArgument(name = "SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)") {
                     type = NavType.IntType
-                    defaultValue= 0
+                    defaultValue = 0
                 }
             )
         ) { backStackEntry ->
             PlayScreen(
                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                onBackButtonClicked = { navController.popBackStack() }
+                onBackButtonClicked = { navController.popBackStack() },
+                onMoreClicked = { /* Handle more button click */ }
             )
         }
     }

@@ -21,7 +21,8 @@
     <string name="connection_error">Connection error</string>
     <string name="refresh">Refresh</string>
     <string name="artist">Artist</string>
-    <string name="add_to_playlist_from_song">Add To Playlist From Song</string>"
+    <string name="add_to_playlist_from_song">Add To Playlist From Song</string>
     <string name="friends">Friends</string>
-    <string name="album">Album\n</string>"
+    <string name="album">Album\n</string>
+    <string name="favorite_friend">Favorite Friend</string>
 </resources>

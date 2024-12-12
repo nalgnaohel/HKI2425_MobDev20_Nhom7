@@ -26,7 +26,7 @@ class DefaultHomeScreenRepo : HomeScreenRepo {
             val request = Request.Builder()
                 .url("https://spotify-scraper.p.rapidapi.com/v1/home")
                 .get()
-                .addHeader("x-rapidapi-key", "bc05c5534fmsh8fb5f0a628eb2c8p1262e2jsn9a210e841cc1")
+                .addHeader("x-rapidapi-key", "1ec5c83b55mshd15a7035beade6fp12f050jsn8791b1a67393")
                 .addHeader("x-rapidapi-host", "spotify-scraper.p.rapidapi.com")
                 .build()
 

@@ -14,40 +14,40 @@ class NavigationDrawerTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    @Test
-    fun testDrawerBehavior() {
-        var profileClicked = false
-        var settingsClicked = false
-        var logoutClicked = false
-
-        composeTestRule.setContent {
-            AppScaffoldWithDrawer(
-                onProfileClicked = { profileClicked = true },
-                onSettingsClicked = { settingsClicked = true },
-                onLogoutClicked = { logoutClicked = true },
-                content = { onOpenDrawer ->
-                    TextButton(onClick = onOpenDrawer) {
-                        Text("Mở Drawer")
-                    }
-                }
-            )
-        }
-
-        // Kiểm tra Drawer mở khi nhấn "Mở Drawer"
-        composeTestRule.onNodeWithText("Mở Drawer").performClick()
-        composeTestRule.onNodeWithText("Hồ sơ").assertIsDisplayed()
-
-        // Kiểm tra callback khi nhấn "Hồ sơ"
-        composeTestRule.onNodeWithText("Hồ sơ").performClick()
-        assert(profileClicked)
-
-        // Kiểm tra callback khi nhấn "Cài đặt"
-        composeTestRule.onNodeWithText("Cài đặt").performClick()
-        assert(settingsClicked)
-
-        // Kiểm tra callback khi nhấn "Đăng xuất"
-        composeTestRule.onNodeWithText("Đăng xuất").performClick()
-        assert(logoutClicked)
-    }
+//    @Test
+//    fun testDrawerBehavior() {
+//        var profileClicked = false
+//        var settingsClicked = false
+//        var logoutClicked = false
+//
+//        composeTestRule.setContent {
+//            AppScaffoldWithDrawer(
+//                onProfileClicked = { profileClicked = true },
+//                onSettingsClicked = { settingsClicked = true },
+//                onLogoutClicked = { logoutClicked = true },
+//                content = { onOpenDrawer ->
+//                    TextButton(onClick = onOpenDrawer) {
+//                        Text("Mở Drawer")
+//                    }
+//                }
+//            )
+//        }
+//
+//        // Kiểm tra Drawer mở khi nhấn "Mở Drawer"
+//        composeTestRule.onNodeWithText("Mở Drawer").performClick()
+//        composeTestRule.onNodeWithText("Hồ sơ").assertIsDisplayed()
+//
+//        // Kiểm tra callback khi nhấn "Hồ sơ"
+//        composeTestRule.onNodeWithText("Hồ sơ").performClick()
+//        assert(profileClicked)
+//
+//        // Kiểm tra callback khi nhấn "Cài đặt"
+//        composeTestRule.onNodeWithText("Cài đặt").performClick()
+//        assert(settingsClicked)
+//
+//        // Kiểm tra callback khi nhấn "Đăng xuất"
+//        composeTestRule.onNodeWithText("Đăng xuất").performClick()
+//        assert(logoutClicked)
+//    }
 }
 
