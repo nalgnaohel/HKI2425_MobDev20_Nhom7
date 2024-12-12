@@ -31,6 +31,7 @@ interface UserDataRepo {
     fun declineFriendRequest(uid: String, callback: (FriendListFetchingState) -> Unit)
     fun getFriends(callback: (FriendListFetchingState) -> Unit)
     fun removeFriend(uid: String, callback: (FriendListFetchingState) -> Unit)
+    fun getFriendSongs(uid: String, callback: (FriendListFetchingState) -> Unit)
 }
 
 data class FirebaseUser(

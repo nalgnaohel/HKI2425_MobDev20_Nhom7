@@ -64,6 +64,12 @@ class FriendListViewModel @Inject constructor(
             _dataFetchingState.value = state
         }
     }
+
+    fun getFriendSongs(uid: String) {
+        userRepo.getFriendSongs(uid) { state ->
+            _dataFetchingState.value = state
+        }
+    }
 }
 
 sealed class FriendListFetchingState {
