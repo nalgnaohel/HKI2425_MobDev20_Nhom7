@@ -125,7 +125,8 @@ fun BottomSheetContent(
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
-    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel()
+    favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
+    playlistViewModel: PlaylistViewModel = hiltViewModel()
 ) {
 
     Column(
@@ -196,8 +197,12 @@ fun BottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    if (selectedSong != null) {
-                        favoriteSongsViewModel?.addFavoriteSong(selectedSong)
+                    if (screenType == "LibraryScreen") {
+                        onAddToFavoriteClicked()
+                    } else {
+                        if (selectedSong != null) {
+                            favoriteSongsViewModel?.addFavoriteSong(selectedSong)
+                        }
                     }
                     onDismiss()
                 }

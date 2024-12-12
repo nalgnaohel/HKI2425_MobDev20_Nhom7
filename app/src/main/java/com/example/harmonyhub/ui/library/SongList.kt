@@ -202,21 +202,24 @@ fun SongList(
             }
         }
     }
-    if (isBottomSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { isBottomSheetVisible = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            BottomSheetContentL(
-                onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong,
-                screenType = screenType,
-                onAddToPlaylistClicked = onAddToPlaylistClicked,
-                onAddToFavoriteClicked = onAddToFavoriteClicked,
-                onDeleteClicked = onDeleteClicked,
-                onShareClicked = onShareClicked,
-                onDownloadClicked = onDownloadClicked
-            )
+
+    if (screenType != "HistoryScreen") {
+        if (isBottomSheetVisible) {
+            ModalBottomSheet(
+                onDismissRequest = { isBottomSheetVisible = false },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ) {
+                BottomSheetContentL(
+                    onDismiss = { isBottomSheetVisible = false },
+                    selectedSong = selectedSong,
+                    screenType = screenType,
+                    onAddToPlaylistClicked = onAddToPlaylistClicked,
+                    onAddToFavoriteClicked = onAddToFavoriteClicked,
+                    onDeleteClicked = onDeleteClicked,
+                    onShareClicked = onShareClicked,
+                    onDownloadClicked = onDownloadClicked
+                )
+            }
         }
     }
 }

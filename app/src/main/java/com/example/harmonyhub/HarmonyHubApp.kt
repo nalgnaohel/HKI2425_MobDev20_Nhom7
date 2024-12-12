@@ -283,7 +283,6 @@ fun HarmonyHubApp(
                                 onAddToPlaylistClicked = {
                                     navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
                                 },
-                                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
                                 onShareClicked = { /* Handle share logic */ },
                                 onDownloadClicked = { /* Handle download logic */ },
                                 onDeleteClicked = { /* Handle delete logic */ },
