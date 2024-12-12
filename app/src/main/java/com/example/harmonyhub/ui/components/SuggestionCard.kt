@@ -31,11 +31,11 @@ import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
-fun SuggestionCard(songName: String, artistName: String, songId: String, songImg: String) {
+fun SuggestionCard(songName: String, artistName: String, songId: String, songImg: String, onSongClicked: () ->Unit ) {
     Surface(
         modifier = Modifier
             .size(width = 125.dp, height = 180.dp)
-            .clickable {  },
+            .clickable { onSongClicked()  },
         color = Color.Transparent
     ) {
         Column(modifier = Modifier.padding(4.dp))

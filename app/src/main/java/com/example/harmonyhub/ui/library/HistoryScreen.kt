@@ -9,6 +9,11 @@ import com.example.harmonyhub.ui.components.Song
 @Composable
 fun HistoryScreen(
     onBackButtonClicked: () -> Unit,
+    onAddToPlaylistClicked: () -> Unit,
+    onAddToFavoriteClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onShareClicked: () -> Unit,
+    onDownloadClicked: () -> Unit
 ) {
     val allSongs: List<Song> = SongRepository.allSongs
 
@@ -17,5 +22,11 @@ fun HistoryScreen(
         more = Icons.Default.MoreVert,
         songs = allSongs,
         onBackButtonClicked = onBackButtonClicked,
+        screenType = "HistoryScreen",
+        onAddToPlaylistClicked = onAddToPlaylistClicked,
+        onAddToFavoriteClicked = onAddToFavoriteClicked,
+        onDeleteClicked = onDeleteClicked,
+        onShareClicked = onShareClicked,
+        onDownloadClicked = onDownloadClicked,
     )
 }
