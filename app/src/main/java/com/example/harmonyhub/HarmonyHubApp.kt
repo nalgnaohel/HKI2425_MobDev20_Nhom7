@@ -239,7 +239,8 @@ fun HarmonyHubApp(
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { searchNavController.popBackStack() }
+                                onBackButtonClicked = { searchNavController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -300,7 +301,8 @@ fun HarmonyHubApp(
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { navController.popBackStack() }
+                                onBackButtonClicked = { navController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -714,7 +716,8 @@ fun Nav3(
         ) { backStackEntry ->
             PlayScreen(
                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                onBackButtonClicked = { navController.popBackStack() }
+                onBackButtonClicked = { navController.popBackStack() },
+                onMoreClicked = { /* Handle more button click */ }
             )
         }
     }
