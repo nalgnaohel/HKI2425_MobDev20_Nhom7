@@ -59,6 +59,8 @@ import com.example.harmonyhub.ui.library.AlbumScreen
 import com.example.harmonyhub.ui.library.ArtistScreen
 import com.example.harmonyhub.ui.library.ChartsScreen
 import com.example.harmonyhub.ui.library.PlaylistSongListScreen
+import com.example.harmonyhub.ui.library.SelectionScreen
+import com.example.harmonyhub.ui.library.SplitMusicScreen
 import com.example.harmonyhub.ui.play.NowPlayingBar
 import com.example.harmonyhub.ui.play.PlayScreen
 import com.example.harmonyhub.ui.profile.FavoriteFriendScreen
@@ -93,7 +95,8 @@ enum class HarmonyHubScreen(@StringRes val title: Int, val icon: ImageVector) {
     ),
     Friends(title = R.string.friends, icon = Icons.Default.AccountBox),
     Album(title = R.string.album, icon = Icons.Default.AccountBox),
-    FavoriteFriend(title = R.string.favorite, icon = Icons.Default.AccountBox)
+    FavoriteFriend(title = R.string.favorite, icon = Icons.Default.AccountBox),
+    Selection(title = R.string.favorite, icon = Icons.Default.AccountBox)
 }
 
 object CurrentSong {
@@ -144,16 +147,16 @@ fun HarmonyHubApp(
             ) {
                 Column {
                     // Kiểm tra nếu CurrentSong.currentSong không null
-                    CurrentSong.currentSong?.let { currentSong ->
-                        NowPlayingBar(
-                            song = currentSong,
-                            isPlaying = true,
-                            onPlayPauseClick = { /* Handle play/pause logic */ },
-                            onNextClick = { /* Handle next song logic */ },
-                            onPreviousClick = { /* Handle previous song logic */ },
-                            onBarClick = { /* Handle bar click logic */ }
-                        )
-                    }
+//                    CurrentSong.currentSong?.let { currentSong ->
+//                        NowPlayingBar(
+//                            song = currentSong,
+//                            isPlaying = true,
+//                            onPlayPauseClick = { /* Handle play/pause logic */ },
+//                            onNextClick = { /* Handle next song logic */ },
+//                            onPreviousClick = { /* Handle previous song logic */ },
+//                            onBarClick = { /* Handle bar click logic */ }
+//                        )
+//                    }
                     BottomNavigationBar(navController = navController)
                 }
             }
@@ -274,8 +277,8 @@ fun HarmonyHubApp(
                                     authenticationMainViewModel.signOut()
                                     navController.navigate(HarmonyHubScreen.Login.name)
                                 },
-                                onSettingsButtonClicked = {
-                                    navController.navigate(HarmonyHubScreen.Settings.name)
+                                onSplitButtonClicked = {
+                                    navController.navigate(HarmonyHubScreen.Selection.name)
                                 },
                                 onPlaySongClicked = {
                                     navController.navigate(HarmonyHubScreen.Play.name)
@@ -489,6 +492,9 @@ fun HarmonyHubApp(
                         onBackButtonClicked = { navController.popBackStack() }
                     )
                 }
+                composable(route = HarmonyHubScreen.Selection.name) {
+                    Nav5(navController)
+                }
 
             }
         }
@@ -625,8 +631,8 @@ fun Nav3(
                     authenticationMainViewModel.signOut()
                     parentNavController.navigate(HarmonyHubScreen.Login.name)
                 },
-                onSettingsButtonClicked = {
-                    parentNavController.navigate(HarmonyHubScreen.Settings.name)
+                onSplitButtonClicked = {
+                    parentNavController.navigate(HarmonyHubScreen.Selection.name)
                 },
                 navController = navController
             )
@@ -720,7 +726,39 @@ fun Nav3(
         }
     }
 }
-
+@Composable
+fun Nav5(
+    parentNavController: NavHostController
+) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = HarmonyHubScreen.Selection.name) {
+        composable(route = HarmonyHubScreen.Selection.name) {
+            SelectionScreen(
+                navController,
+                onBackButtonClicked = {parentNavController.popBackStack()}
+            )
+        }
+        composable(
+            route = "SplitMusic?url1={selectedUrls[0]}&url2={selectedUrls[1]}",
+            arguments = listOf(
+                navArgument(name = "selectedUrls[0]") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument(name = "selectedUrls[1]") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            SplitMusicScreen(
+                url1 = backStackEntry.arguments?.getString("selectedUrls[0]"),
+                url2 = backStackEntry.arguments?.getString("selectedUrls[1]"),
+                onBackButtonClicked = {navController.popBackStack()}
+            )
+        }
+    }
+}
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //fun HarmonyHubAppbar(
