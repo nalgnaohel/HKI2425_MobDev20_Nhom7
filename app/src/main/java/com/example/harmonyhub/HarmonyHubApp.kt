@@ -242,7 +242,8 @@ fun HarmonyHubApp(
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { searchNavController.popBackStack() }
+                                onBackButtonClicked = { searchNavController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -286,7 +287,6 @@ fun HarmonyHubApp(
                                 onAddToPlaylistClicked = {
                                     navController.navigate(HarmonyHubScreen.AddToPlaylistFromSong.name)
                                 },
-                                onAddToFavoriteClicked = { /* Handle add to favorite logic */ },
                                 onShareClicked = { /* Handle share logic */ },
                                 onDownloadClicked = { /* Handle download logic */ },
                                 onDeleteClicked = { /* Handle delete logic */ },
@@ -304,7 +304,8 @@ fun HarmonyHubApp(
                         ) { backStackEntry ->
                             PlayScreen(
                                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                                onBackButtonClicked = { navController.popBackStack() }
+                                onBackButtonClicked = { navController.popBackStack() },
+                                onMoreClicked = { /* Handle more button click */ }
                             )
                         }
                     }
@@ -721,7 +722,8 @@ fun Nav3(
         ) { backStackEntry ->
             PlayScreen(
                 index = backStackEntry.arguments?.getInt("SongRepository.currentPLaylist.indexOf(CurrentSong.currentSong)"),
-                onBackButtonClicked = { navController.popBackStack() }
+                onBackButtonClicked = { navController.popBackStack() },
+                onMoreClicked = { /* Handle more button click */ }
             )
         }
     }

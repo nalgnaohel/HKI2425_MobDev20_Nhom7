@@ -644,6 +644,34 @@ class UserDataRepoImpl @Inject constructor(
                 callback(FriendListFetchingState.Error("Failed to remove friend"))
             }
     }
+
+    override fun getFriendSongs(
+        uid: String,
+        callback: (FriendListFetchingState) -> Unit
+    ) {
+        val favoriteSongsRef = getFavoriteSongsRef(uid)
+
+        favoriteSongsRef.get()
+            .addOnSuccessListener { result ->
+                val favoriteSongs = mutableListOf<Song>()
+                for (document in result) {
+                    Log.d("favorite", "${document.id} => ${document.data}")
+                    val song = Song(
+                        id = document.id,
+                        name = document.getString("songName").toString(),
+                        artist = document.getString("artist").toString(),
+                        imageResId = document.getString("imageResId").toString(),
+                        url = document.getString("url").toString()
+                    )
+                    favoriteSongs.add(song)
+                }
+                callback(FriendListFetchingState.Success(favoriteSongs))
+            }
+            .addOnFailureListener { exception ->
+                Log.d("favorite", "Error getting documents: ", exception)
+                callback(FriendListFetchingState.Error("Failed to get favorite songs"))
+            }
+    }
 }
 
 data class FirebasePlaylist(

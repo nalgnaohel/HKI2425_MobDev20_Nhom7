@@ -59,6 +59,8 @@ import com.example.harmonyhub.ui.components.BottomSheetContent
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.theme.NotoSans
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private val gradientBackground = Brush.verticalGradient(
     colors = listOf(
@@ -83,7 +85,6 @@ fun LibraryScreen(
     favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
     userViewModel: UserDataViewModel = hiltViewModel(),
     onAddToPlaylistClicked: () -> Unit,
-    onAddToFavoriteClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onDownloadClicked: () -> Unit,
@@ -273,24 +274,32 @@ fun LibraryScreen(
             }
         }
     }
-    if (isBottomSheetVisible) {
-        ModalBottomSheet(
-            onDismissRequest = { isBottomSheetVisible = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            BottomSheetContent(
-                onDismiss = { isBottomSheetVisible = false },
-                selectedSong = selectedSong,
-                screenType = "LibraryScreen",
-                onAddToPlaylistClicked = onAddToPlaylistClicked,
-                onAddToFavoriteClicked = onAddToFavoriteClicked,
-                onDeleteClicked = onDeleteClicked,
-                onShareClicked = onShareClicked,
-                onDownloadClicked = onDownloadClicked,
-                favoriteSongsViewModel = favoriteSongsViewModel
-            )
-        }
-    }
+//    if (isBottomSheetVisible) {
+//        ModalBottomSheet(
+//            onDismissRequest = { isBottomSheetVisible = false },
+//            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//        ) {
+//            BottomSheetContent(
+//                onDismiss = { isBottomSheetVisible = false },
+//                selectedSong = selectedSong,
+//                screenType = "LibraryScreen",
+//                onAddToPlaylistClicked = {},
+//                onAddToFavoriteClicked = {
+//                    runBlocking {
+//                        launch {
+//                            favoriteSongsViewModel.addFavoriteSong(selectedSong!!)
+//                            favoriteSongsViewModel.getFavoriteSongs()
+//                        }
+//                    }
+//                    isBottomSheetVisible = false
+//                },
+//                onDeleteClicked = onDeleteClicked,
+//                onShareClicked = onShareClicked,
+//                onDownloadClicked = onDownloadClicked,
+//                favoriteSongsViewModel = favoriteSongsViewModel
+//            )
+//        }
+//    }
 }
 
 
