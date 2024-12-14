@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
@@ -50,7 +51,7 @@ import java.time.format.TextStyle
 @Composable
 fun AppScaffoldWithDrawer(
     onProfileClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
+    onSplitClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
     content: @Composable (onOpenDrawer: () -> Unit) -> Unit
 ) {
@@ -72,9 +73,9 @@ fun AppScaffoldWithDrawer(
                         scope.launch { drawerState.close() }
                         onProfileClicked()
                     },
-                    onSettingsClicked = {
+                    onSplitClicked = {
                         scope.launch { drawerState.close() }
-                        onSettingsClicked()
+                        onSplitClicked()
                     },
                     onLogoutClicked = {
                         scope.launch { drawerState.close() }
@@ -93,7 +94,7 @@ fun AppScaffoldWithDrawer(
 @Composable
 fun DrawerContent(
     onProfileClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
+    onSplitClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
     userDataViewModel: UserDataViewModel = hiltViewModel()
 ) {
@@ -166,17 +167,17 @@ fun DrawerContent(
         }
 
         TextButton(
-            onClick = onSettingsClicked
+            onClick = onSplitClicked
         ) {
             Row {
                 Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
+                    imageVector = Icons.Default.Build,
+                    contentDescription = "Split",
                     tint = Color.White
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Cài đặt",
+                    text = "Tách nhạc",
                     style = androidx.compose.ui.text.TextStyle(
                         fontFamily = NotoSans,
                         fontWeight = FontWeight.Bold,
