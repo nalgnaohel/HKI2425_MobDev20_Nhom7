@@ -142,7 +142,8 @@ fun HarmonyHubApp(
                     HarmonyHubScreen.Play,
                     HarmonyHubScreen.Friends,
                     HarmonyHubScreen.AddToPlaylistFromSong,
-                    HarmonyHubScreen.FavoriteFriend
+                    HarmonyHubScreen.FavoriteFriend,
+                    HarmonyHubScreen.Selection
                 )
             ) {
                 Column {

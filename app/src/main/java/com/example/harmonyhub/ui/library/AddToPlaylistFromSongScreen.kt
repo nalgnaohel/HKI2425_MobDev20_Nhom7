@@ -69,10 +69,6 @@ import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.theme.NotoSans
 import kotlinx.coroutines.launch
 
-private val gradientBackground = Brush.verticalGradient(
-    colors = listOf(Color(0xFF04A8A3), Color(0xFF0A91BD))
-)
-
 private fun getSongByUrl(url: String?): Song? {
 
     SongRepository.allSongs.forEach {
@@ -99,7 +95,7 @@ fun AddToPlaylistFromSongScreen(
     var showDialog by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
 
-    var selectedPlaylists by remember { mutableStateOf(setOf<String>())}
+    var selectedPlaylists by remember { mutableStateOf(setOf<String>()) }
 
     val albumsFetchingState = userDataViewModel.dataFetchingState.observeAsState()
     val addingSongState = playlistViewModel.dataFetchingState.observeAsState()
@@ -129,11 +125,13 @@ fun AddToPlaylistFromSongScreen(
                 }
                 userDataViewModel.resetDataFetchingState()
             }
+
             is DataFetchingState.Error -> {
                 val message = (albumsFetchingState.value as DataFetchingState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 userDataViewModel.resetDataFetchingState()
             }
+
             else -> {}
         }
     }
@@ -257,7 +255,8 @@ fun AddToPlaylistFromSongScreen(
         Button(
             onClick = {
                 if (selectedPlaylists.size > 1) {
-                    Toast.makeText(context, "Chỉ được chọn 1 danh sách phát", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Chỉ được chọn 1 danh sách phát", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     // Launch a coroutine to handle the asynchronous operations
                     selectedPlaylists.forEach { playlist ->
@@ -270,10 +269,16 @@ fun AddToPlaylistFromSongScreen(
                                         val message = state.message
                                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                     }
+
                                     is PlaylistSongFetchingState.Success -> {
                                         userDataViewModel.getAlbums()
-                                        Toast.makeText(context, "Successfully added to playlist", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Successfully added to playlist",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
+
                                     else -> {}
                                 }
                             }
@@ -284,19 +289,19 @@ fun AddToPlaylistFromSongScreen(
 //                onBackButtonClicked()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = Color(0xFF00FAF2)
             ),
             modifier = Modifier
                 .width(100.dp)
                 .height(50.dp)
                 .align(Alignment.CenterHorizontally)
-                .background(gradientBackground, shape = MaterialTheme.shapes.medium),
+                .background(color = Color.Transparent, shape = MaterialTheme.shapes.medium),
         ) {
             Text(
                 text = "Xong",
                 fontFamily = NotoSans,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = Color.DarkGray,
                 fontSize = 16.sp
             )
         }
@@ -382,45 +387,47 @@ fun AddToPlaylistFromSongScreen(
     }
 }
 
-    @Composable
-    fun PlaylistItem(playlistName: String,
-                     songCount: String,
-                     onPlaylistClicked: () -> Unit = { }
+@Composable
+fun PlaylistItem(
+    playlistName: String,
+    songCount: String,
+    onPlaylistClicked: () -> Unit = { }
+) {
+    var isSelected by remember { mutableStateOf(false) }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
-        var isSelected by remember { mutableStateOf(false) }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Image(
+            painter = painterResource(R.drawable.v),
+            contentDescription = "Playlist Image",
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.v),
-                contentDescription = "Playlist Image",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                .size(50.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = playlistName,
+                color = Color.White,
+                fontSize = 16.sp
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = playlistName,
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = songCount,
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            RadioButton(
-                selected = isSelected,
-                onClick = { isSelected = !isSelected
-                          onPlaylistClicked()
-                          },
-                colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0A91BD))
+            Text(
+                text = songCount,
+                color = Color.Gray,
+                fontSize = 14.sp
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+        RadioButton(
+            selected = isSelected,
+            onClick = {
+                isSelected = !isSelected
+                onPlaylistClicked()
+            },
+            colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF0A91BD))
+        )
     }
+}
