@@ -100,7 +100,7 @@ fun HomeScreen(
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
+    onSplitButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     userDataViewModel: UserDataViewModel = hiltViewModel(),
@@ -128,7 +128,7 @@ fun HomeScreen(
                 onLibraryButtonClicked,
                 onProfileButtonClicked,
                 onLogoutButtonClicked,
-                onSettingsButtonClicked,
+                onSplitButtonClicked,
                 modifier,
                 username.value.toString(),
                 popularItems,
@@ -146,7 +146,7 @@ fun MainHomeScreen(
     onLibraryButtonClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
+    onSplitButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     nameUser : String,
     resPopularItem: ResponseHomeScreenData
@@ -154,7 +154,7 @@ fun MainHomeScreen(
     //Main UI
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = onSettingsButtonClicked,
+        onSplitClicked = onSplitButtonClicked,
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
@@ -190,7 +190,7 @@ fun MainHomeScreen(
                     )
                 }
                 Row {
-                    IconButton(onClick = { onSettingsButtonClicked() }) {
+                    IconButton(onClick = { onSplitButtonClicked() }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",

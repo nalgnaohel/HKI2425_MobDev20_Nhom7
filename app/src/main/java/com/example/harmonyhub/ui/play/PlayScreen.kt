@@ -31,7 +31,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun PlayScreen(
     index : Int?,
-    onBackButtonClicked: () -> Unit = {}
+    onBackButtonClicked: () -> Unit,
+    onMoreClicked: () -> Unit
 ) {
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
@@ -125,7 +126,7 @@ fun PlayScreen(
                 }
 
                 Button(
-                    onClick = { /* More options */ },
+                    onClick = { onMoreClicked() },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = PaddingValues(0.dp)
                 ) {
@@ -144,8 +145,8 @@ fun PlayScreen(
                     .data(playlist[currentSongIndex].imageResId)
                     .crossfade(true)
                     .build(),
-                error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
-                placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                error = painterResource(R.drawable.ic_broken_image),
+                placeholder = painterResource(id = R.drawable.loading_img),
                 contentDescription = "Photo",
 
                 modifier = Modifier

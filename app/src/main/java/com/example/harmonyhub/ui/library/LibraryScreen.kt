@@ -81,7 +81,7 @@ fun LibraryScreen(
     onPlaylistButtonClicked: () -> Unit,
     onArtistsFollowingButtonClicked: () -> Unit,
     onLogoutButtonClicked: () -> Unit,
-    onSettingsButtonClicked: () -> Unit,
+    onSplitButtonClicked: () -> Unit,
     favoriteSongsViewModel: FavoriteSongsViewModel = hiltViewModel(),
     userViewModel: UserDataViewModel = hiltViewModel(),
     onAddToPlaylistClicked: () -> Unit,
@@ -118,7 +118,7 @@ fun LibraryScreen(
 
     AppScaffoldWithDrawer(
         onProfileClicked = onProfileButtonClicked,
-        onSettingsClicked = onSettingsButtonClicked,
+        onSplitClicked =  onSplitButtonClicked,
         onLogoutClicked = onLogoutButtonClicked
     ) { onOpenDrawer ->
         Column(
