@@ -35,11 +35,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.components.BottomSheetContent
 import com.example.harmonyhub.ui.components.Song
@@ -58,13 +61,19 @@ fun ChartsScreen(
     onDownloadClicked: () -> Unit
 ) {
     // Dữ liệu giả lập
-    val albumName = "The Best Hits"
+    val albumName = "Top Songs - Global"
     val songs = listOf(
-        Song("1", "Song A", "Artist A", albumName, "https://example.com/song_a.jpg"),
-        Song("2", "Song B", "Artist B", albumName, "https://example.com/song_b.jpg"),
-        Song("3", "Song C", "Artist C", albumName, "https://example.com/song_c.jpg")
+        Song("1", "Die With A Smile", "Lady Gaga, Bruno Mars", "https://i.scdn.co/image/ab67616d00001e0282ea2e9e1858aa012c57cd45", "https://example.com/song_a.jpg"),
+        Song("2", "APT.", "ROSÉ, Bruno Mars", "https://i.scdn.co/image/ab67616d00001e025074bd0894cb1340b8d8a678", "https://example.com/song_b.jpg"),
+        Song("3", "All I Want for Christmas Is You", "Mariah Carey", "https://i.scdn.co/image/ab67616d00001e024246e3158421f5abb75abc4f", "https://example.com/song_c.jpg"),
+        Song("4", "Last Christmas", "Wham!", "https://i.scdn.co/image/ab67616d00001e02f2d2adaa21ad616df6241e7d", "https://example.com/song_c.jpg"),
+        Song("5", "BIRDS OF A FEATHER", "Billie Eilish", "https://i.scdn.co/image/ab67616d00001e0271d62ea7ea8a5be92d3c1f62", "https://example.com/song_c.jpg"),
+        Song("6", "Rockin' Around The Christmas Tree", "Brenda Lee", "https://i.scdn.co/image/ab67616d00001e027845f74d6db14b400fa61cd3", "https://example.com/song_c.jpg"),
+        Song("7", "That’s So True", "Gracie Abrams", "https://i.scdn.co/image/ab67616d00001e021dac3694b3289cd903cb3acf", "https://example.com/song_c.jpg"),
+        Song("3", "luther (with sza)", "Kendrick Lamar, SZA", "https://i.scdn.co/image/ab67616d00001e0209d6ed214f03fbb663e46531", "https://example.com/song_c.jpg"),
+        Song("3", "Jingle Bell Rock", "Bobby Helms", "https://i.scdn.co/image/ab67616d00001e02fd56f3c7a294f5cfe51c7b17", "https://example.com/song_c.jpg"),
+        Song("3", "Who", "Jimin", "https://i.scdn.co/image/ab67616d00001e02f02c451189a709b9a952aaec", "https://example.com/song_c.jpg")
     )
-
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedSong by remember { mutableStateOf<Song?>(null) }
 
@@ -74,15 +83,19 @@ fun ChartsScreen(
             .background(Color.Black)
     ) {
         Box {
-            Image(
-                painter = painterResource(id = R.drawable.v),
-                contentDescription = null,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("https://charts-images.scdn.co/assets/locale_en/regional/weekly/region_global_default.jpg")
+                    .crossfade(true)
+                    .build(),
+                error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                contentDescription = "Photo",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp)
             )
-
             // Gradient overlay để tăng độ rõ của chữ
             Box(
                 modifier = Modifier
