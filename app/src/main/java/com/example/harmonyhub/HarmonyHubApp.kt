@@ -755,8 +755,8 @@ fun Nav5(
             )
         ) { backStackEntry ->
             SplitMusicScreen(
-                url1 = backStackEntry.arguments?.getString("selectedUrls[0]"),
-                url2 = backStackEntry.arguments?.getString("selectedUrls[1]"),
+                id1 = backStackEntry.arguments?.getString("selectedUrls[0]"),
+                id2 = backStackEntry.arguments?.getString("selectedUrls[1]"),
                 onBackButtonClicked = {navController.popBackStack()}
             )
         }

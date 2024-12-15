@@ -45,15 +45,15 @@ import com.example.harmonyhub.ui.theme.NotoSans
 
 @Composable
 fun SplitMusicScreen(
-    url1: String?,
-    url2: String?,
+    id1: String?,
+    id2: String?,
     onBackButtonClicked: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
     // Chuyển đổi URL thành đối tượng Song
-    val song1 = url1?.let { findSongByUrl(it) }
-    val song2 = url2?.let { findSongByUrl(it) }
+    val song1 = id1?.let { findSongByUrl(it) }
+    val song2 = id2?.let { findSongByUrl(it) }
 
     // Dùng một map để giữ trạng thái của từng checkbox cho mỗi bài hát
     val checkedStatesSong1 = remember { mutableStateOf(mapOf<String, Boolean>()) }
@@ -206,8 +206,8 @@ fun SplitMusicScreen(
         }
     }
 }
-fun findSongByUrl(url: String): Song? {
-    return SongRepository.allSongs.find { it.url == url }
+fun findSongByUrl(id: String): Song? {
+    return SongRepository.allSongs.find { it.id == id }
 }
 
 
