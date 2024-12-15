@@ -111,3 +111,10 @@ data class ChartOut(
     val image: String?,
     val id: String
 )
+data class ResponseSplit(
+    val bass : String,
+    val drum : String,
+    val beat : String,
+    val lyric : String,
+)
+

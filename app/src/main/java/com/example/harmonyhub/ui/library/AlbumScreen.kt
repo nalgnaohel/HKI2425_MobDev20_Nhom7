@@ -18,13 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.harmonyhub.R
 import com.example.harmonyhub.ui.components.BottomSheetContent
 import com.example.harmonyhub.ui.components.Song
@@ -43,11 +46,13 @@ fun AlbumScreen(
     onDownloadClicked: () -> Unit
 ) {
     // Dữ liệu giả lập
-    val albumName = "The Best Hits"
+    val albumName = "CHROMAKOPIA"
     val songs = listOf(
-        Song("1", "Song A", "Artist A", albumName, "https://example.com/song_a.jpg"),
-        Song("2", "Song B", "Artist B", albumName, "https://example.com/song_b.jpg"),
-        Song("3", "Song C", "Artist C", albumName, "https://example.com/song_c.jpg")
+        Song("1", "St. Chroma (feat. Daniel Caesar)", "Tyler, The Creator, Daniel Caesar", "https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c", "https://example.com/song_a.jpg"),
+        Song("2", "Rah Tah Tah", "Tyler, The Creator", "https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c", "https://example.com/song_b.jpg"),
+        Song("2", "Darling, I (feat. Teezo Touchdown)", "Tyler, The Creator, Teezo Touchdown", "https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c", "https://example.com/song_b.jpg"),
+        Song("2", "Hey Jane", "Tyler, The Creator", "https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c", "https://example.com/song_b.jpg"),
+        Song("2", "I Killed You", "Tyler, The Creator", "https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c", "https://example.com/song_b.jpg"),
     )
 
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -59,15 +64,19 @@ fun AlbumScreen(
             .background(Color.Black)
     ) {
         Box {
-            Image(
-                painter = painterResource(id = R.drawable.v),
-                contentDescription = null,
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("https://i.scdn.co/image/ab67616d0000b273124e9249fada4ff3c3a0739c")
+                    .crossfade(true)
+                    .build(),
+                error = painterResource(com.example.harmonyhub.R.drawable.ic_broken_image),
+                placeholder = painterResource(id = com.example.harmonyhub.R.drawable.loading_img),
+                contentDescription = "Photo",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp)
             )
-
             // Gradient overlay để tăng độ rõ của chữ
             Box(
                 modifier = Modifier
