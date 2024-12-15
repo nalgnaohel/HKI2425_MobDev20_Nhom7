@@ -56,16 +56,16 @@ import java.io.File
 
 @Composable
 fun SplitMusicScreen(
-    url1: String?,
-    url2: String?,
-    onBackButtonClicked: () -> Unit,
+    id1: String?,
+    id2: String?,
+    onBackButtonClicked: () -> Unit
 ) {
     val exoPlayers = mutableListOf<ExoPlayer>()
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     // Chuyển đổi URL thành đối tượng Song
-    val song1 = url1?.let { findSongByUrl(it) }
-    val song2 = url2?.let { findSongByUrl(it) }
+    val song1 = id1?.let { findSongByUrl(it) }
+    val song2 = id2?.let { findSongByUrl(it) }
     DisposableEffect(Unit) {
         onDispose {
             // Release all players in the list when the screen is disposed

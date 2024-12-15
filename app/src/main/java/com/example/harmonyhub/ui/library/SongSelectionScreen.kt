@@ -167,9 +167,9 @@ fun SelectionScreen(
                             if (selectedUrls.size < 2 || (selectedSongs[song.id] == true)) {
                                 selectedSongs[song.id] = !(selectedSongs[song.id] ?: false)
                                 if (selectedSongs[song.id] == true) {
-                                    selectedUrls.add(song.url) // Thêm URL vào danh sách
+                                    selectedUrls.add(song.id) // Thêm URL vào danh sách
                                 } else {
-                                    selectedUrls.remove(song.url) // Xoá URL khỏi danh sách
+                                    selectedUrls.remove(song.id) // Xoá URL khỏi danh sách
                                 }
                             }
                         },
@@ -184,11 +184,11 @@ fun SelectionScreen(
                             if (isChecked) {
                                 if (selectedUrls.size < 2) { // Kiểm tra nếu số lượng chưa đạt 2
                                     selectedSongs[song.id] = true
-                                    selectedUrls.add(song.url)
+                                    selectedUrls.add(song.id)
                                 }
                             } else {
                                 selectedSongs[song.id] = false
-                                selectedUrls.remove(song.url)
+                                selectedUrls.remove(song.id)
                             }
                         },
                         colors = androidx.compose.material3.CheckboxDefaults.colors(Color(0xFF00FAF2))
@@ -222,7 +222,3 @@ fun SelectionScreen(
         }
     }
 }
-
-
-
-
