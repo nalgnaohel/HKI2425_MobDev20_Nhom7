@@ -289,8 +289,8 @@ fun SplitMusicScreen(
         exoPlayers.forEach { it.release() }
     })
 }
-fun findSongByUrl(url: String): Song? {
-    return SongRepository.allSongs.find { it.url == url }
+fun findSongByUrl(id: String): Song? {
+    return SongRepository.allSongs.find { it.id == id }
 }
 
 
