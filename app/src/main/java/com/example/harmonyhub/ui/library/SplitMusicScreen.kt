@@ -38,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.harmonyhub.data.SongRepository
 import com.example.harmonyhub.ui.components.Song
 import com.example.harmonyhub.ui.components.SongCard
 import com.example.harmonyhub.ui.theme.NotoSans
@@ -51,8 +52,8 @@ fun SplitMusicScreen(
     val focusManager = LocalFocusManager.current
 
     // Chuyển đổi URL thành đối tượng Song
-    val song1 = convertUrlToSong(url1)
-    val song2 = convertUrlToSong(url2)
+    val song1 = url1?.let { findSongByUrl(it) }
+    val song2 = url2?.let { findSongByUrl(it) }
 
     // Dùng một map để giữ trạng thái của từng checkbox cho mỗi bài hát
     val checkedStatesSong1 = remember { mutableStateOf(mapOf<String, Boolean>()) }
@@ -114,12 +115,14 @@ fun SplitMusicScreen(
             }
 
             items(listOf(song1, song2)) { song ->
-                SongCard(
-                    song = song,
-                    more = null,
-                    onSongClick = {},
-                    onMoreClick = {}
-                )
+                if (song != null) {
+                    SongCard(
+                        song = song,
+                        more = null,
+                        onSongClick = {},
+                        onMoreClick = {}
+                    )
+                }
             }
 
             item {
@@ -203,28 +206,10 @@ fun SplitMusicScreen(
         }
     }
 }
-
-
-fun convertUrlToSong(url: String?): Song {
-    return if (url != null) {
-        val title = url.substringAfterLast("=") // Lấy phần cuối của URL làm tiêu đề bài hát
-        Song(
-            id = title.hashCode().toString(), // Tạo ID từ hash của tiêu đề
-            name = title,
-            artist = "Unknown Artist",        // Nghệ sĩ mặc định
-            imageResId = "https://example.com/default_image.png", // Ảnh mặc định
-            url = url
-        )
-    } else {
-        // Tạo một bài hát mặc định nếu URL null
-        Song(
-            id = "0",
-            name = "Không có dữ liệu",
-            artist = "Không xác định",
-            imageResId = "https://example.com/default_image.png", // Ảnh mặc định
-            url = ""
-        )
-    }
+fun findSongByUrl(url: String): Song? {
+    return SongRepository.allSongs.find { it.url == url }
 }
+
+
 
 
