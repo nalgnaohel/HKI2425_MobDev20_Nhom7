@@ -48,7 +48,7 @@ class DefaultHomeScreenRepo : HomeScreenRepo {
         val request = Request.Builder()
             .url("https://splitbeat-vocal-remover-music-splitter.p.rapidapi.com/Upload_audio")
             .post(requestBody)
-            .addHeader("x-rapidapi-key", "89644839e0mshcae86286ffb46fcp1e2f10jsn5dacb407fc3b")
+            .addHeader("x-rapidapi-key", "eeb6435659mshc336b23616278efp1f1318jsn9ff087024dd7")
             .addHeader("x-rapidapi-host", "splitbeat-vocal-remover-music-splitter.p.rapidapi.com")
             .addHeader("Content-Type", "multipart/form-data; boundary=---011000010111000001101001")
             .build()
