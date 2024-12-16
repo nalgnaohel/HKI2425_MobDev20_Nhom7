@@ -26,4 +26,11 @@ class SongCardTest {
         var song = Song("1", "Conditionally", "Katy Perry", "imageResId", "url");
         assertEquals(song.contains("Taylor"), false);
     }
+
+    @Test
+    fun testIgnoreCaseFalse() {
+        // Test the SongCard
+        var song = Song("1", "Conditionally", "Katy Perry", "imageResId", "url");
+        assertEquals(false, song.contains("perry", ignoreCase = false));
+    }
 }
